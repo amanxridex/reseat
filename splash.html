@@ -1,33 +1,44 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nexus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/splash.css">
-    <link rel="stylesheet" href="css/mobile.css">
     
-    <!-- Check: Skip splash if coming from internal pages -->
+    <!-- CRITICAL FIX: Check auth status before redirecting -->
     <script>
         (function() {
-            // Check if user came from our own website (internal navigation)
-            const referrer = document.referrer;
-            const currentDomain = window.location.hostname;
-            
-            // If referrer contains our domain, user is navigating internally (profile → index)
-            if(referrer && referrer.includes(currentDomain)) {
-                // Skip splash, go directly to index
-                window.location.replace('index.html');
+            // Check if already shown this session
+            if(sessionStorage.getItem('splash_shown_this_session')) {
+                const auth = localStorage.getItem('nexus_auth');
+                const session = sessionStorage.getItem('nexus_session');
+                
+                // FIX: Redirect based on auth status!
+                if(auth || session) {
+                    window.location.replace('index.html');
+                } else {
+                    window.location.replace('auth.html');
+                }
                 return;
             }
             
-            // Also check if already shown in this browser session
-            if(sessionStorage.getItem('splash_shown_this_session')) {
-                window.location.replace('index.html');
+            // Check if coming from internal navigation (profile/settings -> index)
+            // In that case, index.html should handle the view, not splash
+            const referrer = document.referrer;
+            if(referrer && referrer.includes(window.location.hostname)) {
+                // Coming from our own site, skip splash but check auth first
+                const auth = localStorage.getItem('nexus_auth');
+                const session = sessionStorage.getItem('nexus_session');
+                
+                if(auth || session) {
+                    window.location.replace('index.html');
+                } else {
+                    window.location.replace('auth.html');
+                }
             }
         })();
     </script>
@@ -38,7 +49,6 @@
         <div class="ambient-light"></div>
         <div class="mesh-gradient"></div>
         
-        <!-- Logo Container -->
         <div class="brand-reveal">
             <div class="logo-mark">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +66,6 @@
             </div>
         </div>
 
-        <!-- Loading Bar -->
         <div class="loader-container">
             <div class="progress-track">
                 <div class="progress-fill" id="progressBar"></div>
@@ -122,8 +131,12 @@
                 // Mark as shown for this browser session
                 sessionStorage.setItem('splash_shown_this_session', 'true');
                 
+                // CRITICAL FIX: Check auth and redirect accordingly
                 const auth = localStorage.getItem('nexus_auth');
-                const target = auth ? 'index.html' : 'auth.html';
+                const session = sessionStorage.getItem('nexus_session');
+                
+                // If authenticated -> index, else -> auth
+                const target = (auth || session) ? 'index.html' : 'auth.html';
                 
                 document.body.style.opacity = '0';
                 document.body.style.transition = 'opacity 0.5s ease';
