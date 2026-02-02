@@ -1,3 +1,14 @@
+<script>
+    // Auth Guard - Redirect to splash if not logged in
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
