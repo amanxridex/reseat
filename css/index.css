@@ -486,3 +486,19 @@ body {
         flex-shrink: 0;
     }
 }
+
+@media (max-width: 768px) {
+    /* Fix resale card badge */
+    .card.resale .discount-badge {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .card.resale {
+        padding-left: 7rem; /* Make space for badge */
+    }
+}
