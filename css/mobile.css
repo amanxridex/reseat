@@ -4,6 +4,22 @@
 
 /* Tablet & Mobile Breakpoint */
 @media (max-width: 968px) {
+
+    @media (max-width: 968px) {
+    
+    /* Hide mode switcher - bottom nav has these options */
+    .mode-switcher {
+        display: none !important;
+    }
+    
+    /* Adjust spacing */
+    .hero-content {
+        padding-top: 1rem;
+    }
+    
+    .subtitle {
+        margin-bottom: 1.5rem;
+    }
     
         /* Settings Page Navigation Fix */
     .top-nav {
@@ -49,7 +65,7 @@
         width: 20px;
         height: 20px;
     }
-    
+
     /* Navigation - Mobile Header */
     .glass-nav {
         top: 0;
@@ -559,4 +575,17 @@
 .mobile-menu-btn,
 .mobile-nav {
     display: none;
+}
+
+.hide-on-mobile {
+    display: none !important;
+}
+
+/* Adjust hero content spacing when mode switcher is hidden */
+.hero-content {
+    padding-top: 2rem;
+}
+    
+.search-widget {
+    margin-top: 1rem;
 }
