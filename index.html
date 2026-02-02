@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <script>
     // Auth Guard - Redirect to splash if not logged in
     (function() {
@@ -22,6 +23,7 @@
     <link rel="stylesheet" href="css/animations.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -222,5 +224,27 @@
     <script src="js/entertainment.js"></script>
     <script src="js/resale.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <a href="#travel" class="mobile-nav-item active" 
+    onclick="App.switchMode('travel')">
+            <i class="fas fa-plane"></i>
+            <span>Travel</span>
+        </a>
+        <a href="#entertainment" class="mobile-nav-item"
+    onclick="App.switchMode('entertainment')">
+            <i class="fas fa-film"></i>
+            <span>Movies</span>
+        </a>
+        <a href="#resale" class="mobile-nav-item" onclick="App.switchMode('resale')">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Resale</span>
+        </a>
+    <a href="profile.html" class="mobile-nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+</nav>
 </body>
 </html>
