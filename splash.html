@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/splash.css">
+</head>
+<body>
+
+    <div class="splash-container">
+        <!-- Background ambient glow -->
+        <div class="ambient-glow"></div>
+        
+        <!-- Logo Container -->
+        <div class="brand-reveal">
+            <div class="logo-mark">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="8" width="48" height="48" rx="16" stroke="currentColor" stroke-width="3" class="logo-rect"/>
+                    <path d="M24 32L30 38L40 26" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="logo-check"/>
+                </svg>
+            </div>
+            
+            <div class="brand-text">
+                <span class="letter" style="--delay: 0.1s">N</span>
+                <span class="letter" style="--delay: 0.15s">e</span>
+                <span class="letter" style="--delay: 0.2s">x</span>
+                <span class="letter" style="--delay: 0.25s">u</span>
+                <span class="letter" style="--delay: 0.3s">s</span>
+            </div>
+        </div>
+
+        <!-- Loading Bar -->
+        <div class="loader-container">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="loader-text">
+                <span id="loadingStatus">Initializing</span>
+                <span class="dots">
+                    <span>.</span><span>.</span><span>.</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer Tagline -->
+        <div class="splash-footer">
+            <span class="tagline">Premium Travel & Entertainment</span>
+            <div class="security-badge">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 1L1.5 3V5.5C1.5 8.25 6 11 6 11C6 11 10.5 8.25 10.5 5.5V3L6 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Secure UPI Payments</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/splash.js"></script>
+</body>
+</html>

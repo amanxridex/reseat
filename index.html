@@ -1,0 +1,226 @@
+<script>
+    // Auth Guard - Redirect to splash if not logged in
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        
+        if(!auth && !session && !window.location.href.includes('splash')) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Premium Ticket Exchange</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-bolt neon-green"></i>
+                <span>NEXUS</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#travel" class="nav-link active">Travel</a>
+                <a href="#entertainment" class="nav-link">Entertainment</a>
+                <a href="#resale" class="nav-link highlight">Resale Market</a>
+                <a href="#dashboard" class="nav-link">My Tickets</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="icon-btn" id="searchToggle"><i class="fas fa-search"></i>
+            </button>
+                <button class="icon-btn" id="ticketsToggle"
+            onclick="App.switchMode('dashboard')">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span class="badge">2</span>
+                </button>
+                <button class="btn-primary" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i> Profile
+               </button>
+            </div>
+    </nav>
+
+    <!-- Command Palette (Cmd+K) -->
+    <div id="commandPalette" class="modal hidden">
+        <div class="modal-content glass">
+            <input type="text" placeholder="Search destinations, events, or tickets..." id="commandInput">
+            <div class="command-list" id="commandList"></div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="glitch-text">NEXT GEN<span class="neon-green"> TICKETING</span></h1>
+            <p class="subtitle">Buy. Sell. Resale. Travel & Entertainment in one Nexus.</p>
+            
+            <!-- Mode Toggle -->
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="travel"><i class="fas fa-plane"></i> Travel</button>
+                <button class="mode-btn" data-mode="entertainment"><i class="fas fa-film"></i> Entertainment</button>
+                <button class="mode-btn" data-mode="resale"><i class="fas fa-exchange-alt"></i> Resale</button>
+            </div>
+
+            <!-- Search Widget -->
+            <div class="search-widget glass">
+                <div class="search-tabs" id="travelTabs">
+                    <button class="tab-btn active" data-tab="flights"><i class="fas fa-plane"></i> Flights</button>
+                    <button class="tab-btn" data-tab="trains"><i class="fas fa-train"></i> Trains</button>
+                    <button class="tab-btn" data-tab="buses"><i class="fas fa-bus"></i> Buses</button>
+                </div>
+
+                <div class="search-form" id="searchForm">
+                    <!-- Dynamic content injected via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Resale Ticker -->
+    <div class="resale-ticker">
+        <div class="ticker-content">
+            <span class="ticker-label">LIVE RESALES:</span>
+            <div class="ticker-items" id="tickerItems">
+                <!-- JS injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+        
+        <!-- Travel Section -->
+        <section id="travel" class="section">
+            <div class="section-header">
+                <h2>Travel <span class="neon-green">Modes</span></h2>
+                <div class="filters">
+                    <button class="filter-chip active">All</button>
+                    <button class="filter-chip">Domestic</button>
+                    <button class="filter-chip">International</button>
+                    <button class="filter-chip">Resale Available</button>
+                </div>
+            </div>
+            
+            <div class="results-grid" id="travelResults">
+                <!-- JS injected cards -->
+            </div>
+        </section>
+
+        <!-- Entertainment Section -->
+        <section id="entertainment" class="section hidden">
+            <div="entertainment-tabs">
+                <button class="ent-tab active" data-ent="ipl">
+                    <i class="fas fa-cricket"></i> IPL 2024
+                </button>
+                <button class="ent-tab" data-ent="movies">
+                    <i class="fas fa-film"></i> Movies
+                </button>
+            </div>
+
+            <div class="ent-content" id="entContent">
+                <!-- JS injected -->
+            </div>
+        </section>
+
+        <!-- Resale Marketplace -->
+        <section id="resale" class="section hidden">
+            <div class="resale-hero glass">
+                <div class="resale-stats">
+                    <div class="stat-card">
+                        <span class="stat-value" id="activeListings">0</span>
+                        <span class="stat-label">Active Listings</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="avgDiscount">0%</span>
+                        <span class="stat-label">Avg. Discount</span>
+                    </div>
+                    <div class="stat-card highlight">
+                        <span class="stat-value" id="resaleSavings">₹0</span>
+                        <span class="stat-label">Total Saved</span>
+                    </div>
+                </div>
+                
+                <button class="btn-large btn-gradient" id="listTicketBtn">
+                    <i class="fas fa-plus-circle"></i> List Your Ticket
+                </button>
+            </div>
+
+            <div class="resale-grid" id="resaleGrid">
+                <!-- JS injected resale cards -->
+            </div>
+        </section>
+
+        <!-- User Dashboard -->
+        <section id="dashboard" class="section hidden">
+            <div class="dashboard-grid">
+                <div class="wallet-card glass">
+                    <h3>My Wallet</h3>
+                    <div class="balance-large">₹12,450</div>
+                    <div class="wallet-actions">
+                        <button class="btn-outline">Withdraw</button>
+                        <button class="btn-primary">Add Money</button>
+                    </div>
+                </div>
+
+                <div class="tickets-slideshow glass">
+                    <h3>Active Tickets</h3>
+                    <div class="ticket-carousel" id="ticketCarousel">
+                        <!-- JS injected tickets with 3D tilt -->
+                    </div>
+                </div>
+
+                <div class="resale-manager glass">
+                    <h3>My Listings</h3>
+                    <div class="listing-list" id="myListings">
+                        <!-- JS injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Seat Selection Modal -->
+    <div id="seatModal" class="modal hidden">
+        <div class="modal-content large" id="seatMapContainer">
+            <!-- Content injected by JS -->
+        </div>
+    </div>
+
+    <!-- List Ticket Modal -->
+    <div id="listModal" class="modal hidden">
+        <div class="modal-content glass">
+            <h3>Resale Your Ticket</h3>
+            <div class="list-form" id="listForm">
+                <!-- Form injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/travel.js"></script>
+    <script src="js/entertainment.js"></script>
+    <script src="js/resale.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth-premium.css">
+</head>
+<body>
+
+    <!-- Ambient Background -->
+    <div class="ambient-light"></div>
+    <div class="mesh-gradient"></div>
+
+    <div class="auth-wrapper">
+        <!-- Left Side (Visual) -->
+        <div class="auth-visual">
+            <div class="brand-mark">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="4" y="4" width="40" height="40" rx="12" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 24L22 30L32 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Nexus</span>
+            </div>
+            
+            <div class="visual-content">
+                <h1>Travel without<br>friction.</h1>
+                <p>Buy, sell, and resale tickets seamlessly. Join 2M+ users.</p>
+                
+                <div class="feature-list">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span>Zero cancellation fees</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span>Instant resale marketplace</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span>Secure UPI payments</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-footer">
+                <div class="avatar-stack">
+                    <img src="https://i.pravatar.cc/150?img=1" alt="User">
+                    <img src="https://i.pravatar.cc/150?img=2" alt="User">
+                    <img src="https://i.pravatar.cc/150?img=3" alt="User">
+                    <div class="avatar-more">+2M</div>
+                </div>
+                <span class="trust-text">Trusted by travelers worldwide</span>
+            </div>
+        </div>
+
+        <!-- Right Side (Form) -->
+        <div class="auth-form-container">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2 id="formTitle">Welcome back</h2>
+                    <p id="formSubtitle">Enter your mobile number to continue</p>
+                </div>
+
+                <form id="authForm" onsubmit="return false;">
+                    <!-- Phone Input -->
+                    <div class="input-group" id="phoneGroup">
+                        <label>Mobile Number</label>
+                        <div class="phone-input-wrapper">
+                            <span class="country-code">+91</span>
+                            <input 
+                                type="tel" 
+                                id="phoneInput" 
+                                placeholder="98765 43210" 
+                                maxlength="10"
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- OTP Input (Hidden initially) -->
+                    <div class="input-group hidden" id="otpGroup">
+                        <label>Verification Code</label>
+                        <div class="otp-container">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="0">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="1">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="2">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="3">
+                        </div>
+                        <div class="otp-hint">
+                            <span>Code: <strong>9090</strong></span>
+                            <button type="button" class="resend-btn" onclick="Auth.resendOTP()">Resend</button>
+                        </div>
+                    </div>
+
+                    <!-- Name Input (Signup only, hidden initially) -->
+                    <div class="input-group hidden" id="nameGroup">
+                        <label>Full Name</label>
+                        <input type="text" id="nameInput" placeholder="Rahul Sharma">
+                    </div>
+
+                    <button type="button" class="primary-button" id="actionBtn" onclick="Auth.handleAction()">
+                        <span class="btn-text">Continue</span>
+                        <div class="btn-loader hidden"></div>
+                    </button>
+
+                    <div class="form-footer">
+                        <span id="toggleText">Don't have an account?</span>
+                        <button type="button" class="text-button" onclick="Auth.toggleMode()" id="toggleBtn">
+                            Sign up
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="legal-text">
+                By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-premium.js"></script>
+</body>
+</html>
