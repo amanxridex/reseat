@@ -5,6 +5,51 @@
 /* Tablet & Mobile Breakpoint */
 @media (max-width: 968px) {
     
+        /* Settings Page Navigation Fix */
+    .top-nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    .nav-content {
+        display: grid !important;
+        grid-template-columns: 40px 1fr 40px !important;
+        align-items: center !important;
+        justify-items: center !important;
+        padding: 0 !important;
+        gap: 0.5rem;
+    }
+    
+    .nav-content h1 {
+        font-size: 1.1rem;
+        text-align: center;
+        justify-self: center;
+        width: 100%;
+    }
+    
+    .back-btn {
+        justify-self: start;
+        width: 36px;
+        height: 36px;
+        padding: 0.5rem;
+    }
+    
+    .back-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .icon-btn {
+        justify-self: end;
+        width: 36px;
+        height: 36px;
+        padding: 0.5rem;
+    }
+    
+    .icon-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
     /* Navigation - Mobile Header */
     .glass-nav {
         top: 0;
@@ -269,6 +314,8 @@
     }
     
     /* Mobile Bottom Navigation */
+
+    
     .mobile-nav {
         display: flex !important;
         position: fixed;

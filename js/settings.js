@@ -5,10 +5,7 @@ const Settings = {
     },
     
     loadSettings() {
-        // Load saved preferences from localStorage
         const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
-        
-        // Apply saved toggle states
         Object.keys(settings).forEach(key => {
             const toggle = document.getElementById(key);
             if(toggle) toggle.checked = settings[key];
@@ -42,17 +39,12 @@ const Settings = {
     saveProfile() {
         const name = document.getElementById('editName').value;
         const email = document.getElementById('editEmail').value;
-        
-        // Update user data
         const user = JSON.parse(localStorage.getItem('nexus_user') || '{}');
         user.name = name;
         user.email = email;
         localStorage.setItem('nexus_user', JSON.stringify(user));
-        
         this.closeModal();
         this.showToast('Profile updated successfully');
-        
-        // Update UI if on same page
         setTimeout(() => window.location.reload(), 500);
     },
     
@@ -60,9 +52,7 @@ const Settings = {
         const current = prompt('Enter current password:');
         if(current) {
             const newPass = prompt('Enter new password:');
-            if(newPass) {
-                this.showToast('Password changed successfully');
-            }
+            if(newPass) this.showToast('Password changed successfully');
         }
     },
     
@@ -75,8 +65,7 @@ const Settings = {
     },
     
     setSpendingLimit() {
-        const current = "50000";
-        const limit = prompt('Set monthly spending limit (₹):', current);
+        const limit = prompt('Set monthly spending limit (₹):', '50000');
         if(limit && !isNaN(limit)) {
             this.showToast(`Spending limit set to ₹${parseInt(limit).toLocaleString()}`);
         }
@@ -90,9 +79,7 @@ const Settings = {
     
     downloadData() {
         this.showToast('Preparing your data download...');
-        setTimeout(() => {
-            alert('Your data has been emailed to you.');
-        }, 1500);
+        setTimeout(() => alert('Your data has been emailed to you.'), 1500);
     },
     
     contactSupport() {
@@ -101,9 +88,7 @@ const Settings = {
     
     reportBug() {
         const bug = prompt('Describe the issue:');
-        if(bug) {
-            this.showToast('Thank you! Our team will look into it.');
-        }
+        if(bug) this.showToast('Thank you! Our team will look into it.');
     },
     
     rateApp() {
@@ -120,10 +105,8 @@ const Settings = {
     },
     
     deleteAccount() {
-        const confirm1 = confirm('WARNING: This will permanently delete your account and all data. Continue?');
-        if(confirm1) {
-            const confirm2 = prompt('Type "DELETE" to confirm:');
-            if(confirm2 === 'DELETE') {
+        if(confirm('WARNING: This will permanently delete your account and all data. Continue?')) {
+            if(prompt('Type "DELETE" to confirm:') === 'DELETE') {
                 localStorage.clear();
                 sessionStorage.clear();
                 alert('Account deleted. Redirecting...');
@@ -152,13 +135,13 @@ const Settings = {
             border: 1px solid var(--accent);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 3000;
-            animation: slideUp 0.3s ease-out;
+            animation: toastSlideUp 0.3s ease-out;
         `;
         toast.textContent = message;
         document.body.appendChild(toast);
         
         setTimeout(() => {
-            toast.style.animation = 'slideDown 0.3s ease-out';
+            toast.style.animation = 'toastSlideDown 0.3s ease-out';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
@@ -167,11 +150,11 @@ const Settings = {
 // Add animation styles
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes slideUp {
+    @keyframes toastSlideUp {
         from { opacity: 0; transform: translate(-50%, 20px); }
         to { opacity: 1; transform: translate(-50%, 0); }
     }
-    @keyframes slideDown {
+    @keyframes toastSlideDown {
         from { opacity: 1; transform: translate(-50%, 0); }
         to { opacity: 0; transform: translate(-50%, 20px); }
     }
