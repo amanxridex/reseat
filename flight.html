@@ -1,0 +1,421 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flights | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/flight.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="travel.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Book Flight</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Trip Type Toggle -->
+        <div class="trip-toggle">
+            <label class="radio-label active">
+                <input type="radio" name="tripType" value="oneway" checked onchange="setTripType(this)">
+                <span>One Way</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="tripType" value="roundtrip" onchange="setTripType(this)">
+                <span>Round Trip</span>
+            </label>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-box">
+            <!-- From -->
+            <div class="field-group" onclick="openCityPicker('from')">
+                <label class="field-label">From</label>
+                <div class="field-value" id="fromCity">Delhi <span class="code">(DEL)</span></div>
+            </div>
+
+            <!-- Swap Button -->
+            <button class="swap-btn" onclick="swapCities()">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+
+            <!-- To -->
+            <div class="field-group" onclick="openCityPicker('to')">
+                <label class="field-label">To</label>
+                <div class="field-value" id="toCity">Mumbai <span class="code">(BOM)</span></div>
+            </div>
+
+            <!-- Depart Date -->
+            <div class="field-group date-field" onclick="openDatePicker()">
+                <label class="field-label">Depart</label>
+                <div class="field-value" id="departDate">Fri, 06 Feb 26</div>
+            </div>
+
+            <!-- Return Date -->
+            <div class="field-group date-field return-field disabled" id="returnField" onclick="openDatePicker()">
+                <label class="field-label">Return</label>
+                <div class="field-value return-text" id="returnDate">Add Return</div>
+            </div>
+
+            <!-- Passengers & Class -->
+            <div class="field-group full-width" onclick="openPassengerPicker()">
+                <label class="field-label">Passenger & Class</label>
+                <div class="field-value" id="passengerClass">1 Traveller, Economy <i class="fas fa-chevron-down"></i></div>
+            </div>
+        </div>
+
+        <!-- Search Button -->
+        <button class="search-btn" onclick="searchFlights()">
+            Search Flights
+        </button>
+    </main>
+
+    <!-- City Picker Modal -->
+    <div id="cityModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="cityModalTitle">Select Origin</h3>
+                <button class="close-btn" onclick="closeModal('cityModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="citySearch" placeholder="Search city or airport" oninput="filterCities(this.value)">
+            </div>
+            <div class="city-list" id="cityList">
+                <!-- Cities injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="dateModal" class="modal hidden">
+        <div class="modal-content date-modal">
+            <div class="modal-header">
+                <h3>Select Date</h3>
+                <button class="close-btn" onclick="closeModal('dateModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="calendar" id="calendar">
+                <!-- Calendar injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Passenger Picker Modal -->
+    <div id="passengerModal" class="modal hidden">
+        <div class="modal-content passenger-modal">
+            <div class="modal-header">
+                <h3>Passengers & Class</h3>
+                <button class="close-btn" onclick="closeModal('passengerModal')"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="passenger-section">
+                <h4>Add Travellers</h4>
+                <div class="counter-row">
+                    <div>
+                        <span class="counter-label">Adults</span>
+                        <span class="counter-sub">12+ years</span>
+                    </div>
+                    <div class="counter">
+                        <button onclick="updateCount('adults', -1)"><i class="fas fa-minus"></i></button>
+                        <span id="adultsCount">1</span>
+                        <button onclick="updateCount('adults', 1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="counter-row">
+                    <div>
+                        <span class="counter-label">Children</span>
+                        <span class="counter-sub">2-12 years</span>
+                    </div>
+                    <div class="counter">
+                        <button onclick="updateCount('children', -1)"><i class="fas fa-minus"></i></button>
+                        <span id="childrenCount">0</span>
+                        <button onclick="updateCount('children', 1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="counter-row">
+                    <div>
+                        <span class="counter-label">Infants</span>
+                        <span class="counter-sub">0-2 years</span>
+                    </div>
+                    <div class="counter">
+                        <button onclick="updateCount('infants', -1)"><i class="fas fa-minus"></i></button>
+                        <span id="infantsCount">0</span>
+                        <button onclick="updateCount('infants', 1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-section">
+                <h4>Choose Class</h4>
+                <label class="class-option">
+                    <input type="radio" name="travelClass" value="economy" checked onchange="setClass(this)">
+                    <span>Economy</span>
+                </label>
+                <label class="class-option">
+                    <input type="radio" name="travelClass" value="premium" onchange="setClass(this)">
+                    <span>Premium Economy</span>
+                </label>
+                <label class="class-option">
+                    <input type="radio" name="travelClass" value="business" onchange="setClass(this)">
+                    <span>Business</span>
+                </label>
+            </div>
+
+            <button class="done-btn" onclick="applyPassengers()">Done</button>
+        </div>
+    </div>
+
+    <script>
+        // Cities data
+        const cities = [
+            { name: 'Delhi', code: 'DEL', airport: 'Indira Gandhi Airport' },
+            { name: 'Mumbai', code: 'BOM', airport: 'Chhatrapati Shivaji Airport' },
+            { name: 'Bengaluru', code: 'BLR', airport: 'Kempegowda Airport' },
+            { name: 'Hyderabad', code: 'HYD', airport: 'Rajiv Gandhi Airport' },
+            { name: 'Chennai', code: 'MAA', airport: 'Chennai Airport' },
+            { name: 'Kolkata', code: 'CCU', airport: 'Netaji Subash Chandra Bose Airport' },
+            { name: 'Ahmedabad', code: 'AMD', airport: 'Sardar Patel Airport' },
+            { name: 'Goa', code: 'GOI', airport: 'Dabolim Airport' },
+            { name: 'Pune', code: 'PNQ', airport: 'Pune Airport' },
+            { name: 'Jaipur', code: 'JAI', airport: 'Jaipur Airport' }
+        ];
+
+        // State
+        let tripType = 'oneway';
+        let fromCity = cities[0];
+        let toCity = cities[1];
+        let departDate = new Date();
+        let returnDate = null;
+        let adults = 1;
+        let children = 0;
+        let infants = 0;
+        let travelClass = 'economy';
+        let currentCityField = 'from';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCityList();
+            renderCalendar();
+        });
+
+        // Trip type
+        function setTripType(radio) {
+            tripType = radio.value;
+            document.querySelectorAll('.radio-label').forEach(l => l.classList.remove('active'));
+            radio.parentElement.classList.add('active');
+            
+            const returnField = document.getElementById('returnField');
+            if (tripType === 'oneway') {
+                returnField.classList.add('disabled');
+                document.getElementById('returnDate').textContent = 'Add Return';
+            } else {
+                returnField.classList.remove('disabled');
+                if (!returnDate) {
+                    returnDate = new Date(departDate);
+                    returnDate.setDate(returnDate.getDate() + 2);
+                }
+                updateReturnDateDisplay();
+            }
+        }
+
+        // City picker
+        function openCityPicker(field) {
+            currentCityField = field;
+            document.getElementById('cityModalTitle').textContent = field === 'from' ? 'Select Origin' : 'Select Destination';
+            document.getElementById('cityModal').classList.remove('hidden');
+            document.getElementById('citySearch').value = '';
+            filterCities('');
+        }
+
+        function renderCityList(filter = '') {
+            const list = document.getElementById('cityList');
+            const filtered = cities.filter(c => 
+                c.name.toLowerCase().includes(filter.toLowerCase()) || 
+                c.code.toLowerCase().includes(filter.toLowerCase())
+            );
+            
+            list.innerHTML = filtered.map(city => `
+                <div class="city-item" onclick="selectCity('${city.code}')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="city-info">
+                        <span class="city-name">${city.name}</span>
+                        <span class="city-airport">${city.airport}</span>
+                    </div>
+                    <span class="city-code">${city.code}</span>
+                </div>
+            `).join('');
+        }
+
+        function filterCities(query) {
+            renderCityList(query);
+        }
+
+        function selectCity(code) {
+            const city = cities.find(c => c.code === code);
+            if (currentCityField === 'from') {
+                fromCity = city;
+                document.getElementById('fromCity').innerHTML = `${city.name} <span class="code">(${city.code})</span>`;
+            } else {
+                toCity = city;
+                document.getElementById('toCity').innerHTML = `${city.name} <span class="code">(${city.code})</span>`;
+            }
+            closeModal('cityModal');
+        }
+
+        function swapCities() {
+            const temp = fromCity;
+            fromCity = toCity;
+            toCity = temp;
+            document.getElementById('fromCity').innerHTML = `${fromCity.name} <span class="code">(${fromCity.code})</span>`;
+            document.getElementById('toCity').innerHTML = `${toCity.name} <span class="code">(${toCity.code})</span>`;
+        }
+
+        // Date picker
+        function openDatePicker() {
+            document.getElementById('dateModal').classList.remove('hidden');
+        }
+
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            const months = ['January', 'February', 'March', 'April', 'May', 'June'];
+            const currentMonth = new Date().getMonth();
+            
+            let html = '';
+            for (let m = 0; m < 2; m++) {
+                const monthIdx = (currentMonth + m) % 12;
+                const year = 2026;
+                
+                html += `
+                    <div class="month">
+                        <h4>${months[monthIdx]} ${year}</h4>
+                        <div class="weekdays">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                        <div class="days">
+                            ${renderDays(monthIdx, year)}
+                        </div>
+                    </div>
+                `;
+            }
+            calendar.innerHTML = html;
+        }
+
+        function renderDays(month, year) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+            let html = '';
+            
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+                html += '<span class="empty"></span>';
+            }
+            
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(year, month, d);
+                const isToday = date.toDateString() === new Date().toDateString();
+                const isSelected = date.toDateString() === departDate.toDateString();
+                const price = Math.floor(Math.random() * 2000) + 4000;
+                
+                html += `
+                    <span class="day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+                          onclick="selectDate(${year}, ${month}, ${d})">
+                        <span class="day-num">${d}</span>
+                        <span class="day-price">₹${price}</span>
+                    </span>
+                `;
+            }
+            return html;
+        }
+
+        function selectDate(year, month, day) {
+            departDate = new Date(year, month, day);
+            document.getElementById('departDate').textContent = formatDate(departDate);
+            closeModal('dateModal');
+            
+            if (tripType === 'roundtrip' && returnDate && returnDate < departDate) {
+                returnDate = new Date(departDate);
+                returnDate.setDate(returnDate.getDate() + 1);
+                updateReturnDateDisplay();
+            }
+        }
+
+        function updateReturnDateDisplay() {
+            if (returnDate) {
+                document.getElementById('returnDate').textContent = formatDate(returnDate);
+                document.getElementById('returnDate').classList.remove('return-text');
+            }
+        }
+
+        function formatDate(date) {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            return `${days[date.getDay()]}, ${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${String(date.getFullYear()).slice(2)}`;
+        }
+
+        // Passenger picker
+        function openPassengerPicker() {
+            document.getElementById('passengerModal').classList.remove('hidden');
+        }
+
+        function updateCount(type, change) {
+            if (type === 'adults') {
+                adults = Math.max(1, Math.min(9, adults + change));
+                document.getElementById('adultsCount').textContent = adults;
+            } else if (type === 'children') {
+                children = Math.max(0, Math.min(6, children + change));
+                document.getElementById('childrenCount').textContent = children;
+            } else if (type === 'infants') {
+                infants = Math.max(0, Math.min(6, infants + change));
+                document.getElementById('infantsCount').textContent = infants;
+            }
+        }
+
+        function setClass(radio) {
+            travelClass = radio.value;
+        }
+
+        function applyPassengers() {
+            const className = travelClass === 'economy' ? 'Economy' : travelClass === 'premium' ? 'Premium Economy' : 'Business';
+            const total = adults + children + infants;
+            document.getElementById('passengerClass').innerHTML = `${total} Traveller${total > 1 ? 's' : ''}, ${className} <i class="fas fa-chevron-down"></i>`;
+            closeModal('passengerModal');
+        }
+
+        // Modal close
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Search
+        function searchFlights() {
+            const params = new URLSearchParams({
+                from: fromCity.code,
+                to: toCity.code,
+                date: departDate.toISOString().split('T')[0],
+                adults: adults,
+                children: children,
+                infants: infants,
+                class: travelClass
+            });
+            window.location.href = `flight-results.html?${params.toString()}`;
+        }
+    </script>
+</body>
+</html>
