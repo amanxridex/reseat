@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Train Tickets | Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/train.css">
+</head>
+<body>
+    <!-- Auth Guard -->
+    <script src="js/auth-guard.js"></script>
+    
+    <!-- Header -->
+    <header class="header">
+        <a href="travel.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <span>NEXUS</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Title -->
+        <div class="hero-text">
+            <h1 class="title">
+                <span class="word" style="--delay: 0s">BOOK</span>
+                <span class="word accent" style="--delay: 0.1s">TRAIN</span>
+            </h1>
+            <p class="subtitle">IRCTC Authorised Partner</p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-container">
+            <!-- Route -->
+            <div class="route-section">
+                <div class="station-input" onclick="openStationPicker('from')">
+                    <label class="input-label">From</label>
+                    <div class="station-name" id="fromStation">Select Station</div>
+                    <div class="station-code" id="fromCode"></div>
+                </div>
+                
+                <button class="swap-btn" onclick="swapStations()">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+                
+                <div class="station-input" onclick="openStationPicker('to')">
+                    <label class="input-label">To</label>
+                    <div class="station-name" id="toStation">Select Station</div>
+                    <div class="station-code" id="toCode"></div>
+                </div>
+            </div>
+
+            <!-- Date Selection -->
+            <div class="date-section">
+                <label class="section-label">Departure Date</label>
+                <div class="date-scroll" id="dateScroll">
+                    <!-- Dates injected via JS -->
+                </div>
+            </div>
+
+            <!-- Class Filter -->
+            <div class="class-filter">
+                <button class="filter-btn active" data-filter="all">AC & non-AC</button>
+                <button class="filter-btn" data-filter="ac">AC only</button>
+                <button class="filter-btn" data-filter="nonac">Non-AC only</button>
+            </div>
+
+            <!-- Search Button -->
+            <button class="search-btn" onclick="searchTrains()">
+                <i class="fas fa-search"></i> Search Trains
+            </button>
+        </div>
+
+        <!-- Additional Services -->
+        <div class="services-section">
+            <h3 class="section-title">Additional Services</h3>
+            <div class="services-grid">
+                <div class="service-card" onclick="window.location.href='my-trips.html'">
+                    <div class="service-icon">
+                        <i class="fas fa-suitcase"></i>
+                    </div>
+                    <h4>My Trips</h4>
+                    <p>View all your bookings in one place</p>
+                </div>
+                
+                <div class="service-card" onclick="openPNRStatus()">
+                    <div class="service-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4>PNR Status</h4>
+                    <p>Check your ticket status with PNR</p>
+                </div>
+                
+                <div class="service-card" onclick="openTrainStatus()">
+                    <div class="service-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h4>Train Status</h4>
+                    <p>Find current location of your train</p>
+                </div>
+                
+                <div class="service-card" onclick="openSeatMap()">
+                    <div class="service-icon">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <h4>Seat Map</h4>
+                    <p>View coach layout before booking</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Station Picker Modal -->
+    <div id="stationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="stationModalTitle">Select Station</h3>
+                <button class="close-btn" onclick="closeModal('stationModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="stationSearch" placeholder="Search station..." oninput="filterStations(this.value)">
+            </div>
+            <div class="station-list" id="stationList">
+                <!-- Stations injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PNR Status Modal -->
+    <div id="pnrModal" class="modal hidden">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Check PNR Status</h3>
+                <button class="close-btn" onclick="closeModal('pnrModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="pnrInput" placeholder="Enter 10-digit PNR number" maxlength="10">
+                <button class="check-btn" onclick="checkPNR()">Check Status</button>
+            </div>
+            <div id="pnrResult" class="result-box hidden"></div>
+        </div>
+    </div>
+
+    <!-- Train Status Modal -->
+    <div id="trainStatusModal" class="modal hidden">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Train Running Status</h3>
+                <button class="close-btn" onclick="closeModal('trainStatusModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="trainNumberInput" placeholder="Enter train number">
+                <button class="check-btn" onclick="checkTrainStatus()">Check Status</button>
+            </div>
+            <div id="trainStatusResult" class="result-box hidden"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="travel.html" class="active">
+            <i class="fas fa-plane"></i>
+            <span>Travel</span>
+        </a>
+        <a href="entertainment.html">
+            <i class="fas fa-film"></i>
+            <span>Movies</span>
+        </a>
+        <a href="resale.html">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Resale</span>
+        </a>
+        <a href="profile.html">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script src="js/train.js"></script>
+</body>
+</html>

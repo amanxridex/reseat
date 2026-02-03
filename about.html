@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Revolutionizing Ticket Exchange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #050505;
+            --bg-card: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.3);
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --orange: #f59e0b;
+            --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        /* Gradient Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            top: -200px;
+            right: -200px;
+            animation: float 20s infinite ease-in-out;
+        }
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--purple);
+            bottom: -100px;
+            left: -100px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: var(--blue);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        nav.scrolled {
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.9);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .logo i {
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-cta {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content {
+            max-width: 900px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+        .btn-secondary {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 6rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Problem Section */
+        .problem {
+            padding: 8rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            border-radius: 100px;
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .problem-card {
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+        }
+        .problem-card:hover {
+            transform: translateY(-10px);
+            border-color: #ef4444;
+        }
+        .problem-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #ef4444;
+            margin-bottom: 1.5rem;
+        }
+        .problem-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .problem-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Solution Section */
+        .solution {
+            padding: 8rem 2rem;
+            background: var(--bg-secondary);
+            position: relative;
+            z-index: 1;
+        }
+        .solution-tag {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            display: flex;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .feature-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .feature-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Why Us Section */
+        .why-us {
+            padding: 8rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .why-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .why-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .why-card:hover::after {
+            opacity: 1;
+        }
+        .why-card:hover {
+            transform: translateY(-5px);
+        }
+        .why-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .why-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .why-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 8rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        .cta h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .cta p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+        }
+        .footer-brand p {
+            color: var(--text-muted);
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+        .footer-links h4 {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .footer-links a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .problems-grid,
+            .why-grid {
+                grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                padding: 1rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Gradient Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">
+            <i class="fas fa-bolt"></i>
+            <span>NEXUS</span>
+        </a>
+        <div class="nav-links">
+            <a href="#problem">Problem</a>
+            <a href="#solution">Solution</a>
+            <a href="#why-us">Why Us</a>
+        </div>
+        <button class="nav-cta" onclick="window.location.href='index.html'">Get Started</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-rocket"></i>
+                <span>Revolutionizing Ticket Exchange</span>
+            </div>
+            <h1>Next Gen Ticketing Platform</h1>
+            <p>India's first unified platform for travel, entertainment, and resale tickets. Buy, sell, and exchange tickets seamlessly with zero hassle.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-play"></i> Launch App
+                </button>
+                <button class="btn-secondary" onclick="document.getElementById('problem').scrollIntoView({behavior: 'smooth'})">
+                    Learn More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid reveal">
+            <div class="stat-card">
+                <div class="stat-number" data-target="50">0</div>
+                <div class="stat-label">Crore+ Tickets Sold</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="35">0</div>
+                <div class="stat-label">% Average Savings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="10000">0</div>
+                <div class="stat-label">+ Daily Resales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="4.9">0</div>
+                <div class="stat-label">Star User Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem" id="problem">
+        <div class="section-header reveal">
+            <span class="section-tag">The Problem</span>
+            <h2>Ticketing in India is Broken</h2>
+            <p>Millions face these challenges every day when trying to book or resell tickets</p>
+        </div>
+        <div class="problems-grid">
+            <div class="problem-card reveal">
+                <div class="problem-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Last Minute Cancellations</h3>
+                <p>No platform to resell tickets when plans change. People lose 100% of their money.</p>
+            </div>
+            <div class="problem-card reveal">
+                <div class="problem-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <h3>Overpriced Black Market</h3>
+                <p>Scalpers charge 2-5x prices for sold-out events. No regulated marketplace exists.</p>
+            </div>
+            <div class="problem-card reveal">
+                <div class="problem-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>10+ Different Apps</h3>
+                <p>Users need separate apps for flights, trains, buses, movies, and events.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution" id="solution">
+        <div class="section-header reveal">
+            <span class="section-tag solution-tag">Our Solution</span>
+            <h2>One Platform, All Tickets</h2>
+            <p>Nexus brings everything together with a revolutionary resale marketplace</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Instant Resale</h3>
+                    <p>List your ticket in 30 seconds. Get paid directly to your wallet. Zero commission for first 3 sales.</p>
+                </div>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Fraud Protection</h3>
+                    <p>Blockchain-verified tickets. QR codes change every minute. 100% guarantee against counterfeits.</p>
+                </div>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Smart Pricing</h3>
+                    <p>AI suggests optimal resale price. Buyers save up to 50% on last-minute deals.</p>
+                </div>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>Unified Dashboard</h3>
+                    <p>Manage all your tickets in one place. Travel, movies, events - everything synced.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section class="why-us" id="why-us">
+        <div class="section-header reveal">
+            <span class="section-tag solution-tag">Why Nexus?</span>
+            <h2>Built Different</h2>
+            <p>We're not just another ticketing app. We're building the future of mobility and entertainment.</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card reveal">
+                <div class="why-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Lightning Fast</h3>
+                <p>Book in under 60 seconds. Resale happens in real-time. No waiting, no hassle.</p>
+            </div>
+            <div class="why-card reveal">
+                <div class="why-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Community First</h3>
+                <p>2M+ active users. Verified sellers. Trusted by India's largest event organizers.</p>
+            </div>
+            <div class="why-card reveal">
+                <div class="why-icon">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <h3>Infinite Inventory</h3>
+                <p>Sold out doesn't exist here. Our resale marketplace creates infinite liquidity.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-box reveal">
+            <div class="cta-content">
+                <h2>Ready to Transform Ticketing?</h2>
+                <p>Join 5 million+ users who've already made the switch. Download now and get ₹100 welcome bonus.</p>
+                <button class="btn-primary" style="font-size: 1.1rem; padding: 1.25rem 2.5rem;" onclick="window.location.href='index.html'">
+                    <i class="fas fa-download"></i> Launch Nexus Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>NEXUS</span>
+                </a>
+                <p>India's unified ticketing platform. Travel, entertainment, and resale - all in one app.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Product</h4>
+                <a href="#">Travel</a>
+                <a href="#">Entertainment</a>
+                <a href="#">Resale Market</a>
+                <a href="#">Pricing</a>
+            </div>
+            <div class="footer-links">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Careers</a>
+                <a href="#">Press</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Refund Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Nexus Technologies Pvt. Ltd. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Animated counters
+        const animateCounter = (el) => {
+            const target = parseFloat(el.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    el.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Number.isInteger(target) ? Math.floor(current) : current.toFixed(1);
+                }
+            }, 16);
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    animateCounter(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+    </script>
+</body>
+</html>
