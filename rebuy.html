@@ -1,0 +1,296 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Tickets | Nexus Exchange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/rebuy.css">
+</head>
+<body>
+    <!-- Travel Search Modal -->
+    <div id="travelSearchModal" class="search-modal hidden">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <h3>Search Travel Tickets</h3>
+                <button class="close-modal" onclick="closeTravelSearch()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="travel-search-form">
+                <div class="route-inputs">
+                    <div class="input-group">
+                        <label>From</label>
+                        <input type="text" id="fromCity" placeholder="Departure City">
+                    </div>
+                    <button class="swap-btn" onclick="swapCities()">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                    <div class="input-group">
+                        <label>To</label>
+                        <input type="text" id="toCity" placeholder="Destination City">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="travelDate">
+                </div>
+                
+                <button class="search-travel-btn" onclick="searchTravelTickets()">
+                    <i class="fas fa-search"></i> Search Tickets
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="resale.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>Buy Tickets</h1>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-shopping-bag"></i>
+        </button>
+    </header>
+
+    <!-- Mode Switcher -->
+    <div class="mode-switcher">
+        <button class="mode-btn active" id="travelMode" onclick="switchMode('travel')">
+            <i class="fas fa-plane"></i>
+            <span>Travel</span>
+        </button>
+        <button class="mode-btn" id="entertainmentMode" onclick="switchMode('entertainment')">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Entertainment</span>
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar-container">
+        <div class="search-bar" id="entertainmentSearch">
+            <i class="fas fa-search"></i>
+            <input type="text" id="eventSearchInput" placeholder="Search events, artists, venues..." oninput="searchEntertainment(this.value)">
+        </div>
+        
+        <button class="travel-search-trigger" id="travelSearchBtn" onclick="openTravelSearch()">
+            <i class="fas fa-search"></i>
+            <span>Where do you want to go?</span>
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- TRAVEL SECTION -->
+    <section class="content-section" id="travelSection">
+        <!-- Category Filter -->
+        <div class="travel-categories">
+            <button class="travel-cat active" data-cat="all" onclick="filterTravel('all')">
+                <i class="fas fa-th-large"></i>
+                <span>All</span>
+            </button>
+            <button class="travel-cat" data-cat="flights" onclick="filterTravel('flights')">
+                <i class="fas fa-plane"></i>
+                <span>Flights</span>
+            </button>
+            <button class="travel-cat" data-cat="trains" onclick="filterTravel('trains')">
+                <i class="fas fa-train"></i>
+                <span>Trains</span>
+            </button>
+            <button class="travel-cat" data-cat="buses" onclick="filterTravel('buses')">
+                <i class="fas fa-bus"></i>
+                <span>Buses</span>
+            </button>
+        </div>
+
+        <!-- Hot Deals Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> Hot Travel Deals</h2>
+                <a href="#" onclick="viewAllTravel('deals')">View All</a>
+            </div>
+            <div class="slider-container" id="travelDealsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Flights Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-plane"></i> Resale Flights</h2>
+                <a href="#" onclick="viewAllTravel('flights')">View All</a>
+            </div>
+            <div class="slider-container" id="flightsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Trains Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-train"></i> Resale Trains</h2>
+                <a href="#" onclick="viewAllTravel('trains')">View All</a>
+            </div>
+            <div class="slider-container" id="trainsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Buses Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-bus"></i> Resale Buses</h2>
+                <a href="#" onclick="viewAllTravel('buses')">View All</a>
+            </div>
+            <div class="slider-container" id="busesSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- All Travel Listings -->
+        <div class="section-block full-list" id="travelFullList">
+            <div class="section-header">
+                <h2>All Travel Tickets</h2>
+                <span class="count" id="travelCount">0 tickets</span>
+            </div>
+            <div class="list-grid" id="travelListGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ENTERTAINMENT SECTION -->
+    <section class="content-section hidden" id="entertainmentSection">
+        <!-- Category Filter -->
+        <div class="ent-categories">
+            <button class="ent-cat active" data-cat="all" onclick="filterEntertainment('all')">
+                <i class="fas fa-th-large"></i>
+                <span>All</span>
+            </button>
+            <button class="ent-cat" data-cat="concerts" onclick="filterEntertainment('concerts')">
+                <i class="fas fa-music"></i>
+                <span>Concerts</span>
+            </button>
+            <button class="ent-cat" data-cat="movies" onclick="filterEntertainment('movies')">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </button>
+            <button class="ent-cat" data-cat="sports" onclick="filterEntertainment('sports')">
+                <i class="fas fa-trophy"></i>
+                <span>Sports</span>
+            </button>
+            <button class="ent-cat" data-cat="clubs" onclick="filterEntertainment('clubs')">
+                <i class="fas fa-cocktail"></i>
+                <span>Clubs</span>
+            </button>
+        </div>
+
+        <!-- Trending Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> Trending Now</h2>
+                <a href="#" onclick="viewAllEntertainment('trending')">View All</a>
+            </div>
+            <div class="slider-container" id="entTrendingSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Concerts Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-music"></i> Concerts</h2>
+                <a href="#" onclick="viewAllEntertainment('concerts')">View All</a>
+            </div>
+            <div class="slider-container" id="concertsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Movies Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-film"></i> Movies</h2>
+                <a href="#" onclick="viewAllEntertainment('movies')">View All</a>
+            </div>
+            <div class="slider-container" id="moviesSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Sports Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-trophy"></i> Sports</h2>
+                <a href="#" onclick="viewAllEntertainment('sports')">View All</a>
+            </div>
+            <div class="slider-container" id="sportsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Clubs Slider -->
+        <div class="section-block">
+            <div class="section-header">
+                <h2><i class="fas fa-cocktail"></i> Clubs</h2>
+                <a href="#" onclick="viewAllEntertainment('clubs')">View All</a>
+            </div>
+            <div class="slider-container" id="clubsSlider">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- All Entertainment Listings -->
+        <div class="section-block full-list" id="entFullList">
+            <div class="section-header">
+                <h2>All Entertainment Tickets</h2>
+                <span class="count" id="entCount">0 tickets</span>
+            </div>
+            <div class="list-grid" id="entListGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="resale.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Exchange</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Buy</span>
+        </a>
+        <a href="resell.html" class="nav-item sell-nav">
+            <div class="sell-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-list"></i>
+            <span>My Listings</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script src="js/rebuy.js"></script>
+</body>
+</html>
