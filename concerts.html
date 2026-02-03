@@ -1,0 +1,256 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concerts | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/concerts.css">
+</head>
+<body>
+    <!-- Ambient Background Effects -->
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+    <div class="ambient-light light-3"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="entertainment.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>Concerts</h1>
+            <span class="live-pulse">
+                <span class="pulse-dot"></span>
+                LIVE
+            </span>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-ticket-alt"></i>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-concert" onclick="openEvent('sunburn-2026')">
+        <div class="hero-bg">
+            <img src="assets/concerts-hero.jpg" alt="Sunburn Festival">
+            <div class="hero-particles"></div>
+        </div>
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+            <div class="hero-tags">
+                <span class="tag-festival">MUSIC FESTIVAL</span>
+                <span class="tag-date">DEC 28-31, 2026</span>
+            </div>
+            <h2 class="hero-title">SUNBURN GOA</h2>
+            <p class="hero-subtitle">Asia's biggest electronic music festival returns</p>
+            <div class="hero-lineup">
+                <span>Lineup:</span>
+                <div class="lineup-artists">
+                    <img src="assets/artist-1.jpg" alt="Artist">
+                    <img src="assets/artist-2.jpg" alt="Artist">
+                    <img src="assets/artist-3.jpg" alt="Artist">
+                    <span class="more-artists">+12</span>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <i class="fas fa-users"></i>
+                    <span>50K+ attending</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Vagator Beach, Goa</span>
+                </div>
+            </div>
+            <button class="hero-btn">
+                <span>Get Tickets</span>
+                <i class="fas fa-bolt"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Quick Filters -->
+    <div class="filters-container">
+        <div class="filters-scroll">
+            <button class="filter-chip active" data-filter="all">
+                <i class="fas fa-compact-disc"></i>
+                <span>All</span>
+            </button>
+            <button class="filter-chip" data-filter="edm">
+                <i class="fas fa-music"></i>
+                <span>EDM</span>
+            </button>
+            <button class="filter-chip" data-filter="bollywood">
+                <i class="fas fa-star"></i>
+                <span>Bollywood</span>
+            </button>
+            <button class="filter-chip" data-filter="punjabi">
+                <i class="fas fa-drum"></i>
+                <span>Punjabi</span>
+            </button>
+            <button class="filter-chip" data-filter="indie">
+                <i class="fas fa-guitar"></i>
+                <span>Indie</span>
+            </button>
+            <button class="filter-chip" data-filter="rock">
+                <i class="fas fa-hand-rock"></i>
+                <span>Rock</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Trending Artists -->
+        <section class="artists-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    Trending Artists
+                </h2>
+            </div>
+            
+            <div class="artists-scroll">
+                <div class="artist-circle" onclick="openArtist('diljit')">
+                    <div class="artist-img">
+                        <img src="assets/artist-1.jpg" alt="Diljit Dosanjh">
+                        <div class="artist-glow"></div>
+                    </div>
+                    <span class="artist-name">Diljit Dosanjh</span>
+                    <span class="artist-genre">Punjabi</span>
+                </div>
+
+                <div class="artist-circle" onclick="openArtist('alan')">
+                    <div class="artist-img">
+                        <img src="assets/artist-2.jpg" alt="Alan Walker">
+                        <div class="artist-glow"></div>
+                    </div>
+                    <span class="artist-name">Alan Walker</span>
+                    <span class="artist-genre">EDM</span>
+                </div>
+
+                <div class="artist-circle" onclick="openArtist('arijit')">
+                    <div class="artist-img">
+                        <img src="assets/artist-3.jpg" alt="Arijit Singh">
+                        <div class="artist-glow"></div>
+                    </div>
+                    <span class="artist-name">Arijit Singh</span>
+                    <span class="artist-genre">Bollywood</span>
+                </div>
+
+                <div class="artist-circle" onclick="openArtist(' Sunidhi Chauhan')">
+                    <div class="artist-img">
+                        <img src="assets/artist-4.jpg" alt="Sunidhi Chauhan">
+                        <div class="artist-glow"></div>
+                    </div>
+                    <span class="artist-name">Sunidhi Chauhan</span>
+                    <span class="artist-genre">Hip-Hop</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upcoming Concerts -->
+        <section class="concerts-section">
+            <div class="section-header">
+                <h2 class="section-title">Upcoming Concerts</h2>
+                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="concerts-list">
+                <div class="concert-card" onclick="openConcert('concert-1')">
+                    <div class="concert-image">
+                        <img src="assets/concert-1.jpg" alt="Concert">
+                        <div class="concert-badge selling-fast">SELLING FAST</div>
+                        <div class="concert-date">
+                            <span class="day">15</span>
+                            <span class="month">FEB</span>
+                        </div>
+                    </div>
+                    <div class="concert-info">
+                        <h3>Diljit Dosanjh India Tour</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Jawaharlal Nehru Stadium, Delhi</p>
+                        <div class="concert-footer">
+                            <span class="time"><i class="fas fa-clock"></i> 7:00 PM</span>
+                            <span class="price">From ₹2,999</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concert-card" onclick="openConcert('concert-2')">
+                    <div class="concert-image">
+                        <img src="assets/concert-2.jpg" alt="Concert">
+                        <div class="concert-badge limited">LIMITED</div>
+                        <div class="concert-date">
+                            <span class="day">22</span>
+                            <span class="month">FEB</span>
+                        </div>
+                    </div>
+                    <div class="concert-info">
+                        <h3>Alan Walker World Tour</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> NESCO, Mumbai</p>
+                        <div class="concert-footer">
+                            <span class="time"><i class="fas fa-clock"></i> 6:00 PM</span>
+                            <span class="price">From ₹3,500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concert-card" onclick="openConcert('concert-3')">
+                    <div class="concert-image">
+                        <img src="assets/concert-3.jpg" alt="Concert">
+                        <div class="concert-date">
+                            <span class="day">08</span>
+                            <span class="month">MAR</span>
+                        </div>
+                    </div>
+                    <div class="concert-info">
+                        <h3>Arijit Singh Live in Concert</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> DY Patil Stadium, Pune</p>
+                        <div class="concert-footer">
+                            <span class="time"><i class="fas fa-clock"></i> 7:30 PM</span>
+                            <span class="price">From ₹1,999</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Venues Section -->
+        <section class="venues-section">
+            <h2 class="section-title">Popular Venues</h2>
+            <div class="venue-card" onclick="openVenue('jio-world')">
+                <div class="venue-image">
+                    <img src="assets/venue.jpg" alt="Venue">
+                    <div class="venue-overlay"></div>
+                </div>
+                <div class="venue-content">
+                    <h3>Jio World Garden</h3>
+                    <p>Mumbai's premier concert destination</p>
+                    <div class="venue-tags">
+                        <span>30,000 capacity</span>
+                        <span>•</span>
+                        <span>AC</span>
+                        <span>•</span>
+                        <span>Multi-stage</span>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right venue-arrow"></i>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/concerts.js"></script>
+</body>
+</html>
