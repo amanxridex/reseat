@@ -14,6 +14,9 @@
     <!-- Auth Guard -->
     <script src="js/auth-guard.js"></script>
     
+    <!-- Status Banner -->
+    <div id="apiStatus" class="api-status hidden"></div>
+    
     <!-- Header -->
     <header class="header">
         <a href="travel.html" class="back-btn">
@@ -144,10 +147,32 @@
             </div>
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="stationSearch" placeholder="Search station..." oninput="filterStations(this.value)">
+                <input type="text" id="stationSearch" placeholder="Search station (e.g., Delhi, Mumbai, 12951)..." oninput="debouncedSearch(this.value)">
             </div>
+            <div class="search-status" id="searchStatus"></div>
             <div class="station-list" id="stationList">
-                <!-- Stations injected via JS -->
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>Type at least 2 characters to search</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Train Results Modal -->
+    <div id="trainResultsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Available Trains</h3>
+                <button class="close-btn" onclick="closeModal('trainResultsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="trainsList" class="trains-list">
+                <div class="loading-trains">
+                    <div class="spinner"></div>
+                    <p>Fetching trains...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -179,7 +204,7 @@
                 </button>
             </div>
             <div class="form-group">
-                <input type="text" id="trainNumberInput" placeholder="Enter train number">
+                <input type="text" id="trainNumberInput" placeholder="Enter train number (e.g., 12951)">
                 <button class="check-btn" onclick="checkTrainStatus()">Check Status</button>
             </div>
             <div id="trainStatusResult" class="result-box hidden"></div>
