@@ -20,14 +20,17 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden; /* Prevent body scroll */
+}
+
 body {
-    min-height: 100vh;
     background: var(--bg);
     color: var(--text);
     font-family: var(--font);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     position: relative;
 }
 
@@ -70,6 +73,7 @@ body {
     justify-content: space-between;
     padding: 1.25rem;
     background: linear-gradient(to bottom, var(--bg), transparent);
+    flex-shrink: 0;
 }
 
 .back-btn, .menu-btn {
@@ -117,14 +121,16 @@ body {
     50% { opacity: 0.5; transform: scale(1.2); }
 }
 
-/* Chat Container */
+/* Chat Container - FIXED SCROLLING */
 .chat-container {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* Enable vertical scroll */
+    overflow-x: hidden;
     padding: 1rem;
     position: relative;
     z-index: 5;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
 }
 
 /* Welcome State */
@@ -133,9 +139,10 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: calc(100vh - 200px);
+    min-height: 100%;
     text-align: center;
     animation: fadeIn 0.6s ease;
+    padding: 2rem 0;
 }
 
 .ai-avatar {
@@ -225,7 +232,8 @@ body {
     gap: 1rem;
     max-width: 800px;
     margin: 0 auto;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
+    min-height: min-content; /* Ensure it expands */
 }
 
 .message {
@@ -276,6 +284,8 @@ body {
     font-size: 0.95rem;
     line-height: 1.5;
     max-width: calc(100% - 60px);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .message.user .message-content {
@@ -366,24 +376,36 @@ body {
     justify-content: center;
     color: var(--accent);
     font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.result-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .result-info h4 {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .result-info p {
     font-size: 0.85rem;
     color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .result-price {
-    margin-left: auto;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--accent);
+    flex-shrink: 0;
 }
 
 /* Input Area */
@@ -392,6 +414,7 @@ body {
     z-index: 10;
     padding: 1rem 1.25rem 1.5rem;
     background: linear-gradient(to top, var(--bg) 80%, transparent);
+    flex-shrink: 0;
 }
 
 .input-container {
@@ -453,6 +476,7 @@ input[type="text"] {
     font-size: 1rem;
     outline: none;
     padding: 0.5rem;
+    min-width: 0;
 }
 
 input[type="text"]::placeholder {
@@ -514,5 +538,20 @@ input[type="text"]::placeholder {
     .message-content {
         font-size: 0.9rem;
         padding: 0.875rem 1rem;
+        max-width: calc(100% - 50px);
+    }
+    
+    .result-card {
+        padding: 0.875rem;
+    }
+    
+    .result-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .result-price {
+        font-size: 1.1rem;
     }
 }
