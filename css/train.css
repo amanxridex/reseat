@@ -903,24 +903,101 @@ body {
 }
 
 /* Responsive */
+/* Mobile Responsive - Add this to your train.css */
+
 @media (max-width: 480px) {
-    .title {
-        font-size: 32px;
-    }
-    
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-    
+    /* Make route section horizontal on mobile */
     .route-section {
-        flex-direction: column;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 8px;
     }
-    
+
+    /* Station inputs side by side */
+    .station-input {
+        flex: 1;
+        min-width: 0; /* Prevents overflow */
+        padding: 12px;
+    }
+
+    .station-name {
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .station-code {
+        font-size: 12px;
+    }
+
+    /* Swap button between stations */
     .swap-btn {
-        transform: rotate(90deg);
+        width: 36px;
+        height: 36px;
+        transform: none !important;
+        flex-shrink: 0;
     }
-    
+
     .swap-btn:hover {
-        transform: rotate(270deg);
+        transform: rotate(180deg) !important;
+    }
+
+    /* Smaller input labels */
+    .input-label {
+        font-size: 10px;
+    }
+
+    /* Class filter buttons in one row */
+    .class-filter {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+
+    /* Services grid 2 columns */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .service-card {
+        padding: 16px;
+    }
+
+    .service-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .service-card h4 {
+        font-size: 14px;
+    }
+
+    .service-card p {
+        font-size: 11px;
+    }
+
+    /* Adjust search container padding */
+    .search-container {
+        padding: 16px;
+    }
+
+    /* Smaller title */
+    .title {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 12px;
     }
 }
