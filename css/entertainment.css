@@ -1,0 +1,626 @@
+:root {
+    --bg: #050508;
+    --card-bg: #0a0a12;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --text-dim: rgba(255, 255, 255, 0.3);
+    
+    /* Glow Colors */
+    --concerts: #ff006e;
+    --concerts-glow: rgba(255, 0, 110, 0.4);
+    --movies: #00d4ff;
+    --movies-glow: rgba(0, 212, 255, 0.4);
+    --sports: #ffaa00;
+    --sports-glow: rgba(255, 170, 0, 0.4);
+    --clubs: #bd00ff;
+    --clubs-glow: rgba(189, 0, 255, 0.4);
+    
+    --font: 'Space Grotesk', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Ambient Background Glows */
+.ambient-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: float 20s ease-in-out infinite;
+}
+
+.concerts-glow {
+    width: 400px;
+    height: 400px;
+    background: var(--concerts);
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.movies-glow {
+    width: 350px;
+    height: 350px;
+    background: var(--movies);
+    top: 20%;
+    right: -100px;
+    animation-delay: 5s;
+}
+
+.sports-glow {
+    width: 300px;
+    height: 300px;
+    background: var(--sports);
+    bottom: 20%;
+    left: -50px;
+    animation-delay: 10s;
+}
+
+.clubs-glow {
+    width: 380px;
+    height: 380px;
+    background: var(--clubs);
+    bottom: -100px;
+    right: 10%;
+    animation-delay: 15s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* Header */
+.header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(5, 5, 8, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+.back-btn, .icon-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover, .icon-btn:hover {
+    border-color: var(--movies);
+    color: var(--movies);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* Main */
+.main {
+    position: relative;
+    z-index: 5;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    line-height: 1.1;
+}
+
+.word {
+    display: inline-block;
+    opacity: 0;
+    animation: slideUp 0.8s ease forwards;
+}
+
+.word:nth-child(1) { animation-delay: 0.1s; }
+.word:nth-child(2) { animation-delay: 0.2s; }
+
+.word.accent {
+    background: linear-gradient(135deg, var(--concerts), var(--clubs));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s ease 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* Cards Grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Entertainment Cards */
+.ent-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    animation: cardAppear 0.6s ease forwards;
+}
+
+.ent-card:nth-child(1) { animation-delay: 0.2s; }
+.ent-card:nth-child(2) { animation-delay: 0.3s; }
+.ent-card:nth-child(3) { animation-delay: 0.4s; }
+.ent-card:nth-child(4) { animation-delay: 0.5s; }
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.ent-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Card Glow Effects */
+.card-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+.concerts-card .card-glow {
+    background: linear-gradient(135deg, var(--concerts), #ff4d9e);
+    box-shadow: 0 0 60px var(--concerts-glow), inset 0 0 60px rgba(255, 0, 110, 0.2);
+}
+
+.movies-card .card-glow {
+    background: linear-gradient(135deg, var(--movies), #4de8ff);
+    box-shadow: 0 0 60px var(--movies-glow), inset 0 0 60px rgba(0, 212, 255, 0.2);
+}
+
+.sports-card .card-glow {
+    background: linear-gradient(135deg, var(--sports), #ffcc4d);
+    box-shadow: 0 0 60px var(--sports-glow), inset 0 0 60px rgba(255, 170, 0, 0.2);
+}
+
+.clubs-card .card-glow {
+    background: linear-gradient(135deg, var(--clubs), #e44dff);
+    box-shadow: 0 0 60px var(--clubs-glow), inset 0 0 60px rgba(189, 0, 255, 0.2);
+}
+
+.ent-card:hover .card-glow {
+    opacity: 1;
+}
+
+/* Card Content */
+.card-content {
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    z-index: 2;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Image */
+.card-image {
+    position: relative;
+    height: 65%;
+    overflow: hidden;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.ent-card:hover .card-image img {
+    transform: scale(1.1);
+}
+
+.image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 0%, var(--card-bg) 100%);
+}
+
+/* Card Info */
+.card-info {
+    position: relative;
+    flex: 1;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.concerts-card .card-icon {
+    background: linear-gradient(135deg, var(--concerts), #ff4d9e);
+    box-shadow: 0 8px 30px var(--concerts-glow);
+}
+
+.movies-card .card-icon {
+    background: linear-gradient(135deg, var(--movies), #4de8ff);
+    box-shadow: 0 8px 30px var(--movies-glow);
+}
+
+.sports-card .card-icon {
+    background: linear-gradient(135deg, var(--sports), #ffcc4d);
+    box-shadow: 0 8px 30px var(--sports-glow);
+}
+
+.clubs-card .card-icon {
+    background: linear-gradient(135deg, var(--clubs), #e44dff);
+    box-shadow: 0 8px 30px var(--clubs-glow);
+}
+
+.card-text {
+    flex: 1;
+}
+
+.card-text h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.card-text p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.card-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.ent-card:hover .card-arrow {
+    background: var(--text);
+    color: var(--bg);
+    transform: translateX(4px);
+}
+
+/* Shine Effect */
+.card-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.ent-card:hover .card-shine {
+    left: 150%;
+}
+
+/* Featured Section */
+.featured-section {
+    margin-top: 2rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(to bottom, var(--movies), var(--concerts));
+    border-radius: 2px;
+}
+
+.featured-scroll {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.featured-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.featured-card {
+    flex: 0 0 300px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.featured-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.featured-image {
+    height: 160px;
+    overflow: hidden;
+}
+
+.featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.featured-card:hover .featured-image img {
+    transform: scale(1.05);
+}
+
+.featured-info {
+    padding: 1.25rem;
+}
+
+.featured-tag {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+}
+
+.concerts-tag {
+    background: rgba(255, 0, 110, 0.15);
+    color: var(--concerts);
+    border: 1px solid rgba(255, 0, 110, 0.3);
+}
+
+.movies-tag {
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--movies);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.sports-tag {
+    background: rgba(255, 170, 0, 0.15);
+    color: var(--sports);
+    border: 1px solid rgba(255, 170, 0, 0.3);
+}
+
+.clubs-tag {
+    background: rgba(189, 0, 255, 0.15);
+    color: var(--clubs);
+    border: 1px solid rgba(189, 0, 255, 0.3);
+}
+
+.featured-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.featured-info p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.featured-info p i {
+    color: var(--movies);
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+    
+    .main {
+        padding: 1.5rem 1rem;
+    }
+    
+    .title {
+        font-size: 2rem;
+        gap: 0.5rem;
+    }
+    
+    .subtitle {
+        font-size: 0.875rem;
+        letter-spacing: 2px;
+    }
+    
+    /* Stack cards on mobile */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .card-content {
+        height: 240px;
+        flex-direction: row;
+    }
+    
+    .card-image {
+        width: 45%;
+        height: 100%;
+    }
+    
+    .image-overlay {
+        background: linear-gradient(to right, transparent 0%, var(--card-bg) 100%);
+    }
+    
+    .card-info {
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .card-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+    
+    .card-text h3 {
+        font-size: 1.1rem;
+    }
+    
+    .card-text p {
+        font-size: 0.8rem;
+    }
+    
+    .card-arrow {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 36px;
+        height: 36px;
+    }
+    
+    /* Smaller ambient glows on mobile */
+    .ambient-glow {
+        filter: blur(100px);
+        opacity: 0.1;
+    }
+    
+    .concerts-glow { width: 250px; height: 250px; }
+    .movies-glow { width: 200px; height: 200px; }
+    .sports-glow { width: 220px; height: 220px; }
+    .clubs-glow { width: 280px; height: 280px; }
+    
+    .featured-card {
+        flex: 0 0 260px;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .title {
+        font-size: 1.75rem;
+    }
+    
+    .card-content {
+        height: 200px;
+    }
+    
+    .card-text h3 {
+        font-size: 1rem;
+    }
+}

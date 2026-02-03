@@ -1,0 +1,189 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entertainment | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/entertainment.css">
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="ambient-glow concerts-glow"></div>
+    <div class="ambient-glow movies-glow"></div>
+    <div class="ambient-glow sports-glow"></div>
+    <div class="ambient-glow clubs-glow"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="travel.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Entertainment</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Text -->
+        <div class="hero-section">
+            <h1 class="title">
+                <span class="word">DISCOVER</span>
+                <span class="word accent">EXPERIENCES</span>
+            </h1>
+            <p class="subtitle">Book tickets for the best events in your city</p>
+        </div>
+
+        <!-- Entertainment Cards Grid -->
+        <div class="cards-grid">
+            <!-- Concerts Card -->
+            <div class="ent-card concerts-card" onclick="openCategory('concerts')">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="assets/concerts.jpg" alt="Concerts" loading="lazy">
+                        <div class="image-overlay"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3>Concerts</h3>
+                            <p>Live music & festivals</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card-shine"></div>
+                </div>
+            </div>
+
+            <!-- Movies Card -->
+            <div class="ent-card movies-card" onclick="openCategory('movies')">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="assets/movie.jpg" alt="Movies" loading="lazy">
+                        <div class="image-overlay"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3>Movies</h3>
+                            <p>Cinema & premieres</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card-shine"></div>
+                </div>
+            </div>
+
+            <!-- Sports Card -->
+            <div class="ent-card sports-card" onclick="openCategory('sports')">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="assets/sports.jpg" alt="Sports" loading="lazy">
+                        <div class="image-overlay"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3>Sports</h3>
+                            <p>Matches & tournaments</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card-shine"></div>
+                </div>
+            </div>
+
+            <!-- Clubs Card -->
+            <div class="ent-card clubs-card" onclick="openCategory('clubs')">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="assets/club.jpg" alt="Clubs" loading="lazy">
+                        <div class="image-overlay"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-cocktail"></i>
+                        </div>
+                        <div class="card-text">
+                            <h3>Clubs</h3>
+                            <p>Nightlife & parties</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="card-shine"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Section -->
+        <div class="featured-section">
+            <h2 class="section-title">Trending Now</h2>
+            <div class="featured-scroll">
+                <div class="featured-card" onclick="openEvent('event1')">
+                    <div class="featured-image">
+                        <img src="assets/concerts.jpg" alt="Featured">
+                    </div>
+                    <div class="featured-info">
+                        <span class="featured-tag concerts-tag">Concert</span>
+                        <h4>Sunburn Festival 2026</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> Goa • Feb 15</p>
+                    </div>
+                </div>
+                <div class="featured-card" onclick="openEvent('event2')">
+                    <div class="featured-image">
+                        <img src="assets/sports.jpg" alt="Featured">
+                    </div>
+                    <div class="featured-info">
+                        <span class="featured-tag sports-tag">Sports</span>
+                        <h4>IPL 2026 Opener</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> Mumbai • Mar 22</p>
+                    </div>
+                </div>
+                <div class="featured-card" onclick="openEvent('event3')">
+                    <div class="featured-image">
+                        <img src="assets/movie.jpg" alt="Featured">
+                    </div>
+                    <div class="featured-info">
+                        <span class="featured-tag movies-tag">Movie</span>
+                        <h4>Avatar 3 Premiere</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> Delhi • Dec 18</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/entertainment.js"></script>
+</body>
+</html>
