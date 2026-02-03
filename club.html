@@ -1,0 +1,112 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clubs | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/club.css">
+</head>
+<body>
+    <!-- Location Modal -->
+    <div id="locationModal" class="location-modal">
+        <div class="location-content">
+            <div class="location-header">
+                <div class="location-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h2>Select Your City</h2>
+                <p>Find the hottest clubs near you</p>
+            </div>
+            
+            <button class="detect-btn" onclick="detectLocation()">
+                <i class="fas fa-crosshairs"></i>
+                <span>
+                    <strong>Detect my location</strong>
+                    <small>Using GPS & Network</small>
+                </span>
+            </button>
+            
+            <div class="divider">or</div>
+            
+            <div class="cities-list">
+                <button class="city-option" onclick="selectCity('Delhi')">
+                    <i class="fas fa-city"></i>
+                    <span>Delhi</span>
+                </button>
+                <button class="city-option" onclick="selectCity('Mumbai')">
+                    <i class="fas fa-city"></i>
+                    <span>Mumbai</span>
+                </button>
+                <button class="city-option" onclick="selectCity('Chandigarh')">
+                    <i class="fas fa-city"></i>
+                    <span>Chandigarh</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="entertainment.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>Clubs</h1>
+            <button class="location-chip" onclick="openLocationModal()">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="currentCity">Detecting...</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <button class="icon-btn">
+            <i class="fas fa-glass-cheers"></i>
+        </button>
+    </header>
+
+    <!-- Search -->
+    <div class="search-wrap">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="clubSearch" placeholder="Search clubs..." oninput="filterClubs(this.value)">
+            <button class="filter-toggle">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- City Title -->
+        <div class="city-header">
+            <h2 id="cityTitle">Top Clubs</h2>
+            <span class="club-count" id="clubCount">12 clubs</span>
+        </div>
+
+        <!-- Clubs Grid -->
+        <div class="clubs-grid" id="clubsGrid">
+            <!-- Clubs injected via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state hidden" id="emptyState">
+            <i class="fas fa-cocktail"></i>
+            <h3>No clubs found</h3>
+            <p>Try another city or search term</p>
+        </div>
+    </main>
+
+    <script src="js/club.js"></script>
+</body>
+</html>
