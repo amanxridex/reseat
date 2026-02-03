@@ -1,0 +1,669 @@
+:root {
+    --bg: #050508;
+    --card-bg: #0a0a12;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    
+    /* Sports Colors */
+    --cricket: #ff6b00;
+    --cricket-glow: rgba(255, 107, 0, 0.4);
+    --football: #00ff88;
+    --football-glow: rgba(0, 255, 136, 0.4);
+    --accent: #00d4ff;
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    
+    --font: 'Space Grotesk', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+}
+
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: rgba(5, 5, 8, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+.back-btn, .icon-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover, .icon-btn:hover {
+    border-color: var(--cricket);
+    color: var(--cricket);
+    box-shadow: 0 0 20px var(--cricket-glow);
+}
+
+.header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    height: 450px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.hero-image {
+    position: absolute;
+    inset: 0;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.hero-section:hover .hero-image img {
+    transform: scale(1.05);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(5, 5, 8, 0.3) 40%,
+        rgba(5, 5, 8, 0.95) 100%
+    );
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    z-index: 10;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--cricket), #ff9500);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px var(--cricket-glow); }
+    50% { box-shadow: 0 0 40px var(--cricket-glow); }
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, var(--cricket));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.hero-stats i {
+    color: var(--cricket);
+}
+
+.hero-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--cricket), #ff9500);
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.hero-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 10px 30px var(--cricket-glow);
+}
+
+/* Main Content */
+.main {
+    padding: 2rem 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Categories Section */
+.categories-section {
+    margin-bottom: 2.5rem;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.sport-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.sport-card:hover {
+    transform: translateY(-5px);
+}
+
+.sport-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.cricket-card .sport-glow {
+    background: linear-gradient(135deg, var(--cricket), #ff9500);
+    box-shadow: 0 0 40px var(--cricket-glow);
+}
+
+.football-card .sport-glow {
+    background: linear-gradient(135deg, var(--football), #00cc6a);
+    box-shadow: 0 0 40px var(--football-glow);
+}
+
+.sport-card:hover .sport-glow {
+    opacity: 1;
+}
+
+.sport-image {
+    height: 140px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.sport-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.sport-card:hover .sport-image img {
+    transform: scale(1.1);
+}
+
+.sport-info {
+    position: relative;
+    z-index: 2;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sport-info i {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.cricket-card .sport-info i {
+    background: linear-gradient(135deg, var(--cricket), #ff9500);
+    color: #000;
+}
+
+.football-card .sport-info i {
+    background: linear-gradient(135deg, var(--football), #00cc6a);
+    color: #000;
+}
+
+.sport-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.sport-info p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Live Section */
+.live-section {
+    margin-bottom: 2.5rem;
+}
+
+.live-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #ff0000;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+    display: inline-block;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.view-all {
+    color: var(--accent);
+    font-size: 0.875rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: gap 0.3s ease;
+}
+
+.view-all:hover {
+    gap: 0.5rem;
+}
+
+/* Match Cards */
+.matches-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.match-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.match-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.team-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+
+.team span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.match-vs {
+    text-align: center;
+}
+
+.vs-text {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cricket);
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+}
+
+.match-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.match-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    margin-bottom: 1rem;
+}
+
+.match-type {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.match-venue {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.book-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: transparent;
+    border: 1px solid var(--cricket);
+    border-radius: 10px;
+    color: var(--cricket);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.book-btn:hover {
+    background: var(--cricket);
+    color: #000;
+    box-shadow: 0 5px 20px var(--cricket-glow);
+}
+
+/* Trending Section */
+.trending-section {
+    margin-bottom: 2.5rem;
+}
+
+.trending-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.trending-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.trending-card {
+    flex: 0 0 220px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trending-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+}
+
+.trending-image {
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.trending-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.trending-card:hover .trending-image img {
+    transform: scale(1.1);
+}
+
+.trending-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    background: #ff006e;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 20px;
+}
+
+.trending-info {
+    padding: 1rem;
+}
+
+.trending-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.trending-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.trending-price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--football);
+}
+
+/* Trophy Section */
+.trophy-section {
+    position: relative;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.trophy-bg {
+    position: absolute;
+    inset: 0;
+}
+
+.trophy-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6);
+    transition: transform 0.4s ease;
+}
+
+.trophy-section:hover .trophy-bg img {
+    transform: scale(1.05);
+}
+
+.trophy-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.trophy-content i {
+    font-size: 3rem;
+    color: #ffd700;
+    margin-bottom: 0.75rem;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+}
+
+.trophy-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.trophy-content p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.trophy-btn {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    color: #ffd700;
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trophy-btn:hover {
+    background: #ffd700;
+    color: #000;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .hero-section {
+        height: 380px;
+    }
+    
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .categories-grid {
+        gap: 0.75rem;
+    }
+    
+    .sport-image {
+        height: 120px;
+    }
+    
+    .match-teams {
+        gap: 1rem;
+    }
+    
+    .team-logo {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .trophy-content i {
+        font-size: 2.5rem;
+    }
+    
+    .trophy-content h3 {
+        font-size: 1.25rem;
+    }
+}

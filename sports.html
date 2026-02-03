@@ -1,0 +1,212 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/sports.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="entertainment.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Sports</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" onclick="openEvent('ipl-2026')">
+        <div class="hero-image">
+            <img src="assets/sports-hero.jpg" alt="IPL 2026">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <span class="hero-badge">FEATURED</span>
+            <h2 class="hero-title">IPL 2026</h2>
+            <p class="hero-subtitle">World's biggest cricket carnival returns</p>
+            <div class="hero-stats">
+                <span><i class="fas fa-calendar"></i> Mar 22 - May 25</span>
+                <span><i class="fas fa-map-marker-alt"></i> 12 Cities</span>
+            </div>
+            <button class="hero-btn">Book Tickets <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Categories -->
+        <section class="categories-section">
+            <h2 class="section-title">Browse by Sport</h2>
+            <div class="categories-grid">
+                <div class="sport-card cricket-card" onclick="openCategory('cricket')">
+                    <div class="sport-glow"></div>
+                    <div class="sport-image">
+                        <img src="assets/cricket.jpg" alt="Cricket">
+                    </div>
+                    <div class="sport-info">
+                        <i class="fas fa-baseball-bat-ball"></i>
+                        <div>
+                            <h3>Cricket</h3>
+                            <p>IPL, International, T20</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sport-card football-card" onclick="openCategory('football')">
+                    <div class="sport-glow"></div>
+                    <div class="sport-image">
+                        <img src="assets/football.jpg" alt="Football">
+                    </div>
+                    <div class="sport-info">
+                        <i class="fas fa-futbol"></i>
+                        <div>
+                            <h3>Football</h3>
+                            <p>ISL, Euro, World Cup</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Matches -->
+        <section class="live-section">
+            <div class="live-header">
+                <h2 class="section-title">
+                    <span class="live-dot"></span>
+                    Live & Upcoming
+                </h2>
+                <a href="#" class="view-all">View All <i class="fas fa-chevron-right"></i></a>
+            </div>
+            
+            <div class="matches-list">
+                <div class="match-card" onclick="openMatch('ind-vs-aus')">
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="assets/team-india.jpg" alt="India" class="team-logo">
+                            <span>IND</span>
+                        </div>
+                        <div class="match-vs">
+                            <span class="vs-text">VS</span>
+                            <span class="match-time">Today, 7:00 PM</span>
+                        </div>
+                        <div class="team">
+                            <img src="assets/stadium.jpg" alt="Australia" class="team-logo">
+                            <span>AUS</span>
+                        </div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-type">T20I Series</span>
+                        <span class="match-venue"><i class="fas fa-map-pin"></i> Wankhede Stadium</span>
+                    </div>
+                    <button class="book-btn">Book Now</button>
+                </div>
+
+                <div class="match-card" onclick="openMatch('isl-final')">
+                    <div class="match-teams">
+                        <div class="team">
+                            <img src="assets/stadium.jpg" alt="Team A" class="team-logo">
+                            <span>MCI</span>
+                        </div>
+                        <div class="match-vs">
+                            <span class="vs-text">VS</span>
+                            <span class="match-time">Tomorrow, 8:00 PM</span>
+                        </div>
+                        <div class="team">
+                            <img src="assets/football.jpg" alt="Team B" class="team-logo">
+                            <span>KER</span>
+                        </div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-type">ISL Final</span>
+                        <span class="match-venue"><i class="fas fa-map-pin"></i> Salt Lake Stadium</span>
+                    </div>
+                    <button class="book-btn">Book Now</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Events -->
+        <section class="trending-section">
+            <h2 class="section-title">Trending Events</h2>
+            <div class="trending-scroll">
+                <div class="trending-card" onclick="openEvent('event-1')">
+                    <div class="trending-image">
+                        <img src="assets/event-1.jpg" alt="Event 1">
+                        <div class="trending-badge">HOT</div>
+                    </div>
+                    <div class="trending-info">
+                        <h4>World Cup 2026 Qualifiers</h4>
+                        <p><i class="fas fa-calendar"></i> 15 Mar 2026</p>
+                        <span class="trending-price">From ₹2,500</span>
+                    </div>
+                </div>
+
+                <div class="trending-card" onclick="openEvent('event-2')">
+                    <div class="trending-image">
+                        <img src="assets/event-2.jpg" alt="Event 2">
+                    </div>
+                    <div class="trending-info">
+                        <h4>India vs Pakistan</h4>
+                        <p><i class="fas fa-calendar"></i> 22 Mar 2026</p>
+                        <span class="trending-price">From ₹5,000</span>
+                    </div>
+                </div>
+
+                <div class="trending-card" onclick="openEvent('event-3')">
+                    <div class="trending-image">
+                        <img src="assets/event-3.jpg" alt="Event 3">
+                    </div>
+                    <div class="trending-info">
+                        <h4>Champions Trophy Final</h4>
+                        <p><i class="fas fa-calendar"></i> 10 Apr 2026</p>
+                        <span class="trending-price">From ₹3,500</span>
+                    </div>
+                </div>
+
+                <div class="trending-card" onclick="openEvent('event-4')">
+                    <div class="trending-image">
+                        <img src="assets/event-4.jpg" alt="Event 4">
+                        <div class="trending-badge">NEW</div>
+                    </div>
+                    <div class="trending-info">
+                        <h4>Asian Games 2026</h4>
+                        <p><i class="fas fa-calendar"></i> Sep 2026</p>
+                        <span class="trending-price">From ₹1,500</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trophy Section -->
+        <section class="trophy-section" onclick="openEvent('championships')">
+            <div class="trophy-bg">
+                <img src="assets/trophy.jpg" alt="Championships">
+            </div>
+            <div class="trophy-content">
+                <i class="fas fa-trophy"></i>
+                <h3>Championships 2026</h3>
+                <p>Witness history in the making</p>
+                <button class="trophy-btn">Explore</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/sports.js"></script>
+</body>
+</html>
