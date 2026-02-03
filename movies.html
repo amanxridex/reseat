@@ -1,0 +1,290 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/movies.css">
+</head>
+<body>
+    <!-- Location Modal -->
+    <div id="locationModal" class="location-modal">
+        <div class="location-modal-content">
+            <div class="location-header">
+                <div class="location-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h2>What's your location?</h2>
+                <p>Find the best cinemas and shows near you</p>
+            </div>
+            
+            <button class="detect-location-btn" onclick="detectLocation()">
+                <i class="fas fa-crosshairs"></i>
+                <span>
+                    <strong>Detect my location</strong>
+                    <small>Using GPS & WiFi</small>
+                </span>
+            </button>
+            
+            <div class="location-divider">
+                <span>or</span>
+            </div>
+            
+            <div class="search-cities">
+                <div class="city-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="cityInput" placeholder="Search city..." oninput="filterCities(this.value)">
+                </div>
+                <div class="cities-grid" id="citiesGrid">
+                    <button class="city-btn" onclick="selectCity('Mumbai')">
+                        <i class="fas fa-city"></i>
+                        <span>Mumbai</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Delhi')">
+                        <i class="fas fa-city"></i>
+                        <span>Delhi</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Bangalore')">
+                        <i class="fas fa-city"></i>
+                        <span>Bangalore</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Hyderabad')">
+                        <i class="fas fa-city"></i>
+                        <span>Hyderabad</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Chennai')">
+                        <i class="fas fa-city"></i>
+                        <span>Chennai</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Pune')">
+                        <i class="fas fa-city"></i>
+                        <span>Pune</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Kolkata')">
+                        <i class="fas fa-city"></i>
+                        <span>Kolkata</span>
+                    </button>
+                    <button class="city-btn" onclick="selectCity('Ahmedabad')">
+                        <i class="fas fa-city"></i>
+                        <span>Ahmedabad</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="entertainment.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>Movies</h1>
+            <button class="location-pill" onclick="openLocationModal()">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="currentLocation">Detecting...</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search movies, cinemas..." id="movieSearch">
+            <button class="filter-btn">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="hero-movie" onclick="openMovie('pushpa2')">
+        <div class="hero-bg">
+            <img src="assets/movies-hero.jpg" alt="Featured Movie">
+            <div class="hero-gradient"></div>
+        </div>
+        <div class="hero-content">
+            <span class="hero-tag">Now Showing</span>
+            <h2 class="hero-title">Pushpa 2: The Rule</h2>
+            <div class="hero-meta">
+                <span class="rating"><i class="fas fa-star"></i> 8.9/10</span>
+                <span class="genre">Action • Drama • 2h 45m</span>
+            </div>
+            <div class="hero-languages">
+                <span class="lang-badge">Hindi</span>
+                <span class="lang-badge">Telugu</span>
+                <span class="lang-badge">Tamil</span>
+            </div>
+            <button class="book-tickets-btn">Book Tickets</button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Quick Filters -->
+        <div class="quick-filters">
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="hindi">Hindi</button>
+            <button class="filter-pill" data-filter="english">English</button>
+            <button class="filter-pill" data-filter="telugu">Telugu</button>
+            <button class="filter-pill" data-filter="tamil">Tamil</button>
+        </div>
+
+        <!-- Now Showing Section -->
+        <section class="movies-section">
+            <div class="section-header">
+                <h2 class="section-title">Now Showing</h2>
+                <a href="#" class="view-all">See All <i class="fas fa-chevron-right"></i></a>
+            </div>
+            
+            <div class="movies-scroll">
+                <div class="movie-card" onclick="openMovie('movie1')">
+                    <div class="movie-poster">
+                        <img src="assets/movie-1.jpg" alt="Movie 1">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>8.5</span>
+                        </div>
+                        <div class="movie-badge">NEW</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3>Salaar</h3>
+                        <p>Action • Telugu</p>
+                        <span class="movie-price">From ₹250</span>
+                    </div>
+                </div>
+
+                <div class="movie-card" onclick="openMovie('movie2')">
+                    <div class="movie-poster">
+                        <img src="assets/movie-2.jpg" alt="Movie 2">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>7.9</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3>Dunki</h3>
+                        <p>Drama • Hindi</p>
+                        <span class="movie-price">From ₹200</span>
+                    </div>
+                </div>
+
+                <div class="movie-card" onclick="openMovie('movie3')">
+                    <div class="movie-poster">
+                        <img src="assets/movie-3.jpg" alt="Movie 3">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>9.2</span>
+                        </div>
+                        <div class="movie-badge">HOT</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3>Animal</h3>
+                        <p>Action • Hindi</p>
+                        <span class="movie-price">From ₹300</span>
+                    </div>
+                </div>
+
+                <div class="movie-card" onclick="openMovie('movie4')">
+                    <div class="movie-poster">
+                        <img src="assets/movie-4.jpg" alt="Movie 4">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>8.1</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3>Sam Bahadur</h3>
+                        <p>Biopic • Hindi</p>
+                        <span class="movie-price">From ₹180</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section class="experience-section">
+            <h2 class="section-title">Premium Experience</h2>
+            <div class="experience-card" onclick="openExperience('imax')">
+                <div class="exp-image">
+                    <img src="assets/imax.jpg" alt="IMAX">
+                </div>
+                <div class="exp-content">
+                    <h3>IMAX</h3>
+                    <p>Immersive giant screen experience</p>
+                    <span class="exp-price">From ₹500</span>
+                </div>
+                <i class="fas fa-chevron-right exp-arrow"></i>
+            </div>
+            
+            <div class="experience-card" onclick="openExperience('dining')">
+                <div class="exp-image">
+                    <img src="assets/popcorn.jpg" alt="Food">
+                </div>
+                <div class="exp-content">
+                    <h3>Food & Beverages</h3>
+                    <p>Pre-order snacks & combos</p>
+                    <span class="exp-price">From ₹150</span>
+                </div>
+                <i class="fas fa-chevron-right exp-arrow"></i>
+            </div>
+        </section>
+
+        <!-- Cinemas Near You -->
+        <section class="cinemas-section">
+            <h2 class="section-title">Cinemas Near You</h2>
+            <div class="cinemas-list">
+                <div class="cinema-card" onclick="openCinema('pvr')">
+                    <div class="cinema-image">
+                        <img src="assets/cinema-hall.jpg" alt="PVR">
+                    </div>
+                    <div class="cinema-info">
+                        <h3>PVR Cinemas</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> 2.5 km away</p>
+                        <div class="cinema-tags">
+                            <span>IMAX</span>
+                            <span>4K</span>
+                            <span>Dolby</span>
+                        </div>
+                    </div>
+                    <button class="cinema-btn">View</button>
+                </div>
+
+                <div class="cinema-card" onclick="openCinema('inox')">
+                    <div class="cinema-image">
+                        <img src="assets/cinema-hall.jpg" alt="INOX">
+                    </div>
+                    <div class="cinema-info">
+                        <h3>INOX Movies</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> 4.2 km away</p>
+                        <div class="cinema-tags">
+                            <span>3D</span>
+                            <span>4K</span>
+                        </div>
+                    </div>
+                    <button class="cinema-btn">View</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/movies.js"></script>
+</body>
+</html>
