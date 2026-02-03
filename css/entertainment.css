@@ -624,3 +624,340 @@ body {
         font-size: 1rem;
     }
 }
+
+/* ============================================
+   EXTRA ANIMATIONS ADD-ON
+   Add this at the end of your entertainment.css
+   ============================================ */
+
+/* 1. FLOATING PARTICLES EFFECT */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(255,0,110,0.3), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(0,212,255,0.3), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255,170,0,0.3), transparent),
+        radial-gradient(2px 2px at 160px 120px, rgba(189,0,255,0.3), transparent),
+        radial-gradient(1px 1px at 230px 80px, rgba(255,0,110,0.3), transparent);
+    background-size: 250px 250px;
+    animation: particleFloat 15s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-250px) rotate(360deg); }
+}
+
+/* 2. TILT EFFECT ON CARDS */
+.ent-card {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.ent-card:hover {
+    transform: translateY(-8px) scale(1.02) rotateX(5deg);
+}
+
+/* 3. NEON BORDER PULSE */
+.ent-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    background: linear-gradient(45deg, 
+        var(--concerts), var(--movies), var(--sports), var(--clubs),
+        var(--concerts), var(--movies), var(--sports), var(--clubs)
+    );
+    background-size: 400% 400%;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: gradientRotate 3s linear infinite;
+}
+
+.ent-card:hover::before {
+    opacity: 0.5;
+}
+
+@keyframes gradientRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 4. BOUNCING ICONS */
+.card-icon {
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+.concerts-card .card-icon { animation-delay: 0s; }
+.movies-card .card-icon { animation-delay: 0.5s; }
+.sports-card .card-icon { animation-delay: 1s; }
+.clubs-card .card-icon { animation-delay: 1.5s; }
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.ent-card:hover .card-icon {
+    animation: iconPulse 0.5s ease;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* 5. GLITCH TEXT EFFECT ON TITLE */
+.word.accent {
+    position: relative;
+}
+
+.word.accent::before,
+.word.accent::after {
+    content: 'EXPERIENCES';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+.word.accent::before {
+    color: var(--concerts);
+    z-index: -1;
+}
+
+.word.accent::after {
+    color: var(--movies);
+    z-index: -2;
+}
+
+.hero-section:hover .word.accent::before {
+    animation: glitch1 0.3s ease;
+    opacity: 0.8;
+}
+
+.hero-section:hover .word.accent::after {
+    animation: glitch2 0.3s ease;
+    opacity: 0.8;
+}
+
+@keyframes glitch1 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(3px, -3px); }
+    60% { transform: translate(-3px, -3px); }
+    80% { transform: translate(3px, 3px); }
+}
+
+@keyframes glitch2 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(3px, -3px); }
+    40% { transform: translate(-3px, 3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(-3px, -3px); }
+}
+
+/* 6. RIPPLE EFFECT ON BUTTONS */
+.back-btn, .icon-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.back-btn::after, .icon-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+.back-btn:active::after, .icon-btn:active::after {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* 7. SCROLL REVEAL ANIMATION */
+.featured-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: scrollReveal 0.6s ease forwards;
+}
+
+.featured-card:nth-child(1) { animation-delay: 0.6s; }
+.featured-card:nth-child(2) { animation-delay: 0.7s; }
+.featured-card:nth-child(3) { animation-delay: 0.8s; }
+.featured-card:nth-child(4) { animation-delay: 0.9s; }
+
+@keyframes scrollReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 8. HOVER CARD IMAGE ZOOM WITH BLUR */
+.card-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.3s ease;
+    pointer-events: none;
+}
+
+.ent-card:hover .card-image::after {
+    backdrop-filter: blur(2px);
+}
+
+/* 9. TEXT SCRAMBLE EFFECT PLACEHOLDER */
+.card-text h3 {
+    position: relative;
+    display: inline-block;
+}
+
+.ent-card:hover .card-text h3 {
+    animation: textGlow 1s ease infinite alternate;
+}
+
+@keyframes textGlow {
+    from { text-shadow: 0 0 5px currentColor; }
+    to { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+/* 10. MAGNETIC ARROW EFFECT */
+.card-arrow {
+    transition: transform 0.2s ease;
+}
+
+.ent-card:hover .card-arrow {
+    animation: magneticPull 0.5s ease infinite alternate;
+}
+
+@keyframes magneticPull {
+    from { transform: translateX(0); }
+    to { transform: translateX(8px); }
+}
+
+/* 11. SECTION TITLE TYPING EFFECT */
+.section-title {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 1s steps(20) 1s forwards;
+    width: 0;
+}
+
+@keyframes typing {
+    to { width: 100%; }
+}
+
+/* 12. STAGGERED CARD ENTRANCE */
+.ent-card {
+    animation: cardFlip 0.8s ease forwards;
+    transform-style: preserve-3d;
+}
+
+@keyframes cardFlip {
+    0% {
+        opacity: 0;
+        transform: rotateY(-90deg) translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateY(0) translateY(0);
+    }
+}
+
+/* 13. PULSE RING ON FEATURED TAGS */
+.featured-tag {
+    position: relative;
+}
+
+.featured-tag::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    border: 1px solid currentColor;
+    opacity: 0;
+    animation: pulseRing 2s infinite;
+}
+
+@keyframes pulseRing {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* 14. AMBIENT GLOW FOLLOW MOUSE (CSS ONLY FALLBACK) */
+.main:hover ~ .ambient-glow {
+    animation-play-state: paused;
+}
+
+/* 15. LOADING SHIMMER ON IMAGES */
+.card-image img {
+    position: relative;
+}
+
+.card-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+    z-index: 5;
+}
+
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
+}
+
+.ent-card:hover .card-image::before {
+    animation: none;
+}
+
+/* 16. ELASTIC BOUNCE ON SCROLL */
+@supports (scroll-timeline: works) {
+    .ent-card {
+        animation-timeline: view();
+        animation-range: entry 0% cover 40%;
+    }
+}
+
+/* Mobile optimizations for new animations */
+@media (max-width: 768px) {
+    body::before {
+        opacity: 0.3;
+    }
+    
+    .ent-card:hover {
+        transform: translateY(-5px) scale(1.01);
+    }
+    
+    .word.accent::before,
+    .word.accent::after {
+        display: none;
+    }
+    
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+}
