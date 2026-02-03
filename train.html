@@ -62,11 +62,22 @@
                 </div>
             </div>
 
-            <!-- Date Selection -->
+            <!-- Date Selection with Calendar -->
             <div class="date-section">
                 <label class="section-label">Departure Date</label>
-                <div class="date-scroll" id="dateScroll">
-                    <!-- Dates injected via JS -->
+                <div class="date-input-container" onclick="openCalendar()">
+                    <div class="date-display" id="dateDisplay">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="selectedDate">Select Date</span>
+                    </div>
+                </div>
+                <div class="calendar-popup hidden" id="calendarPopup">
+                    <div class="calendar-header">
+                        <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <span id="monthYear"></span>
+                        <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
                 </div>
             </div>
 
@@ -174,30 +185,6 @@
             <div id="trainStatusResult" class="result-box hidden"></div>
         </div>
     </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="mobile-nav">
-        <a href="index.html">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="travel.html" class="active">
-            <i class="fas fa-plane"></i>
-            <span>Travel</span>
-        </a>
-        <a href="entertainment.html">
-            <i class="fas fa-film"></i>
-            <span>Movies</span>
-        </a>
-        <a href="resale.html">
-            <i class="fas fa-exchange-alt"></i>
-            <span>Resale</span>
-        </a>
-        <a href="profile.html">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </nav>
 
     <script src="js/train.js"></script>
 </body>
