@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Bus | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/bus.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="travel.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Bus Tickets</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <!-- Route -->
+        <div class="route-box">
+            <div class="city-input" onclick="openCityPicker('from')">
+                <label>From</label>
+                <span id="fromCity">Select City</span>
+                <input type="hidden" id="fromCode">
+            </div>
+            
+            <button class="swap-btn" onclick="swapCities()">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            
+            <div class="city-input" onclick="openCityPicker('to')">
+                <label>To</label>
+                <span id="toCity">Select City</span>
+                <input type="hidden" id="toCode">
+            </div>
+        </div>
+
+        <!-- Date -->
+        <div class="date-box" onclick="openDatePicker()">
+            <label>Departure Date</label>
+            <span id="travelDate">Select Date</span>
+        </div>
+
+        <!-- Search Button -->
+        <button class="search-btn" onclick="searchBuses()">
+            <i class="fas fa-search"></i> Search Buses
+        </button>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section hidden" id="resultsSection">
+        <div class="results-header">
+            <h3 id="routeTitle">Buses</h3>
+            <span id="resultsCount">0 buses found</span>
+        </div>
+        <div class="buses-list" id="busesList">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+        <i class="fas fa-bus"></i>
+        <p>Search buses to see results</p>
+    </div>
+
+    <!-- City Picker Modal -->
+    <div id="cityModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Select City</h3>
+                <button class="close-btn" onclick="closeModal('cityModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="citySearch" placeholder="Search city..." oninput="filterCities(this.value)">
+            </div>
+            <div class="cities-list" id="citiesList">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="dateModal" class="modal hidden">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Select Date</h3>
+                <button class="close-btn" onclick="closeModal('dateModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="calendar" id="calendar">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bus.js"></script>
+</body>
+</html>
