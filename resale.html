@@ -1,0 +1,248 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resale Exchange | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/resale.css">
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="travel.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>NEXUS EXCHANGE</h1>
+            <span class="tagline">Peer-to-Peer Ticket Marketplace</span>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-wallet"></i>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2 class="hero-title">Buy & Sell <span>Tickets</span></h2>
+            <p class="hero-subtitle">India's safest ticket resale platform. Verified buyers, secure payments, instant transfers.</p>
+            
+            <!-- Main Action Cards -->
+            <div class="action-cards">
+                <div class="action-card buy-card" onclick="window.location.href='rebuy.html'">
+                    <div class="card-glow"></div>
+                    <div class="action-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>Buy Tickets</h3>
+                    <p>Find deals up to 75% off</p>
+                    <div class="action-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <span class="badge hot">HOT DEALS</span>
+                </div>
+
+                <div class="action-card sell-card" onclick="window.location.href='resell.html'">
+                    <div class="card-glow"></div>
+                    <div class="action-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>Sell Tickets</h3>
+                    <p>List in 2 minutes</p>
+                    <div class="action-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <span class="badge new">+20% MAX</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Stats Banner -->
+    <div class="stats-banner">
+        <div class="stat-item">
+            <span class="stat-number" id="activeListings">1,247</span>
+            <span class="stat-label">Active Listings</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <span class="stat-number" id="avgSavings">32%</span>
+            <span class="stat-label">Avg. Savings</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <span class="stat-number" id="successRate">98.5%</span>
+            <span class="stat-label">Success Rate</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3>List Your Ticket</h3>
+                    <p>Upload from any platform - BookMyShow, Insider, Paytm, or anywhere</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>We Verify & Hold</h3>
+                    <p>We verify authenticity and hold the ticket securely</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Get Paid</h3>
+                    <p>Buyer pays us → We pay you after event confirmation</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Price Guarantee -->
+        <section class="guarantee-section">
+            <div class="guarantee-card">
+                <div class="guarantee-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="guarantee-content">
+                    <h3>Price Protection Guarantee</h3>
+                    <div class="guarantee-rules">
+                        <div class="rule">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Sellers:</strong> Max 20% above original price</span>
+                        </div>
+                        <div class="rule">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Buyers:</strong> No lower price limit - steal deals!</span>
+                        </div>
+                        <div class="rule">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Platform:</strong> Secure escrow, fraud protection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Deals -->
+        <section class="deals-section">
+            <div class="section-header">
+                <h2 class="section-title">🔥 Featured Deals</h2>
+                <a href="rebuy.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="deals-scroll">
+                <div class="deal-card" onclick="window.location.href='rebuy.html?id=1'">
+                    <div class="deal-image">
+                        <img src="assets/resale-hero.jpg" alt="Event">
+                        <div class="deal-discount">-40%</div>
+                    </div>
+                    <div class="deal-info">
+                        <span class="deal-category">Concert</span>
+                        <h4>Coldplay Mumbai</h4>
+                        <div class="deal-prices">
+                            <span class="original">₹5,000</span>
+                            <span class="selling">₹3,000</span>
+                        </div>
+                        <p class="deal-meta"><i class="fas fa-calendar"></i> Jan 15 • Block A</p>
+                    </div>
+                </div>
+
+                <div class="deal-card" onclick="window.location.href='rebuy.html?id=2'">
+                    <div class="deal-image">
+                        <img src="assets/resale-hero.jpg" alt="Event">
+                        <div class="deal-discount">-60%</div>
+                    </div>
+                    <div class="deal-info">
+                        <span class="deal-category">Movie</span>
+                        <h4>Pushpa 2 IMAX</h4>
+                        <div class="deal-prices">
+                            <span class="original">₹800</span>
+                            <span class="selling">₹320</span>
+                        </div>
+                        <p class="deal-meta"><i class="fas fa-calendar"></i> Today • 7:30 PM</p>
+                    </div>
+                </div>
+
+                <div class="deal-card" onclick="window.location.href='rebuy.html?id=3'">
+                    <div class="deal-image">
+                        <img src="assets/resale-hero.jpg" alt="Event">
+                        <div class="deal-discount">-25%</div>
+                    </div>
+                    <div class="deal-info">
+                        <span class="deal-category">Sports</span>
+                        <h4>IPL Final 2026</h4>
+                        <div class="deal-prices">
+                            <span class="original">₹15,000</span>
+                            <span class="selling">₹11,250</span>
+                        </div>
+                        <p class="deal-meta"><i class="fas fa-calendar"></i> May 25 • Pavilion</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="trust-section">
+            <h2 class="section-title">Why Nexus Exchange?</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <i class="fas fa-badge-check"></i>
+                    <h4>Verified Tickets</h4>
+                    <p>Every ticket checked for authenticity</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h4>Secure Payments</h4>
+                    <p>Your money is safe with us</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Instant Transfer</h4>
+                    <p>Digital tickets transferred immediately</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-headset"></i>
+                    <h4>24/7 Support</h4>
+                    <p>We're here if anything goes wrong</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Sell Button (Mobile) -->
+    <button class="fab-sell" onclick="window.location.href='resell.html'">
+        <i class="fas fa-plus"></i>
+        <span>Sell</span>
+    </button>
+
+    <script src="js/resale.js"></script>
+</body>
+</html>

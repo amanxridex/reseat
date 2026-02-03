@@ -1,59 +1,32 @@
-const ResaleModule = {
-    init() {
-        this.loadResaleListings();
-        this.updateStats();
-        this.loadUserListings();
-    },
-    
-    loadResaleListings() {
-        const grid = document.getElementById('resaleGrid');
-        
-        grid.innerHTML = resaleListings.map(listing => {
-            const item = listing.item;
-            return Components.ticketCard(item, listing.type, true);
-        }).join('');
-    },
-    
-    updateStats() {
-        // Animate stats
-        Utils.animateValue(document.getElementById('activeListings'), 0, 142, 2000);
-        Utils.animateValue(document.getElementById('avgDiscount'), 0, 24, 2000);
-        Utils.animateValue(document.getElementById('resaleSavings'), 0, 125000, 2500);
-    },
-    
-    loadUserListings() {
-        const container = document.getElementById('myListings');
-        const myTickets = mockData.userTickets.filter(t => !t.listed);
-        
-        container.innerHTML = myTickets.map(ticket => `
-            <div class="listing-item" onclick="ResaleModule.openListModal('${ticket.id}')">
-                <div class="listing-info">
-                    <span class="listing-type">${ticket.type.toUpperCase()}</span>
-                    <span class="listing-details">
-                        ${ticket.details.match || ticket.details.from + ' → ' + ticket.details.to}
-                    </span>
-                </div>
-                <div class="listing-price">₹${ticket.price}</div>
-                <button class="btn-outline btn-sm">Resale</button>
-            </div>
-        `).join('');
-    },
-    
-    openListModal(ticketId) {
-        const ticket = mockData.userTickets.find(t => t.id === ticketId);
-        const modal = document.getElementById('listModal');
-        const form = document.getElementById('listForm');
-        
-        form.innerHTML = Components.resaleForm(ticket);
-        modal.classList.remove('hidden');
-    },
-    
-    confirmListing(ticketId) {
-        const price = document.getElementById('resalePriceSlider').value;
-        Utils.showToast(`Ticket listed for ₹${price}!`);
-        App.closeModal();
-        
-        // Update UI
-        setTimeout(() => this.loadUserListings(), 500);
-    }
-};
+// Animate numbers on load
+function animateNumber(elementId, target, suffix = '') {
+    const element = document.getElementById(elementId);
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + suffix;
+    }, 30);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Animate stats
+    animateNumber('activeListings', 1247);
+    animateNumber('avgSavings', 32, '%');
+    animateNumber('successRate', 98.5, '%');
+});
+
+// Touch feedback
+document.querySelectorAll('.action-card, .deal-card, .step-card').forEach(el => {
+    el.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+    });
+    el.addEventListener('touchend', function() {
+        this.style.transform = '';
+    });
+});

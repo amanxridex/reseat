@@ -1,0 +1,631 @@
+:root {
+    --bg: #050508;
+    --card-bg: #0a0a12;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    
+    /* Exchange Colors */
+    --buy: #00ff88;
+    --buy-glow: rgba(0, 255, 136, 0.4);
+    --sell: #ff006e;
+    --sell-glow: rgba(255, 0, 110, 0.4);
+    --accent: #00d4ff;
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    --warning: #ffaa00;
+    
+    --font: 'Space Grotesk', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Ambient Glows */
+.ambient-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: float 20s ease-in-out infinite;
+}
+
+.glow-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--buy);
+    top: -100px;
+    right: -100px;
+}
+
+.glow-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--sell);
+    bottom: 10%;
+    left: -100px;
+    animation-delay: 10s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -30px) scale(1.1); }
+}
+
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(5, 5, 8, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: linear-gradient(to right, var(--buy), var(--sell));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.back-btn, .icon-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover, .icon-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    padding: 2rem 1rem;
+    text-align: center;
+    z-index: 5;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.hero-title span {
+    background: linear-gradient(to right, var(--buy), var(--sell));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+/* Action Cards */
+.action-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.action-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.buy-card .card-glow {
+    background: linear-gradient(135deg, var(--buy), #00cc6a);
+    box-shadow: 0 0 40px var(--buy-glow);
+}
+
+.sell-card .card-glow {
+    background: linear-gradient(135deg, var(--sell), #ff4d9e);
+    box-shadow: 0 0 40px var(--sell-glow);
+}
+
+.action-card:hover .card-glow {
+    opacity: 1;
+}
+
+.action-icon {
+    position: relative;
+    z-index: 1;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1rem;
+}
+
+.buy-card .action-icon {
+    background: linear-gradient(135deg, var(--buy), #00cc6a);
+    box-shadow: 0 10px 30px var(--buy-glow);
+}
+
+.sell-card .action-icon {
+    background: linear-gradient(135deg, var(--sell), #ff4d9e);
+    box-shadow: 0 10px 30px var(--sell-glow);
+}
+
+.action-card h3 {
+    position: relative;
+    z-index: 1;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.action-card p {
+    position: relative;
+    z-index: 1;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.action-arrow {
+    position: relative;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover .action-arrow {
+    background: var(--text);
+    color: var(--bg);
+    transform: translateX(5px);
+}
+
+.badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}
+
+.badge.hot {
+    background: var(--sell);
+    color: #fff;
+    animation: pulse 2s infinite;
+}
+
+.badge.new {
+    background: var(--warning);
+    color: #000;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Stats Banner */
+.stats-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1.25rem;
+    background: linear-gradient(90deg, rgba(0,255,136,0.05), rgba(255,0,110,0.05));
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 1rem 0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--buy), var(--sell));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+}
+
+/* Main */
+.main {
+    padding: 1.5rem 1rem;
+    padding-bottom: 6rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* How It Works */
+.how-it-works {
+    margin-bottom: 2rem;
+}
+
+.steps-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.step-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-number {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #0088cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.step-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.step-card p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* Guarantee Section */
+.guarantee-section {
+    margin-bottom: 2rem;
+}
+
+.guarantee-card {
+    background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,212,255,0.05));
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.guarantee-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.guarantee-content h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+}
+
+.guarantee-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rule {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.rule i {
+    color: var(--buy);
+}
+
+/* Deals Section */
+.deals-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.view-all {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.deals-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    scrollbar-width: none;
+}
+
+.deals-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.deal-card {
+    flex: 0 0 200px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.deal-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--buy);
+}
+
+.deal-image {
+    position: relative;
+    height: 120px;
+}
+
+.deal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.deal-discount {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    background: var(--sell);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+}
+
+.deal-info {
+    padding: 0.875rem;
+}
+
+.deal-category {
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.deal-info h4 {
+    font-size: 0.95rem;
+    margin: 0.25rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deal-prices {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.original {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.selling {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--buy);
+}
+
+.deal-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* Trust Section */
+.trust-section {
+    margin-bottom: 1rem;
+}
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.trust-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.trust-item i {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.trust-item h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.trust-item p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Floating Action Button */
+.fab-sell {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--sell), #ff4d9e);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 10px 30px var(--sell-glow);
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.fab-sell:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 380px) {
+    .action-cards {
+        gap: 0.75rem;
+    }
+    
+    .action-card {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .trust-grid {
+        grid-template-columns: 1fr;
+    }
+}
