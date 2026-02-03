@@ -524,3 +524,188 @@ body {
         margin-left: auto;
     }
 }
+
+/* AI Mode Card */
+.card.ai {
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(139, 92, 246, 0.08) 100%);
+    border-color: rgba(139, 92, 246, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.card.ai::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    animation: aiPulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes aiPulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+.ai-badge {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    color: #fff;
+    padding: 0.35rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    animation: aiBadgePulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.ai-badge i {
+    font-size: 0.65rem;
+}
+
+@keyframes aiBadgePulse {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 25px rgba(139, 92, 246, 0.6), 0 0 20px rgba(236, 72, 153, 0.3);
+    }
+}
+
+.card.ai .card-icon {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1));
+    border-color: rgba(139, 92, 246, 0.3);
+    color: #a78bfa;
+    position: relative;
+    z-index: 2;
+}
+
+.card.ai:hover .card-icon {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15));
+    animation: aiIconFloat 3s ease-in-out infinite;
+}
+
+@keyframes aiIconFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-5px) rotate(-5deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(5deg);
+    }
+}
+
+.card.ai:hover {
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: 
+        0 20px 40px rgba(139, 92, 246, 0.2), 
+        0 0 0 1px rgba(139, 92, 246, 0.2),
+        inset 0 0 30px rgba(139, 92, 246, 0.05);
+}
+
+.card.ai:hover .card-arrow {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    border-color: transparent;
+    color: #fff;
+}
+
+/* AI Glow Effect */
+.ai-glow {
+    position: absolute;
+    bottom: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+    filter: blur(40px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.card.ai:hover .ai-glow {
+    opacity: 1;
+    animation: aiGlowMove 3s ease-in-out infinite;
+}
+
+@keyframes aiGlowMove {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-20px);
+    }
+}
+
+/* Mobile Responsive for AI Card */
+@media (max-width: 768px) {
+    .card.ai {
+        position: relative;
+    }
+    
+    .ai-badge {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        right: auto;
+        font-size: 0.65rem;
+        padding: 0.25rem 0.6rem;
+    }
+    
+    .ai-badge span {
+        display: inline;
+    }
+    
+    .card.ai .card-icon {
+        margin-left: auto;
+    }
+    
+    .ai-glow {
+        width: 100px;
+        height: 100px;
+        filter: blur(30px);
+    }
+}
+
+/* Add shimmer effect to AI card on hover */
+.card.ai::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    transition: left 0.7s;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.card.ai:hover::before {
+    left: 100%;
+}
