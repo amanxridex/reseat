@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant | NEXUS</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/ai.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="ai-orb"></div>
+    <div class="grid-bg"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="ai-status">
+            <div class="pulse-dot"></div>
+            <span>AI Online</span>
+        </div>
+        <button class="menu-btn" onclick="clearChat()">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </header>
+
+    <!-- Main Chat Area -->
+    <main class="chat-container" id="chatContainer">
+        <!-- Welcome State -->
+        <div class="welcome-state" id="welcomeState">
+            <div class="ai-avatar">
+                <i class="fas fa-robot"></i>
+                <div class="avatar-glow"></div>
+            </div>
+            <h1>NEXUS AI</h1>
+            <p>Your personal ticket booking assistant</p>
+            
+            <div class="suggestion-chips">
+                <button class="chip" onclick="sendQuickMessage('Book me a flight from Delhi to Mumbai tomorrow')">
+                    <i class="fas fa-plane"></i>
+                    <span>Book a flight</span>
+                </button>
+                <button class="chip" onclick="sendQuickMessage('Find me 2 movie tickets for tonight')">
+                    <i class="fas fa-film"></i>
+                    <span>Movie tickets</span>
+                </button>
+                <button class="chip" onclick="sendQuickMessage('Train from Bangalore to Chennai on Friday')">
+                    <i class="fas fa-train"></i>
+                    <span>Train tickets</span>
+                </button>
+                <button class="chip" onclick="sendQuickMessage('Sell my Coldplay concert ticket')">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Sell ticket</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="messages" id="messages"></div>
+    </main>
+
+    <!-- Input Area -->
+    <div class="input-area">
+        <div class="input-container">
+            <button class="mic-btn" id="micBtn">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <input type="text" 
+                   id="userInput" 
+                   placeholder="Ask me anything..." 
+                   autocomplete="off">
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        <p class="input-hint">Press Enter to send • AI may produce inaccurate results</p>
+    </div>
+
+    <script src="js/ai.js"></script>
+</body>
+</html>
