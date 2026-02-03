@@ -1,0 +1,281 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Ticket | Nexus Exchange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/resell.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="resale.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-center">
+            <h1>Sell Ticket</h1>
+            <span class="step-indicator">Step <span id="currentStep">1</span> of 4</span>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Main Form Container -->
+    <main class="main">
+        <form id="sellForm" onsubmit="return false;">
+            
+            <!-- STEP 1: Select Category -->
+            <div class="step" id="step1">
+                <h2 class="step-title">What are you selling?</h2>
+                <p class="step-subtitle">Choose the type of event</p>
+                
+                <div class="category-grid">
+                    <label class="category-card">
+                        <input type="radio" name="category" value="concert" onchange="nextStep()">
+                        <div class="category-content">
+                            <i class="fas fa-music"></i>
+                            <span>Concert</span>
+                        </div>
+                    </label>
+                    
+                    <label class="category-card">
+                        <input type="radio" name="category" value="movie" onchange="nextStep()">
+                        <div class="category-content">
+                            <i class="fas fa-film"></i>
+                            <span>Movie</span>
+                        </div>
+                    </label>
+                    
+                    <label class="category-card">
+                        <input type="radio" name="category" value="sports" onchange="nextStep()">
+                        <div class="category-content">
+                            <i class="fas fa-trophy"></i>
+                            <span>Sports</span>
+                        </div>
+                    </label>
+                    
+                    <label class="category-card">
+                        <input type="radio" name="category" value="club" onchange="nextStep()">
+                        <div class="category-content">
+                            <i class="fas fa-cocktail"></i>
+                            <span>Club</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- STEP 2: Event Details -->
+            <div class="step hidden" id="step2">
+                <h2 class="step-title">Event Details</h2>
+                <p class="step-subtitle">Tell us about the event</p>
+                
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="eventName" placeholder="e.g., Coldplay Mumbai 2026" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Venue</label>
+                    <input type="text" id="venue" placeholder="e.g., DY Patil Stadium, Mumbai" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>City</label>
+                    <select id="city" required>
+                        <option value="">Select City</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Jaipur">Jaipur</option>
+                    </select>
+                </div>
+                
+                <button type="button" class="btn-next" onclick="validateStep2()">
+                    Continue <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- STEP 3: Ticket Info -->
+            <div class="step hidden" id="step3">
+                <h2 class="step-title">Ticket Information</h2>
+                <p class="step-subtitle">Upload ticket & set price</p>
+                
+                <!-- Platform -->
+                <div class="form-group">
+                    <label>Original Booking Platform</label>
+                    <input type="text" id="platform" placeholder="e.g., BookMyShow, Insider, Paytm, Venue Website..." required>
+                    <span class="input-hint">Where did you buy this ticket from?</span>
+                </div>
+                
+                <!-- Ticket Upload -->
+                <div class="form-group">
+                    <label>Upload Ticket</label>
+                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('ticketFile').click()">
+                        <input type="file" id="ticketFile" accept="image/*,.pdf" hidden onchange="handleFileUpload(this)">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Tap to upload ticket</span>
+                            <small>Image or PDF, max 5MB</small>
+                        </div>
+                        <div class="upload-preview hidden" id="uploadPreview">
+                            <img id="previewImg" src="" alt="Ticket Preview">
+                            <button type="button" class="remove-file" onclick="removeFile(event)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Seat Info -->
+                <div class="form-group">
+                    <label>Seat Details</label>
+                    <input type="text" id="seatInfo" placeholder="e.g., Block A, Row 5, Seat 12" required>
+                </div>
+                
+                <!-- Pricing with 20% Cap -->
+                <div class="pricing-section">
+                    <div class="form-group">
+                        <label>Original Price (₹)</label>
+                        <input type="number" id="originalPrice" placeholder="1000" min="1" oninput="calculateMaxPrice()" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Your Selling Price (₹)</label>
+                        <input type="number" id="sellingPrice" placeholder="800" min="1" oninput="validatePrice()" required>
+                        <div class="price-validation" id="priceValidation">
+                            <span class="max-price">Max allowed: ₹<span id="maxPrice">1200</span></span>
+                            <span class="error-msg hidden" id="priceError">
+                                <i class="fas fa-exclamation-circle"></i> Price cannot exceed 20% of original
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Breakdown -->
+                    <div class="price-breakdown" id="priceBreakdown">
+                        <div class="breakdown-row">
+                            <span>Your selling price</span>
+                            <span>₹<span id="displayPrice">0</span></span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Platform fee (5%)</span>
+                            <span>- ₹<span id="platformFee">0</span></span>
+                        </div>
+                        <div class="breakdown-row total">
+                            <span>You receive</span>
+                            <span>₹<span id="netAmount">0</span></span>
+                        </div>
+                        
+                        <!-- Savings Indicator -->
+                        <div class="savings-indicator" id="savingsIndicator">
+                            <i class="fas fa-tag"></i>
+                            <span>Buyer saves <strong id="savingsPercent">0%</strong> vs original price</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-next" onclick="validateStep3()" id="step3Btn">
+                    Continue <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- STEP 4: Contact & Submit -->
+            <div class="step hidden" id="step4">
+                <h2 class="step-title">Contact Details</h2>
+                <p class="step-subtitle">How buyers will reach you</p>
+                
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="sellerName" placeholder="Full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>WhatsApp Number (optional)</label>
+                    <input type="tel" id="whatsapp" placeholder="Same as phone if empty" maxlength="10">
+                </div>
+                
+                <!-- Terms -->
+                <div class="terms-box">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span>I confirm this is a genuine ticket and agree to Nexus Exchange terms</span>
+                    </label>
+                </div>
+                
+                <!-- Summary Preview -->
+                <div class="listing-preview" id="listingPreview">
+                    <h4>Listing Preview</h4>
+                    <div class="preview-content" id="previewContent">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-submit" onclick="submitListing()">
+                    <i class="fas fa-check-circle"></i>
+                    List Ticket for Sale
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Success Screen -->
+        <div class="success-screen hidden" id="successScreen">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Ticket Listed!</h2>
+            <p>Your ticket is now live on Nexus Exchange</p>
+            <div class="success-details" id="successDetails"></div>
+            <div class="success-buttons">
+                <button class="btn-secondary" onclick="window.location.href='resale.html'">
+                    <i class="fas fa-home"></i> Back to Exchange
+                </button>
+                <button class="btn-primary" onclick="window.location.href='my-listings.html'">
+                    <i class="fas fa-list"></i> My Listings
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/resell.js"></script>
+</body>
+</html>
