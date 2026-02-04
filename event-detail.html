@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎊</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/event-detail.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="#" class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Event Details</h1>
+        <button class="icon-btn" onclick="shareEvent()">
+            <i class="fas fa-share-alt"></i>
+        </button>
+    </header>
+
+    <!-- Event Hero -->
+    <section class="event-hero">
+        <img id="eventImage" src="" alt="Event">
+        <div class="hero-overlay">
+            <span class="event-category" id="eventCategory">Category</span>
+            <h1 id="eventName">Event Name</h1>
+            <p id="collegeName">College Name</p>
+        </div>
+    </section>
+
+    <!-- Event Info -->
+    <main class="event-info">
+        <!-- Quick Stats -->
+        <div class="stats-row">
+            <div class="stat">
+                <i class="fas fa-calendar"></i>
+                <div>
+                    <span class="label">Date</span>
+                    <span class="value" id="eventDate">---</span>
+                </div>
+            </div>
+            <div class="stat">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <span class="label">Time</span>
+                    <span class="value" id="eventTime">---</span>
+                </div>
+            </div>
+            <div class="stat">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <span class="label">Venue</span>
+                    <span class="value" id="eventVenue">---</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- About -->
+        <section class="about-section">
+            <h3>About Event</h3>
+            <p id="eventDescription">---</p>
+        </section>
+
+        <!-- Lineup -->
+        <section class="lineup-section">
+            <h3>Lineup</h3>
+            <div class="lineup-tags" id="lineupTags">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Ticket Pricing -->
+        <section class="tickets-section">
+            <h3>Tickets</h3>
+            <div class="ticket-card">
+                <div class="ticket-info">
+                    <span class="ticket-type">General Entry</span>
+                    <span class="ticket-includes">Full access to all events</span>
+                </div>
+                <div class="ticket-price" id="ticketPrice">₹0</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Fixed Footer -->
+    <footer class="booking-footer">
+        <div class="price-info">
+            <span class="starting">Starting from</span>
+            <span class="amount" id="footerPrice">₹0</span>
+        </div>
+        <button class="book-btn" onclick="bookTickets()">
+            Book Now
+        </button>
+    </footer>
+
+    <script src="js/event-detail.js"></script>
+</body>
+</html>
