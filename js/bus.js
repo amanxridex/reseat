@@ -355,8 +355,9 @@ function generateBusResults(from, to) {
         const depTime = formatTime(depHour, depMinute);
         
         // Random duration 4-16 hours
-        const duration = Math.floor(Math.random() * 12) + 4;
-        const arrTime = addHours(depHour, depMinute, duration);
+        const durationHours = Math.floor(Math.random() * 12) + 4;
+        const durationMins = Math.floor(Math.random() * 60);
+        const arrTime = addHours(depHour, depMinute, durationHours);
         
         // Random price based on type
         let basePrice = 400;
@@ -374,7 +375,7 @@ function generateBusResults(from, to) {
             type,
             depTime,
             arrTime,
-            duration: `${duration}h ${Math.floor(Math.random() * 60)}m`,
+            duration: `${durationHours}h ${durationMins}m`,
             price,
             seats
         });
@@ -444,52 +445,58 @@ function displayBuses(buses) {
             </div>
         `;
         
-        busCard.onclick = () => bookBus(bus);
+        busCard.onclick = () => selectBus(bus);
         busesList.appendChild(busCard);
     });
 }
 
-// Book bus
-function bookBus(bus) {
-    const from = selectedFromCity.name;
-    const to = selectedToCity.name;
-    const date = selectedDate.toLocaleDateString('en-IN');
+// Select bus - store data and redirect to details page
+function selectBus(bus) {
+    // Calculate arrival date (next day if overnight)
+    const depDate = selectedDate;
+    const arrDate = new Date(depDate);
+    // Simple check - if arrival time is earlier than departure, it's next day
+    if (timeToMinutes(bus.arrTime) < timeToMinutes(bus.depTime)) {
+        arrDate.setDate(arrDate.getDate() + 1);
+    }
     
-    // Store booking details
-    const bookingDetails = {
-        type: 'bus',
+    const busData = {
+        id: bus.id,
         operator: bus.operator,
-        busType: bus.type,
-        from: from,
-        to: to,
-        date: date,
+        type: bus.type,
+        from: selectedFromCity.name,
+        to: selectedToCity.name,
         depTime: bus.depTime,
         arrTime: bus.arrTime,
+        duration: bus.duration,
         price: bus.price,
-        seats: 1,
-        timestamp: new Date().toISOString()
+        availableSeats: bus.seats,
+        date: depDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+        arrDate: arrDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+        amenities: getAmenitiesForType(bus.type)
     };
     
-    sessionStorage.setItem('current_booking', JSON.stringify(bookingDetails));
+    // Store in sessionStorage
+    sessionStorage.setItem('selectedBus', JSON.stringify(busData));
     
-    // For now, show alert - replace with actual booking flow
-    const confirmed = confirm(
-        `🚌 ${bus.operator} (${bus.type})\n` +
-        `📍 ${from} → ${to}\n` +
-        `📅 ${date}\n` +
-        `🕐 ${bus.depTime} - ${bus.arrTime}\n` +
-        `💰 ₹${bus.price}\n\n` +
-        `Proceed to booking?`
-    );
+    // Redirect to bus details page
+    window.location.href = 'bus-details.html';
+}
+
+// Get amenities based on bus type
+function getAmenitiesForType(type) {
+    const baseAmenities = ['gps', 'charging'];
     
-    if (confirmed) {
-        // Redirect to booking page (uncomment when ready)
-        // window.location.href = 'booking.html';
-        console.log('Proceeding to booking:', bookingDetails);
+    if (type.includes('Volvo') || type.includes('Mercedes')) {
+        return [...baseAmenities, 'wifi', 'blanket', 'entertainment', 'water', 'snacks'];
+    } else if (type.includes('AC')) {
+        return [...baseAmenities, 'water', 'blanket'];
+    } else {
+        return baseAmenities;
     }
 }
 
-// Add shake animation to CSS dynamically
+// Add animations to CSS dynamically
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {

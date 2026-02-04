@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Details | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚌</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/bus-details.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="bus.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Bus Details</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main" id="mainContent">
+        <!-- Bus Info Header -->
+        <section class="bus-header-card">
+            <div class="operator-info">
+                <div class="operator-logo">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div class="operator-details">
+                    <h2 id="operatorName">Loading...</h2>
+                    <span class="bus-type" id="busType">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="journey-info">
+                <div class="station departure">
+                    <span class="time" id="depTime">--:--</span>
+                    <span class="city" id="fromCity">---</span>
+                    <span class="date" id="travelDate">---</span>
+                </div>
+                
+                <div class="journey-line">
+                    <div class="duration" id="duration">--h --m</div>
+                    <div class="line"></div>
+                    <div class="stops">Non-stop</div>
+                </div>
+                
+                <div class="station arrival">
+                    <span class="time" id="arrTime">--:--</span>
+                    <span class="city" id="toCity">---</span>
+                    <span class="date" id="arrDate">---</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Amenities -->
+        <section class="amenities-section">
+            <h3>Amenities</h3>
+            <div class="amenities-grid" id="amenitiesGrid">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Bus Photos -->
+        <section class="photos-section">
+            <h3>Bus Interior</h3>
+            <div class="photos-scroll" id="photosScroll">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Seat Layout -->
+        <section class="seats-section">
+            <div class="seats-header">
+                <h3>Select Seats</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="seat-box available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="seat-box selected"></div>
+                        <span>Selected</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="seat-box occupied"></div>
+                        <span>Booked</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="deck-tabs">
+                <button class="deck-tab active" onclick="switchDeck('lower')">Lower Deck</button>
+                <button class="deck-tab" onclick="switchDeck('upper')">Upper Deck</button>
+            </div>
+            
+            <div class="seat-map" id="seatMap">
+                <!-- Injected via JS -->
+            </div>
+            
+            <div class="selected-seats" id="selectedSeats">
+                <span class="label">Selected:</span>
+                <span class="seats-list" id="selectedSeatsList">None</span>
+            </div>
+        </section>
+
+        <!-- Reviews -->
+        <section class="reviews-section">
+            <div class="reviews-header">
+                <h3>Reviews</h3>
+                <div class="rating">
+                    <span class="stars"><i class="fas fa-star"></i> 4.5</span>
+                    <span class="count">(128 reviews)</span>
+                </div>
+            </div>
+            <div class="reviews-list" id="reviewsList">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Cancellation Policy -->
+        <section class="policy-section">
+            <h3>Cancellation Policy</h3>
+            <div class="policy-timeline">
+                <div class="policy-item">
+                    <div class="policy-dot active"></div>
+                    <div class="policy-content">
+                        <span class="time">Before 24h</span>
+                        <span class="refund">90% refund</span>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-dot active"></div>
+                    <div class="policy-content">
+                        <span class="time">12-24h</span>
+                        <span class="refund">70% refund</span>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-dot"></div>
+                    <div class="policy-content">
+                        <span class="time">6-12h</span>
+                        <span class="refund">50% refund</span>
+                    </div>
+                </div>
+                <div class="policy-item">
+                    <div class="policy-dot"></div>
+                    <div class="policy-content">
+                        <span class="time">0-6h</span>
+                        <span class="refund">No refund</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacer for fixed footer -->
+        <div class="footer-spacer"></div>
+    </main>
+
+    <!-- Fixed Footer -->
+    <footer class="booking-footer">
+        <div class="fare-details">
+            <div class="fare-row">
+                <span>Base Fare</span>
+                <span id="baseFare">₹0</span>
+            </div>
+            <div class="fare-row">
+                <span>GST (5%)</span>
+                <span id="gstFare">₹0</span>
+            </div>
+            <div class="fare-row total">
+                <span>Total</span>
+                <span id="totalFare">₹0</span>
+            </div>
+        </div>
+        <button class="proceed-btn" id="proceedBtn" onclick="proceedToBooking()" disabled>
+            Proceed to Booking
+        </button>
+    </footer>
+
+    <script src="js/bus-details.js"></script>
+</body>
+</html>

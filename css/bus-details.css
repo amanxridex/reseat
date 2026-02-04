@@ -1,0 +1,766 @@
+:root {
+    --bg: #050508;
+    --card-bg: #0a0a12;
+    --surface: #12121a;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --accent: #ffaa00;
+    --accent-glow: rgba(255, 170, 0, 0.4);
+    --success: #10b981;
+    --danger: #ef4444;
+    --font: 'Space Grotesk', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+}
+
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(5, 5, 8, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+.back-btn, .icon-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover, .icon-btn:hover {
+    border-color: var(--accent);
+    background: rgba(255, 170, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Main Content */
+.main {
+    padding: 1rem;
+    padding-bottom: 300px; /* Space for fixed footer */
+    overflow-y: auto;
+}
+
+/* Bus Header Card */
+.bus-header-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.operator-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.operator-logo {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--accent), #ffcc4d);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #000;
+}
+
+.operator-details h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.bus-type {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 170, 0, 0.1);
+    border: 1px solid rgba(255, 170, 0, 0.2);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* Journey Info */
+.journey-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.station {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.station .time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.station .city {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.station .date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.journey-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1.5;
+}
+
+.journey-line .duration {
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 170, 0, 0.1);
+    border-radius: 100px;
+}
+
+.journey-line .line {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent));
+    position: relative;
+}
+
+.journey-line .line::before,
+.journey-line .line::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.journey-line .line::before { left: 0; }
+.journey-line .line::after { right: 0; }
+
+.journey-line .stops {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Section Styling */
+section {
+    margin-bottom: 1.5rem;
+}
+
+section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Amenities */
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.amenity-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.amenity-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.amenity-item i {
+    font-size: 1.25rem;
+    color: var(--accent);
+}
+
+.amenity-item span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Photos */
+.photos-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+}
+
+.photos-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.photo-card {
+    flex: 0 0 280px;
+    height: 160px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Seats Section */
+.seats-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.seats-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.legend {
+    display: flex;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.seat-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+.seat-box.available {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+.seat-box.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.seat-box.occupied {
+    background: var(--surface);
+    border-color: var(--danger);
+    position: relative;
+}
+
+.seat-box.occupied::after {
+    content: '×';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--danger);
+    font-size: 14px;
+}
+
+/* Deck Tabs */
+.deck-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--surface);
+    padding: 0.25rem;
+    border-radius: 12px;
+}
+
+.deck-tab {
+    flex: 1;
+    padding: 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.deck-tab.active {
+    background: var(--card-bg);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Seat Map */
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.seat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.seat-cluster {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.seat-cluster.right {
+    margin-left: auto;
+}
+
+.seat {
+    width: 45px;
+    height: 55px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.seat::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.seat.available:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.seat.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+}
+
+.seat.selected::before {
+    background: rgba(0,0,0,0.3);
+}
+
+.seat.occupied {
+    background: var(--surface);
+    border-color: var(--danger);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.seat.occupied::after {
+    content: '×';
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--danger);
+}
+
+.seat-number {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.seat-price {
+    font-size: 0.65rem;
+    opacity: 0.7;
+}
+
+.seat-driver {
+    width: 45px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+}
+
+/* Selected Seats */
+.selected-seats {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+.selected-seats .label {
+    color: var(--text-muted);
+}
+
+.selected-seats .seats-list {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Reviews */
+.reviews-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.review-item {
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.review-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.review-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* Cancellation Policy */
+.policy-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.policy-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.policy-timeline::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--surface);
+    z-index: 0;
+}
+
+.policy-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.policy-dot {
+    width: 14px;
+    height: 14px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.policy-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.policy-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+}
+
+.policy-content .time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.policy-content .refund {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--success);
+}
+
+/* Footer Spacer */
+.footer-spacer {
+    height: 200px;
+}
+
+/* Fixed Footer */
+.booking-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, var(--bg), rgba(5,5,8,0.95));
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 1.5rem;
+    z-index: 100;
+}
+
+.fare-details {
+    margin-bottom: 1rem;
+}
+
+.fare-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.fare-row.total {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.proceed-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent), #ffcc4d);
+    border: none;
+    border-radius: 16px;
+    color: #000;
+    font-family: var(--font);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.proceed-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px var(--accent-glow);
+}
+
+.proceed-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+section {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+section:nth-child(1) { animation-delay: 0.1s; }
+section:nth-child(2) { animation-delay: 0.2s; }
+section:nth-child(3) { animation-delay: 0.3s; }
+section:nth-child(4) { animation-delay: 0.4s; }
+section:nth-child(5) { animation-delay: 0.5s; }
+section:nth-child(6) { animation-delay: 0.6s; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .amenities-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .amenity-item {
+        padding: 0.75rem;
+    }
+    
+    .amenity-item span {
+        font-size: 0.7rem;
+    }
+    
+    .seat {
+        width: 40px;
+        height: 50px;
+    }
+    
+    .journey-info {
+        gap: 0.5rem;
+    }
+    
+    .station .time {
+        font-size: 1.25rem;
+    }
+}
