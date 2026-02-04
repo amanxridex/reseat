@@ -5,95 +5,100 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadEventData() {
+    // Read from sessionStorage (set by college-fest-detail.js)
     const data = sessionStorage.getItem('selectedEvent');
+    
     if (!data) {
+        // No data found - redirect back to college fests
         window.location.href = 'college-fests.html';
         return;
     }
     
-    eventData = JSON.parse(data);
-    
-    // Populate page
-    document.getElementById('eventImage').src = eventData.image;
+    try {
+        eventData = JSON.parse(data);
+        
+        // Validate required fields
+        if (!eventData.name || !eventData.college) {
+            throw new Error('Invalid event data');
+        }
+        
+        // Populate the page
+        populatePage();
+        
+    } catch (error) {
+        console.error('Error loading event:', error);
+        window.location.href = 'college-fests.html';
+    }
+}
+
+function populatePage() {
+    // Hero section
+    document.getElementById('eventImage').src = eventData.image || 'assets/college-fest.jpg';
     document.getElementById('eventImage').onerror = function() {
         this.src = 'assets/college-fest.jpg';
     };
-    document.getElementById('eventCategory').textContent = eventData.category;
+    document.getElementById('eventCategory').textContent = eventData.category || 'Event';
     document.getElementById('eventName').textContent = eventData.name;
-    document.getElementById('collegeName').textContent = eventData.college.name;
-    document.getElementById('eventDate').textContent = eventData.date;
-    document.getElementById('eventTime').textContent = eventData.time;
-    document.getElementById('eventVenue').textContent = eventData.venue;
-    document.getElementById('eventDescription').textContent = eventData.description;
-    document.getElementById('ticketPrice').textContent = `₹${eventData.price}`;
-    document.getElementById('footerPrice').textContent = `₹${eventData.price}`;
+    document.getElementById('collegeName').textContent = eventData.college.name || eventData.college;
     
-    // Lineup tags
+    // Stats
+    document.getElementById('eventDate').textContent = eventData.date || 'TBA';
+    document.getElementById('eventTime').textContent = eventData.time || 'TBA';
+    document.getElementById('eventVenue').textContent = eventData.venue || 'TBA';
+    
+    // About
+    document.getElementById('eventDescription').textContent = eventData.description || 'No description available.';
+    
+    // Lineup
     const lineupContainer = document.getElementById('lineupTags');
-    lineupContainer.innerHTML = eventData.lineup.map(item => 
-        `<span class="lineup-tag">${item}</span>`
-    ).join('');
+    if (eventData.lineup && eventData.lineup.length > 0) {
+        lineupContainer.innerHTML = eventData.lineup.map(item => 
+            `<span class="lineup-tag">${item}</span>`
+        ).join('');
+    } else {
+        lineupContainer.innerHTML = '<span class="lineup-tag">Coming Soon</span>';
+    }
+    
+    // Ticket price
+    document.getElementById('ticketPrice').textContent = `₹${eventData.price || 0}`;
+    document.getElementById('footerPrice').textContent = `₹${eventData.price || 0}`;
 }
 
 function goBack() {
-    const collegeId = eventData?.college ? Object.keys(collegeData).find(key => collegeData[key].name === eventData.college.name) : null;
-    if (collegeId) {
-        window.location.href = `college-fest-detail.html?id=${collegeId}`;
-    } else {
-        window.location.href = 'college-fests.html';
-    }
+    window.history.back();
 }
 
 function shareEvent() {
     if (navigator.share) {
         navigator.share({
             title: eventData.name,
-            text: `Check out ${eventData.name} at ${eventData.college.name}!`,
+            text: `Check out ${eventData.name} at ${eventData.college.name || eventData.college}!`,
             url: window.location.href
         });
     } else {
-        // Fallback - copy to clipboard
         navigator.clipboard.writeText(window.location.href);
         alert('Link copied to clipboard!');
     }
 }
 
 function bookTickets() {
-    // Store booking data
+    // Store data for booking page (reuse same key, update if needed)
     const bookingData = {
-        type: 'event',
-        eventId: eventData.id,
-        eventName: eventData.name,
-        college: eventData.college,
+        id: eventData.id,
+        name: eventData.name,
+        category: eventData.category,
         date: eventData.date,
         time: eventData.time,
         venue: eventData.venue,
         price: eventData.price,
         image: eventData.image,
-        quantity: 1,
-        timestamp: new Date().toISOString()
+        description: eventData.description,
+        lineup: eventData.lineup,
+        college: eventData.college
     };
     
     sessionStorage.setItem('selectedEvent', JSON.stringify(bookingData));
     
     // Redirect to booking page
     window.location.href = 'college-event-booking.html';
-}
-    
-    sessionStorage.setItem('eventBooking', JSON.stringify(bookingData));
-    
-    // For now show alert, later redirect to payment
-    const confirmed = confirm(
-        `🎉 ${eventData.name}\n` +
-        `🎓 ${eventData.college.name}\n` +
-        `📅 ${eventData.date} • ${eventData.time}\n` +
-        `📍 ${eventData.venue}\n` +
-        `💰 ₹${eventData.price}\n\n` +
-        `Proceed to book?`
-    );
-    
-    if (confirmed) {
-        // window.location.href = 'event-booking.html';
-        console.log('Booking:', bookingData);
-    }
 }
