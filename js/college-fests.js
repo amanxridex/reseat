@@ -113,7 +113,7 @@ function renderColleges(collegesToRender = colleges) {
         grid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
-                <p>No universities found</p>
+                <p>If your university is not in the list mail us at: collegefest@nexus.in</p>
             </div>
         `;
         return;
