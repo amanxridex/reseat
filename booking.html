@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Booking | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/booking.css">
+</head>
+<body>
+    <!-- Progress Header -->
+    <header class="progress-header">
+        <a href="bus-details.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-dot"><i class="fas fa-check"></i></div>
+                <span>Select</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <div class="step-dot"><i class="fas fa-check"></i></div>
+                <span>Details</span>
+            </div>
+            <div class="step-line active"></div>
+            <div class="step active">
+                <div class="step-dot">3</div>
+                <span>Payment</span>
+            </div>
+        </div>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Trip Summary Card -->
+        <section class="trip-summary">
+            <div class="summary-header">
+                <i class="fas fa-bus"></i>
+                <span>Trip Summary</span>
+            </div>
+            <div class="journey-details">
+                <div class="route">
+                    <div class="city">
+                        <strong id="fromCity">---</strong>
+                        <span id="depTime">--:--</span>
+                    </div>
+                    <div class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                        <span id="duration">--h</span>
+                    </div>
+                    <div class="city">
+                        <strong id="toCity">---</strong>
+                        <span id="arrTime">--:--</span>
+                    </div>
+                </div>
+                <div class="bus-info">
+                    <span id="operatorName">---</span>
+                    <span class="dot">•</span>
+                    <span id="busType">---</span>
+                    <span class="dot">•</span>
+                    <span id="travelDate">---</span>
+                </div>
+            </div>
+            <div class="seat-info">
+                <span>Selected Seats:</span>
+                <strong id="selectedSeats">---</strong>
+            </div>
+        </section>
+
+        <!-- Passenger Details Form -->
+        <section class="passenger-section">
+            <h2><i class="fas fa-user-friends"></i> Passenger Details</h2>
+            <form id="passengerForm" class="passenger-form">
+                <!-- Contact Info -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <div class="input-wrapper">
+                            <span class="prefix">+91</span>
+                            <input type="tel" id="phone" placeholder="9876543210" maxlength="10" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="altPhone">Alternate Number <span class="optional">(Optional)</span></label>
+                        <div class="input-wrapper">
+                            <span class="prefix">+91</span>
+                            <input type="tel" id="altPhone" placeholder="9876543210" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passenger 1 -->
+                <div class="passenger-card" data-passenger="1">
+                    <div class="passenger-header">
+                        <span class="passenger-num">Passenger 1</span>
+                        <span class="seat-label" id="seatLabel1">Seat L1A</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" name="p1name" placeholder="As per ID proof" required>
+                            </div>
+                        </div>
+                        <div class="form-group age-group">
+                            <label>Age</label>
+                            <div class="input-wrapper">
+                                <input type="number" name="p1age" placeholder="25" min="1" max="120" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="gender-options">
+                                <label class="gender-radio">
+                                    <input type="radio" name="p1gender" value="male" checked>
+                                    <span>Male</span>
+                                </label>
+                                <label class="gender-radio">
+                                    <input type="radio" name="p1gender" value="female">
+                                    <span>Female</span>
+                                </label>
+                                <label class="gender-radio">
+                                    <input type="radio" name="p1gender" value="other">
+                                    <span>Other</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional passengers will be added dynamically -->
+                <div id="additionalPassengers"></div>
+            </form>
+        </section>
+
+        <!-- Offers Section -->
+        <section class="offers-section">
+            <h2><i class="fas fa-tag"></i> Apply Offer</h2>
+            <div class="coupon-input">
+                <div class="input-wrapper">
+                    <i class="fas fa-ticket-alt"></i>
+                    <input type="text" id="couponCode" placeholder="Enter coupon code">
+                </div>
+                <button type="button" class="apply-btn" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div class="applied-coupons" id="appliedCoupons"></div>
+            
+            <div class="quick-offers">
+                <button class="offer-chip" onclick="applyQuickOffer('BUS20')">
+                    <span class="code">BUS20</span>
+                    <span class="desc">20% off</span>
+                </button>
+                <button class="offer-chip" onclick="applyQuickOffer('FIRST50')">
+                    <span class="code">FIRST50</span>
+                    <span class="desc">₹50 off</span>
+                </button>
+                <button class="offer-chip" onclick="applyQuickOffer('NEXUS100')">
+                    <span class="code">NEXUS100</span>
+                    <span class="desc">₹100 off</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Payment Methods -->
+        <section class="payment-section">
+            <h2><i class="fas fa-credit-card"></i> Payment Method</h2>
+            
+            <div class="payment-methods">
+                <label class="payment-card active">
+                    <input type="radio" name="payment" value="upi" checked>
+                    <div class="payment-content">
+                        <div class="payment-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="payment-info">
+                            <strong>UPI</strong>
+                            <span>Google Pay, PhonePe, Paytm</span>
+                        </div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </label>
+
+                <label class="payment-card">
+                    <input type="radio" name="payment" value="card">
+                    <div class="payment-content">
+                        <div class="payment-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="payment-info">
+                            <strong>Card</strong>
+                            <span>Credit/Debit Card</span>
+                        </div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </label>
+
+                <label class="payment-card">
+                    <input type="radio" name="payment" value="netbanking">
+                    <div class="payment-content">
+                        <div class="payment-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="payment-info">
+                            <strong>Net Banking</strong>
+                            <span>All major banks</span>
+                        </div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </label>
+
+                <label class="payment-card">
+                    <input type="radio" name="payment" value="wallet">
+                    <div class="payment-content">
+                        <div class="payment-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="payment-info">
+                            <strong>Wallets</strong>
+                            <span>Paytm, Amazon Pay</span>
+                        </div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </label>
+            </div>
+        </section>
+
+        <!-- Trust Badges -->
+        <section class="trust-section">
+            <div class="trust-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Payments</span>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-undo"></i>
+                <span>Easy Cancellation</span>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-headset"></i>
+                <span>24/7 Support</span>
+            </div>
+        </section>
+
+        <!-- Spacer for footer -->
+        <div class="footer-spacer"></div>
+    </main>
+
+    <!-- Fixed Footer with Pricing -->
+    <footer class="booking-footer">
+        <div class="price-breakdown">
+            <div class="breakdown-row">
+                <span>Base Fare (<span id="seatCount">1</span> seats)</span>
+                <span id="baseFare">₹0</span>
+            </div>
+            <div class="breakdown-row" id="discountRow" style="display: none;">
+                <span>Discount</span>
+                <span id="discountAmount" style="color: var(--success);">-₹0</span>
+            </div>
+            <div class="breakdown-row">
+                <span>Convenience Fee</span>
+                <span id="convenienceFee">₹49</span>
+            </div>
+            <div class="breakdown-row">
+                <span>GST (5%)</span>
+                <span id="gstAmount">₹0</span>
+            </div>
+            <div class="breakdown-row total">
+                <span>Total Payable</span>
+                <span id="totalAmount">₹0</span>
+            </div>
+        </div>
+        <button class="pay-btn" id="payBtn" onclick="proceedToPayment()">
+            <span>Pay Now</span>
+            <i class="fas fa-lock"></i>
+        </button>
+    </footer>
+
+    <!-- Processing Modal -->
+    <div class="modal hidden" id="processingModal">
+        <div class="modal-content">
+            <div class="processing-animation">
+                <div class="spinner"></div>
+                <div class="rings">
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                </div>
+            </div>
+            <h3>Processing Payment</h3>
+            <p>Please do not close or refresh the page</p>
+        </div>
+    </div>
+
+    <script src="js/booking.js"></script>
+</body>
+</html>
