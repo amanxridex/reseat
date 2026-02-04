@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fest Events | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/college-fest-detail.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="college-fests.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 id="collegeName">Events</h1>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+        </button>
+    </header>
+
+    <!-- College Hero -->
+    <section class="college-hero" id="collegeHero">
+        <div class="college-banner">
+            <img id="collegeImage" src="" alt="College">
+            <div class="banner-overlay"></div>
+        </div>
+        <div class="college-info">
+            <h2 id="festName">Fest 2026</h2>
+            <p id="collegeLocation"><i class="fas fa-map-marker-alt"></i> Location</p>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <main class="events-section">
+        <div class="section-header">
+            <h3>Upcoming Events</h3>
+            <span class="event-count" id="eventCount">0 events</span>
+        </div>
+        
+        <div class="events-grid" id="eventsGrid">
+            <!-- Events injected via JS -->
+        </div>
+    </main>
+
+    <script src="js/college-fest-detail.js"></script>
+</body>
+</html>
