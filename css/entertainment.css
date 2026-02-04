@@ -961,3 +961,65 @@ body::before {
         50% { transform: translateY(-3px); }
     }
 }
+
+/* College Fests - Purple/Pink Theme */
+.fests-card {
+    animation-delay: 0.6s;
+}
+
+.fests-card .card-glow {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    box-shadow: 0 0 60px rgba(139, 92, 246, 0.4), inset 0 0 60px rgba(236, 72, 153, 0.2);
+}
+
+.fests-card .card-icon {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+}
+
+/* Fests Ambient Glow */
+.fests-glow {
+    width: 320px;
+    height: 320px;
+    background: #8b5cf6;
+    top: 40%;
+    right: -80px;
+    animation-delay: 20s;
+}
+
+/* Featured tag for fests */
+.fests-tag {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Update animation delays for 5 cards */
+.ent-card:nth-child(1) { animation-delay: 0.2s; }
+.ent-card:nth-child(2) { animation-delay: 0.3s; }
+.ent-card:nth-child(3) { animation-delay: 0.4s; }
+.ent-card:nth-child(4) { animation-delay: 0.5s; }
+.ent-card:nth-child(5) { animation-delay: 0.6s; }
+
+/* Icon animation delay */
+.fests-card .card-icon { animation-delay: 2s; }
+
+/* Mobile: 2 columns for 5 cards (3+2 layout) */
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* First 3 cards full width on very small screens */
+    @media (max-width: 480px) {
+        .cards-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+/* CSS Variable for fests */
+:root {
+    --fests: #8b5cf6;
+    --fests-glow: rgba(139, 92, 246, 0.4);
+}
