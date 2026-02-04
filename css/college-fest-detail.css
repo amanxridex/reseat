@@ -288,3 +288,262 @@ body {
         font-size: 1.25rem;
     }
 }
+
+/* ============================================
+   MOBILE FIXES - Add to college-fest-detail.css
+   ============================================ */
+
+/* Header should show Fest Name, not College Name */
+.header h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    /* Allow text to wrap if needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* Better Hero Section for Mobile */
+.college-hero {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.college-banner {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+}
+
+.college-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 8, 0.3) 0%,
+        transparent 30%,
+        transparent 60%,
+        rgba(5, 5, 8, 0.95) 100%
+    );
+}
+
+.college-info {
+    padding: 0 1rem;
+    margin-top: -4rem;
+    position: relative;
+    z-index: 10;
+}
+
+.college-info h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+.college-info p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.college-info p i {
+    color: #a855f7;
+    font-size: 1rem;
+}
+
+/* Mobile-Optimized Event Card */
+.event-card {
+    display: flex;
+    flex-direction: row;
+    background: linear-gradient(145deg, #0a0a12, #12121a);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease forwards;
+    opacity: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.event-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.2);
+}
+
+.event-image {
+    width: 35%;
+    min-width: 120px;
+    height: auto;
+    min-height: 160px;
+    object-fit: cover;
+    border-right: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.event-content {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.event-category {
+    display: inline-block;
+    width: fit-content;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a855f7;
+    background: rgba(139, 92, 246, 0.15);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    margin-bottom: 0.25rem;
+}
+
+.event-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.event-meta span {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+}
+
+.event-meta i {
+    font-size: 0.9rem;
+    color: #a855f7;
+    margin-top: 0.15rem;
+    min-width: 16px;
+}
+
+.event-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    border-left: 1px solid rgba(139, 92, 246, 0.2);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.event-price span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #a855f7;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+/* Better Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding: 0 0.25rem;
+}
+
+.section-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.event-count {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+    .college-banner {
+        height: 240px;
+    }
+    
+    .college-info h2 {
+        font-size: 1.75rem;
+    }
+    
+    /* Stack card vertically on very small screens */
+    .event-card {
+        flex-direction: column;
+    }
+    
+    .event-image {
+        width: 100%;
+        height: 160px;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+    
+    .event-content {
+        padding: 1.25rem;
+    }
+    
+    .event-name {
+        font-size: 1.5rem;
+    }
+    
+    .event-meta {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+    }
+    
+    .event-price {
+        border-left: none;
+        border-top: 1px solid rgba(139, 92, 246, 0.2);
+        padding: 1rem;
+        justify-content: flex-start;
+        background: rgba(139, 92, 246, 0.08);
+    }
+    
+    .event-price::before {
+        content: 'Price: ';
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-right: 0.5rem;
+    }
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
