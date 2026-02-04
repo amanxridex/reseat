@@ -8,8 +8,8 @@ const colleges = [
     },
     {
         id: 2,
-        name: "Delhi NCR",
-        location: "Noida, Delhi",
+        name: "Christ University",
+        location: "Delhi NCR",
         image: "assets/colleges/delhi-ncr.jpg",
         festName: "Crossroads"
     },
