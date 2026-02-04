@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tickets | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎟️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/college-event-booking.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="event-detail.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Book Tickets</h1>
+        <div style="width: 40px;"></div>
+    </header>
+
+    <!-- Event Summary -->
+    <section class="event-summary">
+        <img id="eventImage" src="" alt="Event">
+        <div class="summary-content">
+            <h2 id="eventName">Event Name</h2>
+            <p id="collegeName">College Name</p>
+            <div class="event-meta">
+                <span><i class="fas fa-calendar"></i> <span id="eventDate">---</span></span>
+                <span><i class="fas fa-map-marker-alt"></i> <span id="eventVenue">---</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ticket Quantity -->
+    <section class="ticket-section">
+        <div class="section-title">
+            <h3>Select Tickets</h3>
+            <span class="limit-badge">Max 2 per user</span>
+        </div>
+        
+        <div class="ticket-selector">
+            <button class="qty-btn" onclick="changeQty(-1)" id="minusBtn">
+                <i class="fas fa-minus"></i>
+            </button>
+            <div class="qty-display">
+                <span id="ticketQty">1</span>
+                <small>ticket</small>
+            </div>
+            <button class="qty-btn" onclick="changeQty(1)" id="plusBtn">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        
+        <div class="max-reached-msg" id="maxMsg">
+            <i class="fas fa-info-circle"></i> Maximum limit reached
+        </div>
+    </section>
+
+    <!-- Attendee Details -->
+    <section class="attendee-section">
+        <h3>Attendee Details</h3>
+        <form id="bookingForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="attendeeName" placeholder="As on ID card" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="attendeeEmail" placeholder="your@email.com" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <div class="input-wrapper">
+                        <span class="prefix">+91</span>
+                        <input type="tel" id="attendeePhone" placeholder="9876543210" maxlength="10" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>College/Institution <span class="optional">(Optional)</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
+                    <input type="text" id="attendeeCollege" placeholder="Your college name">
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- Price Breakdown -->
+    <section class="price-section">
+        <h3>Price Details</h3>
+        <div class="price-breakdown">
+            <div class="price-row">
+                <div class="price-label">
+                    <span>Ticket Price</span>
+                    <small id="ticketCount">1 × ₹0</small>
+                </div>
+                <span class="price-value" id="ticketTotal">₹0</span>
+            </div>
+            <div class="price-row">
+                <div class="price-label">
+                    <span>Platform Fee</span>
+                    <small>Fixed charge</small>
+                </div>
+                <span class="price-value" id="platformFee">₹1</span>
+            </div>
+            <div class="price-row total">
+                <span>Total Amount</span>
+                <span class="price-value" id="grandTotal">₹0</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spacer -->
+    <div class="footer-spacer"></div>
+
+    <!-- Footer -->
+    <footer class="booking-footer">
+        <div class="footer-content">
+            <div class="total-display">
+                <span class="total-label">Total</span>
+                <span class="total-amount" id="footerTotal">₹0</span>
+            </div>
+            <button class="pay-btn" id="payBtn" onclick="proceedToPayment()">
+                <span>Pay Now</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Payment Processing Modal -->
+    <div class="modal hidden" id="paymentModal">
+        <div class="modal-content">
+            <div class="payment-animation">
+                <div class="spinner-ring"></div>
+                <div class="check-icon hidden" id="successIcon">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+            <h3 id="paymentStatus">Processing Payment...</h3>
+            <p id="paymentSubtext">Please wait while we secure your transaction</p>
+        </div>
+    </div>
+
+    <script src="js/college-event-booking.js"></script>
+</body>
+</html>
