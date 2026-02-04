@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Ticket | Nexus</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="css/my-ticket.css">
+</head>
+<body>
+    <!-- Confetti Background -->
+    <div class="confetti-container" id="confetti"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-home"></i>
+        </a>
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <span>NEXUS</span>
+        </div>
+        <button class="icon-btn" onclick="downloadTicket()">
+            <i class="fas fa-download"></i>
+        </button>
+    </header>
+
+    <!-- Success Message -->
+    <div class="success-banner">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Booking Confirmed!</h2>
+        <p>Your ticket has been generated</p>
+    </div>
+
+    <!-- Main Ticket Container -->
+    <main class="ticket-container">
+        <!-- The Actual Ticket (for PDF capture) -->
+        <div class="ticket-wrapper" id="ticketWrapper">
+            <div class="ticket">
+                <!-- Ticket Header -->
+                <div class="ticket-header">
+                    <div class="brand">
+                        <i class="fas fa-bolt"></i>
+                        <span>NEXUS</span>
+                    </div>
+                    <div class="ticket-type">ENTRY PASS</div>
+                </div>
+
+                <!-- Event Info -->
+                <div class="ticket-body">
+                    <div class="event-info">
+                        <h3 id="eventName">Event Name</h3>
+                        <p class="college-name" id="collegeName">College Name</p>
+                        
+                        <div class="details-grid">
+                            <div class="detail">
+                                <i class="fas fa-calendar"></i>
+                                <div>
+                                    <span class="label">Date</span>
+                                    <span class="value" id="ticketDate">---</span>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <span class="label">Time</span>
+                                    <span class="value" id="ticketTime">---</span>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <span class="label">Venue</span>
+                                    <span class="value" id="ticketVenue">---</span>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>
+                                    <span class="label">Tickets</span>
+                                    <span class="value" id="ticketQty">1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QR Code Section -->
+                    <div class="qr-section">
+                        <div class="qr-code" id="qrcode"></div>
+                        <p class="qr-hint">Scan at entry gate</p>
+                        <div class="ticket-id" id="ticketId">NEX-XXXXXXXX</div>
+                    </div>
+                </div>
+
+                <!-- Attendee Info -->
+                <div class="attendee-info">
+                    <div class="info-row">
+                        <span class="label">Attendee</span>
+                        <span class="value" id="attendeeName">---</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Booking ID</span>
+                        <span class="value" id="bookingId">---</span>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="ticket-divider">
+                    <div class="circle left"></div>
+                    <div class="line"></div>
+                    <div class="circle right"></div>
+                </div>
+
+                <!-- Snitch Advertisement -->
+                <div class="ad-section">
+                    <div class="ad-label">Sponsored</div>
+                    <div class="ad-content">
+                        <img src="assets/snitch.jpg" alt="Snitch" class="ad-image">
+                        <div class="ad-text">
+                            <h4>Snitch</h4>
+                            <p>Upgrade your style game</p>
+                            <span class="ad-cta">Use code NEXUS20 for 20% off</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket Footer -->
+                <div class="ticket-footer">
+                    <p class="terms">
+                        <i class="fas fa-shield-alt"></i> 
+                        This ticket is non-transferable and non-refundable. Valid ID proof required at entry.
+                    </p>
+                    <div class="validity">
+                        <span>Valid for single entry only</span>
+                        <span id="bookingTime">Booked on ---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn primary" onclick="downloadTicket()">
+                <i class="fas fa-download"></i>
+                <span>Download Ticket</span>
+            </button>
+            <button class="action-btn secondary" onclick="shareTicket()">
+                <i class="fas fa-share-alt"></i>
+                <span>Share</span>
+            </button>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="info-cards">
+            <div class="info-card">
+                <i class="fas fa-headset"></i>
+                <div>
+                    <h4>Need Help?</h4>
+                    <p>Contact support at support@nexus.com</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-undo"></i>
+                <div>
+                    <h4>Cancellation</h4>
+                    <p>Cancel upto 24h before event</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/my-ticket2.js"></script>
+</body>
+</html>
