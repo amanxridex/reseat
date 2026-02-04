@@ -62,15 +62,23 @@ function bookTickets() {
     // Store booking data
     const bookingData = {
         type: 'event',
+        eventId: eventData.id,
         eventName: eventData.name,
-        college: eventData.college.name,
+        college: eventData.college,
         date: eventData.date,
         time: eventData.time,
         venue: eventData.venue,
         price: eventData.price,
+        image: eventData.image,
         quantity: 1,
         timestamp: new Date().toISOString()
     };
+    
+    sessionStorage.setItem('selectedEvent', JSON.stringify(bookingData));
+    
+    // Redirect to booking page
+    window.location.href = 'college-event-booking.html';
+}
     
     sessionStorage.setItem('eventBooking', JSON.stringify(bookingData));
     
