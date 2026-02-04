@@ -104,7 +104,7 @@ function generateConfetti() {
     }
 }
 
-// Download ticket as PDF
+// Download ticket as JPG image
 async function downloadTicket() {
     const btn = document.querySelector('.action-btn.primary');
     const originalText = btn.innerHTML;
@@ -112,52 +112,93 @@ async function downloadTicket() {
     btn.disabled = true;
     
     try {
-        const { jsPDF } = window.jspdf;
+        // Check if html2canvas is loaded
+        if (typeof html2canvas === 'undefined') {
+            // Load html2canvas dynamically
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        }
+        
         const ticketElement = document.getElementById('ticketWrapper');
         
-        // Capture ticket as image
+        // Capture ticket as canvas
         const canvas = await html2canvas(ticketElement, {
             scale: 2,
             backgroundColor: '#050508',
+            useCORS: true,
+            allowTaint: true,
             logging: false
         });
         
-        const imgData = canvas.toDataURL('image/png');
-        
-        // Create PDF
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`NEXUS-Ticket-${bookingData.bookingId}.pdf`);
+        // Convert to JPG and download
+        const link = document.createElement('a');
+        link.download = `NEXUS-Ticket-${bookingData.bookingId}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         
     } catch (error) {
-        console.error('PDF generation failed:', error);
-        alert('Failed to generate PDF. Please try again.');
+        console.error('Image generation failed:', error);
+        alert('Failed to generate image. Please try again.');
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
 }
 
+// Helper: Load script dynamically
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
 // Share ticket
 async function shareTicket() {
-    const shareData = {
-        title: `NEXUS Ticket - ${bookingData.eventName}`,
-        text: `I've booked ${bookingData.tickets} ticket(s) for ${bookingData.eventName} at ${bookingData.college.name} on ${bookingData.date}!`,
-        url: window.location.href
-    };
+    // Try to share image if available
+    try {
+        const ticketElement = document.getElementById('ticketWrapper');
+        const canvas = await html2canvas(ticketElement, {
+            scale: 2,
+            backgroundColor: '#050508',
+            useCORS: true,
+            logging: false
+        });
+        
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], `ticket-${bookingData.bookingId}.jpg`, { type: 'image/jpeg' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: `NEXUS Ticket - ${bookingData.eventName}`,
+                    text: `I've booked ${bookingData.tickets} ticket(s) for ${bookingData.eventName}!`
+                });
+            } else {
+                // Fallback to text share
+                shareText();
+            }
+        }, 'image/jpeg');
+        
+    } catch (err) {
+        shareText();
+    }
+}
+
+// Fallback text share
+function shareText() {
+    const text = `🎫 NEXUS TICKET\n\nEvent: ${bookingData.eventName}\nCollege: ${bookingData.college.name}\nDate: ${bookingData.date}\nTickets: ${bookingData.tickets}\nBooking ID: ${bookingData.bookingId}\n\nDownload the NEXUS app for your tickets!`;
     
     if (navigator.share) {
-        try {
-            await navigator.share(shareData);
-        } catch (err) {
-            console.log('Share cancelled');
-        }
+        navigator.share({
+            title: `NEXUS Ticket - ${bookingData.eventName}`,
+            text: text
+        });
     } else {
-        // Fallback - copy to clipboard
-        const text = `${shareData.title}\n${shareData.text}\nBooking ID: ${bookingData.bookingId}`;
         navigator.clipboard.writeText(text);
         alert('Ticket info copied to clipboard!');
     }
