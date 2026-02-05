@@ -1,323 +1,417 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Profile | Nexus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/variables.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/profile.css">
-    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="top-nav glass">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
         <div class="nav-content">
-            <a href="index.html" class="back-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <a href="index.html" class="nav-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
             </a>
             <h1>My Profile</h1>
-            <button class="icon-btn" onclick="Profile.showSettings()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-            </button>
+            <div class="nav-actions">
+                <button class="nav-btn" onclick="Profile.toggleNotifications()" id="notifBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                    <span class="notif-badge">3</span>
+                </button>
+                <a href="settings.html" class="nav-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </nav>
 
+    <!-- Notification Dropdown -->
+    <div class="notifications-panel hidden" id="notificationsPanel">
+        <div class="notif-header">
+            <h3>Notifications</h3>
+            <button class="mark-read" onclick="Profile.markAllRead()">Mark all read</button>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+    </div>
+
     <main class="profile-container">
-        
-        <!-- Hero Section: User Info & Points -->
-        <section class="profile-hero">
-            <div class="user-card glass">
-                <div class="user-avatar">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile" id="userAvatar">
-                    <div class="tier-badge gold" id="tierBadge">GOLD</div>
+
+        <!-- Hero: User + Wallet Combined -->
+        <section class="hero-section">
+            <div class="user-identity">
+                <div class="avatar-section">
+                    <div class="avatar-ring">
+                        <img src="https://i.pravatar.cc/150?img=11" alt="Profile" id="userAvatar">
+                    </div>
+                    <div class="tier-flair" id="tierFlair">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <span>GOLD</span>
+                    </div>
                 </div>
-                <div class="user-info">
+                <div class="identity-info">
                     <h2 id="userName">Rahul Sharma</h2>
-                    <p class="user-phone" id="userPhone">+91 98765 43210</p>
-                    <div class="user-meta">
-                        <span class="meta-item">
-                            <span class="meta-label">Member since</span>
-                            <span class="meta-value">Jan 2024</span>
-                        </span>
-                        <span class="divider"></span>
-                        <span class="meta-item">
-                            <span class="meta-label">KYC Status</span>
-                            <span class="meta-value verified">Verified</span>
-                        </span>
+                    <p class="user-contact" id="userContact">+91 98765 43210 • rahul@email.com</p>
+                    <div class="member-since">
+                        <span class="pulse-dot"></span>
+                        Nexus Member since Jan 2024
                     </div>
                 </div>
             </div>
 
-            <!-- Nexus Points Card -->
-            <div class="points-card premium-glass">
-                <div class="points-header">
-                    <div class="points-label">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Nexus Wallet Card -->
+            <div class="wallet-card">
+                <div class="wallet-bg">
+                    <div class="gradient-orb orb-1"></div>
+                    <div class="gradient-orb orb-2"></div>
+                </div>
+                <div class="wallet-content">
+                    <div class="wallet-header">
+                        <span class="wallet-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <line x1="2" y1="10" x2="22" y2="10"/>
+                            </svg>
+                            Nexus Wallet
+                        </span>
+                        <button class="add-money-btn" onclick="Profile.showAddMoney()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Money
+                        </button>
+                    </div>
+                    <div class="wallet-balance">
+                        <span class="currency">₹</span>
+                        <span class="amount" id="walletBalance">2,450</span>
+                        <span class="decimal">.00</span>
+                    </div>
+                    <div class="wallet-quick-actions">
+                        <button class="quick-action" onclick="Profile.quickAction('scan')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M8 12h8M12 8v8"/>
+                            </svg>
+                            Scan QR
+                        </button>
+                        <button class="quick-action" onclick="Profile.quickAction('transfer')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="17 1 21 5 17 9"/>
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/>
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                            </svg>
+                            Transfer
+                        </button>
+                        <button class="quick-action" onclick="Profile.quickAction('history')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="12 8 12 12 16 14"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nexus Club Tier Progress -->
+        <section class="club-section">
+            <div class="club-card">
+                <div class="club-info">
+                    <div class="club-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                         </svg>
-                        <span>Nexus Points</span>
-                    </div>
-                    <div class="tier-progress">
-                        <span class="tier-name">Gold Tier</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 65%"></div>
+                        <div>
+                            <h3>Nexus Club <span class="tier-name">Gold</span></h3>
+                            <p>You're in top 15% of Nexus users</p>
                         </div>
-                        <span class="points-to-next">3,400 pts to Platinum</span>
+                    </div>
+                    <div class="tier-benefits-preview">
+                        <span class="benefit-tag">5% Cashback</span>
+                        <span class="benefit-tag">Free Cancellation</span>
+                        <span class="benefit-tag">Priority Support</span>
                     </div>
                 </div>
-                
-                <div class="points-balance">
-                    <span class="balance-amount" id="pointsBalance">12,450</span>
-                    <span class="balance-value">= ₹12,450</span>
-                </div>
-
-                <div class="points-stats">
-                    <div class="stat">
-                        <span class="stat-label">Lifetime Earned</span>
-                        <span class="stat-value" id="lifetimePoints">24,900</span>
+                <div class="tier-progress-container">
+                    <div class="tier-markers">
+                        <div class="marker active">
+                            <div class="marker-dot"></div>
+                            <span>Silver</span>
+                        </div>
+                        <div class="marker current">
+                            <div class="marker-dot"></div>
+                            <span>Gold</span>
+                        </div>
+                        <div class="marker">
+                            <div class="marker-dot"></div>
+                            <span>Platinum</span>
+                        </div>
+                        <div class="marker">
+                            <div class="marker-dot"></div>
+                            <span>Elite</span>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-label">Redeemed</span>
-                        <span class="stat-value" id="redeemedPoints">12,450</span>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 65%"></div>
                     </div>
-                    <div class="stat highlight">
-                        <span class="stat-label">Cashback Rate</span>
-                        <span class="stat-value accent">5%</span>
+                    <div class="progress-stats">
+                        <span>12,450 points earned</span>
+                        <span class="next-tier">3,400 more to Platinum</span>
                     </div>
-                </div>
-
-                <div class="points-actions">
-                    <button class="btn-secondary" onclick="Profile.showRedeemModal()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                        Redeem Points
-                    </button>
-                    <button class="btn-ghost" onclick="Profile.showPointsHistory()">
-                        View History
-                    </button>
                 </div>
             </div>
         </section>
 
         <!-- Quick Stats Grid -->
-        <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon savings">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="23"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        <section class="stats-section">
+            <div class="stat-card primary">
+                <div class="stat-visual">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="circle" stroke-dasharray="85, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                     </svg>
+                    <div class="stat-icon">💰</div>
                 </div>
-                <div class="stat-info">
-                    <span class="stat-amount" id="totalSavings">₹24,500</span>
-                    <span class="stat-desc">Total Savings</span>
+                <div class="stat-details">
+                    <span class="stat-value" id="totalSavings">₹24,500</span>
+                    <span class="stat-label">Total Savings</span>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon tickets">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="M12 4v16"/>
-                        <path d="M2 10h20"/>
-                    </svg>
+                <div class="stat-visual blue">
+                    <div class="stat-icon">🎫</div>
                 </div>
-                <div class="stat-info">
-                    <span class="stat-amount" id="ticketsCount">47</span>
-                    <span class="stat-desc">Tickets Booked</span>
+                <div class="stat-details">
+                    <span class="stat-value" id="ticketsBooked">47</span>
+                    <span class="stat-label">Tickets Booked</span>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon resale">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 1l4 4-4 4"/>
-                        <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-                        <path d="M7 23l-4-4 4-4"/>
-                        <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-                    </svg>
+                <div class="stat-visual orange">
+                    <div class="stat-icon">🔄</div>
                 </div>
-                <div class="stat-info">
-                    <span class="stat-amount" id="resaleEarnings">₹8,200</span>
-                    <span class="stat-desc">Resale Earnings</span>
+                <div class="stat-details">
+                    <span class="stat-value" id="resaleDeals">12</span>
+                    <span class="stat-label">Resale Deals</span>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon refund">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="23 4 23 10 17 10"/>
-                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-                    </svg>
+                <div class="stat-visual pink">
+                    <div class="stat-icon">⭐</div>
                 </div>
-                <div class="stat-info">
-                    <span class="stat-amount" id="refundAmount">₹3,400</span>
-                    <span class="stat-desc">Refunds Processed</span>
+                <div class="stat-details">
+                    <span class="stat-value" id="nexusPoints">12.4k</span>
+                    <span class="stat-label">Points Balance</span>
                 </div>
             </div>
         </section>
 
-        <!-- Tab Navigation -->
-        <section class="tab-section">
-            <div class="tab-nav">
-                <button class="tab-btn active" data-tab="tickets" onclick="Profile.switchTab('tickets')">
+        <!-- Main Content Tabs -->
+        <section class="content-section">
+            <div class="tab-navigation">
+                <button class="tab-pill active" data-tab="dashboard" onclick="Profile.switchTab('dashboard')">
+                    Dashboard
+                </button>
+                <button class="tab-pill" data-tab="tickets" onclick="Profile.switchTab('tickets')">
                     My Tickets
                 </button>
-                <button class="tab-btn" data-tab="refunds" onclick="Profile.switchTab('refunds')">
-                    Refunds
+                <button class="tab-pill" data-tab="insights" onclick="Profile.switchTab('insights')">
+                    Insights
                 </button>
-                <button class="tab-btn" data-tab="payments" onclick="Profile.switchTab('payments')">
-                    UPI & Cards
-                </button>
-                <button class="tab-btn" data-tab="activity" onclick="Profile.switchTab('activity')">
-                    Activity
+                <button class="tab-pill" data-tab="wishlist" onclick="Profile.switchTab('wishlist')">
+                    Wishlist
                 </button>
             </div>
 
-            <!-- My Tickets Tab -->
-            <div class="tab-content active" id="ticketsTab">
-                <div class="filter-bar">
-                    <button class="filter-chip active" onclick="Profile.filterTickets('all')">All</button>
-                    <button class="filter-chip" onclick="Profile.filterTickets('active')">Active</button>
-                    <button class="filter-chip" onclick="Profile.filterTickets('past')">Past</button>
-                    <button class="filter-chip" onclick="Profile.filterTickets('resale')">Listed for Resale</button>
-                </div>
-
-                <div class="tickets-list" id="ticketsList">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Refunds Tab -->
-            <div class="tab-content" id="refundsTab">
-                <div class="refunds-summary">
-                    <div class="summary-card">
-                        <span class="summary-label">Processing</span>
-                        <span class="summary-amount processing">₹1,200</span>
-                    </div>
-                    <div class="summary-card">
-                        <span class="summary-label">Completed (30 days)</span>
-                        <span class="summary-amount success">₹3,400</span>
-                    </div>
-                </div>
+            <!-- Dashboard Tab -->
+            <div class="tab-pane active" id="dashboardTab">
                 
-                <div class="refunds-list" id="refundsList">
-                    <!-- Populated by JS -->
+                <!-- Recent Activity -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <button class="view-all" onclick="Profile.switchTab('tickets')">View All</button>
+                    </div>
+                    <div class="activity-list" id="recentActivity"></div>
+                </div>
+
+                <!-- Referral Card -->
+                <div class="referral-card">
+                    <div class="referral-content">
+                        <div class="referral-text">
+                            <h3>Invite Friends, Earn ₹100</h3>
+                            <p>Get ₹100 in wallet + 500 points for every friend who joins</p>
+                        </div>
+                        <div class="referral-code">
+                            <span class="code-text" id="referralCode">RAHUL100</span>
+                            <button class="copy-btn" onclick="Profile.copyReferral()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div class="referral-stats">
+                        <div class="ref-stat">
+                            <span class="ref-number">5</span>
+                            <span class="ref-label">Invited</span>
+                        </div>
+                        <div class="ref-stat">
+                            <span class="ref-number">3</span>
+                            <span class="ref-label">Joined</span>
+                        </div>
+                        <div class="ref-stat highlight">
+                            <span class="ref-number">₹300</span>
+                            <span class="ref-label">Earned</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Book -->
+                <div class="quick-book-section">
+                    <h3>Quick Book</h3>
+                    <div class="quick-grid">
+                        <a href="bus.html" class="quick-item">
+                            <div class="quick-icon bus">🚌</div>
+                            <span>Bus</span>
+                        </a>
+                        <a href="flight.html" class="quick-item">
+                            <div class="quick-icon flight">✈️</div>
+                            <span>Flight</span>
+                        </a>
+                        <a href="movies.html" class="quick-item">
+                            <div class="quick-icon movie">🎬</div>
+                            <span>Movie</span>
+                        </a>
+                        <a href="concerts.html" class="quick-item">
+                            <div class="quick-icon concert">🎵</div>
+                            <span>Event</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Payments Tab -->
-            <div class="tab-content" id="paymentsTab">
-                <div class="section-header">
-                    <h3>UPI IDs</h3>
-                    <button class="btn-text" onclick="Profile.addUPI()">+ Add New</button>
+            <!-- Tickets Tab -->
+            <div class="tab-pane" id="ticketsTab">
+                <div class="filter-chips">
+                    <button class="chip active" onclick="Profile.filterTickets('all')">All Tickets</button>
+                    <button class="chip" onclick="Profile.filterTickets('active')">Active</button>
+                    <button class="chip" onclick="Profile.filterTickets('past')">Past</button>
+                    <button class="chip" onclick="Profile.filterTickets('resale')">Listed</button>
                 </div>
-                
-                <div class="upi-list" id="upiList">
-                    <div class="upi-card primary">
-                        <div class="upi-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-                        </div>
-                        <div class="upi-details">
-                            <span class="upi-id">rahulsharma@oksbi</span>
-                            <span class="upi-bank">State Bank of India</span>
-                        </div>
-                        <span class="badge primary">Primary</span>
-                    </div>
+                <div class="tickets-grid" id="ticketsGrid"></div>
+            </div>
 
-                    <div class="upi-card">
-                        <div class="upi-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-                        </div>
-                        <div class="upi-details">
-                            <span class="upi-id">rahul@paytm</span>
-                            <span class="upi-bank">Paytm Payments Bank</span>
-                        </div>
+            <!-- Insights Tab -->
+            <div class="tab-pane" id="insightsTab">
+                <div class="insights-header">
+                    <div class="insight-card total-spent">
+                        <span class="insight-label">Total Spent (2024)</span>
+                        <span class="insight-value" id="totalSpent">₹1,24,500</span>
+                        <span class="insight-change positive">↑ 23% vs last year</span>
                     </div>
                 </div>
 
-                <div class="section-header" style="margin-top: 2rem;">
-                    <h3>Saved Cards</h3>
-                    <button class="btn-text" onclick="Profile.addCard()">+ Add Card</button>
+                <div class="category-breakdown">
+                    <h4>Spending by Category</h4>
+                    <div class="category-bars" id="categoryBars"></div>
                 </div>
 
-                <div class="cards-list">
-                    <div class="credit-card">
-                        <div class="card-chip"></div>
-                        <div class="card-number">•••• •••• •••• 4242</div>
-                        <div class="card-meta">
-                            <span class="card-holder">RAHUL SHARMA</span>
-                            <span class="card-expiry">12/25</span>
+                <div class="monthly-chart">
+                    <h4>Monthly Trend</h4>
+                    <div class="chart-container">
+                        <div class="chart-bars" id="monthlyBars"></div>
+                        <div class="chart-labels">
+                            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
                         </div>
-                        <div class="card-brand">VISA</div>
                     </div>
+                </div>
+
+                <div class="achievements">
+                    <h4>Achievements</h4>
+                    <div class="badge-grid" id="badgeGrid"></div>
                 </div>
             </div>
 
-            <!-- Activity Tab -->
-            <div class="tab-content" id="activityTab">
-                <div class="activity-timeline" id="activityTimeline">
-                    <!-- Populated by JS -->
+            <!-- Wishlist Tab -->
+            <div class="tab-pane" id="wishlistTab">
+                <div class="wishlist-header">
+                    <p>Saved events with price drop alerts</p>
                 </div>
+                <div class="wishlist-grid" id="wishlistGrid"></div>
             </div>
+
         </section>
     </main>
 
-    <!-- Redeem Points Modal -->
-    <div class="modal hidden" id="redeemModal">
-        <div class="modal-content glass">
-            <div class="modal-header">
-                <h3>Redeem Points</h3>
+    <!-- Add Money Modal -->
+    <div class="modal hidden" id="addMoneyModal">
+        <div class="modal-overlay" onclick="Profile.closeModal()"></div>
+        <div class="modal-sheet">
+            <div class="sheet-header">
+                <h3>Add Money to Wallet</h3>
                 <button class="close-btn" onclick="Profile.closeModal()">×</button>
             </div>
-            <div class="redeem-options">
-                <div class="redeem-card" onclick="Profile.redeem('cashback')">
-                    <div class="redeem-icon">₹</div>
-                    <div class="redeem-info">
-                        <h4>UPI Cashback</h4>
-                        <p>Transfer to bank account</p>
-                        <span class="redeem-rate">1 Point = ₹1</span>
-                    </div>
-                </div>
-                
-                <div class="redeem-card" onclick="Profile.redeem('travel')">
-                    <div class="redeem-icon">✈</div>
-                    <div class="redeem-info">
-                        <h4>Travel Voucher</h4>
-                        <p>Flat 10% extra value</p>
-                        <span class="redeem-rate">1000 pts = ₹1100</span>
-                    </div>
-                </div>
-
-                <div class="redeem-card" onclick="Profile.redeem('movie')">
-                    <div class="redeem-icon">🎬</div>
-                    <div class="redeem-info">
-                        <h4>Movie Tickets</h4>
-                        <p>Buy 1 Get 1 Free</p>
-                        <span class="redeem-rate">500 pts/ticket</span>
-                    </div>
-                </div>
+            <div class="amount-presets">
+                <button class="preset-btn" onclick="Profile.selectAmount(500)">₹500</button>
+                <button class="preset-btn" onclick="Profile.selectAmount(1000)">₹1000</button>
+                <button class="preset-btn active" onclick="Profile.selectAmount(2000)">₹2000</button>
+                <button class="preset-btn" onclick="Profile.selectAmount(5000)">₹5000</button>
             </div>
+            <div class="custom-amount">
+                <span class="currency-symbol">₹</span>
+                <input type="number" id="customAmount" placeholder="Enter amount" value="2000">
+            </div>
+            <div class="payment-methods">
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="upi" checked>
+                    <div class="option-content">
+                        <span class="option-icon">🏦</span>
+                        <div class="option-details">
+                            <span class="option-title">UPI</span>
+                            <span class="option-sub">rahulsharma@oksbi</span>
+                        </div>
+                    </div>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="card">
+                    <div class="option-content">
+                        <span class="option-icon">💳</span>
+                        <div class="option-details">
+                            <span class="option-title">Card</span>
+                            <span class="option-sub">•••• 4242</span>
+                        </div>
+                    </div>
+                </label>
+            </div>
+            <button class="confirm-btn" onclick="Profile.confirmAddMoney()">
+                Add ₹2,000
+            </button>
         </div>
     </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <script src="js/profile.js"></script>
 </body>
