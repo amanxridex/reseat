@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Join Squad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/group-join.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>NEXUS</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="btn-login" onclick="showLogin()">Login</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Invite Header -->
+        <div class="invite-header slide-in">
+            <div class="invite-badge">
+                <i class="fas fa-user-plus"></i>
+                You're Invited!
+            </div>
+            <h1 class="invite-title">Join the Squad</h1>
+            <p class="invite-subtitle"><span id="organizerName">Alex</span> invited you to split the cost for an epic event</p>
+        </div>
+
+        <!-- Event Card -->
+        <div class="event-card slide-in" style="animation-delay: 0.1s;">
+            <div class="event-image-container">
+                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=600" alt="Event" class="event-image" id="eventImage">
+                <div class="event-overlay">
+                    <div class="event-tag">Group Booking</div>
+                </div>
+            </div>
+            <div class="event-content">
+                <h2 class="event-name" id="eventName">Neon Nights Music Festival</h2>
+                <div class="event-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <span id="eventDate">Feb 15, 2025 • 8:00 PM</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="eventVenue">Cyber Arena, Downtown</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-ticket"></i>
+                        <span id="eventType">VIP Access</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Squad Preview -->
+        <div class="squad-card slide-in" style="animation-delay: 0.2s;">
+            <div class="squad-header">
+                <div class="squad-title">
+                    <i class="fas fa-users"></i>
+                    The Squad (<span id="squadCount">3</span>)
+                </div>
+                <div class="squad-status active">
+                    <span class="status-dot"></span>
+                    Active
+                </div>
+            </div>
+            
+            <div class="squad-members" id="squadMembers">
+                <!-- Members injected via JS -->
+            </div>
+
+            <div class="split-info-box">
+                <div class="split-row">
+                    <span>Total Cost</span>
+                    <span class="amount" id="totalCost">₹4,100</span>
+                </div>
+                <div class="split-row">
+                    <span>Split Type</span>
+                    <span class="badge-equal" id="splitType">Equal Split</span>
+                </div>
+                <div class="split-row highlight">
+                    <span>Your Share</span>
+                    <span class="your-share" id="yourShare">₹1,367</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="payment-card slide-in" style="animation-delay: 0.3s;">
+            <div class="payment-header">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <div class="payment-title">Secure Payment</div>
+                    <div class="payment-subtitle">Pay your share to confirm your spot</div>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-options">
+                <div class="payment-method selected" onclick="selectPayment('nexus')">
+                    <div class="method-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="method-info">
+                        <div class="method-name">Nexus Pay</div>
+                        <div class="method-desc">Instant & Secure</div>
+                    </div>
+                    <div class="check-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+
+                <div class="payment-method" onclick="selectPayment('upi')">
+                    <div class="method-icon" style="background: #3b82f6;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="method-info">
+                        <div class="method-name">UPI</div>
+                        <div class="method-desc">Google Pay, PhonePe</div>
+                    </div>
+                    <div class="check-circle"></div>
+                </div>
+
+                <div class="payment-method" onclick="selectPayment('card')">
+                    <div class="method-icon" style="background: #f59e0b;">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="method-info">
+                        <div class="method-name">Card</div>
+                        <div class="method-desc">Credit or Debit</div>
+                    </div>
+                    <div class="check-circle"></div>
+                </div>
+            </div>
+
+            <!-- UPI Input (hidden by default) -->
+            <div class="upi-input-container" id="upiInput" style="display: none;">
+                <input type="text" class="upi-input" placeholder="Enter UPI ID (e.g., name@upi)" id="upiId">
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+                <div class="trust-item">
+                    <i class="fas fa-lock"></i>
+                    <span>256-bit SSL</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-undo"></i>
+                    <span>Instant Refund</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-headset"></i>
+                    <span>24/7 Support</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perks Section -->
+        <div class="perks-card slide-in" style="animation-delay: 0.4s;">
+            <div class="perks-title">Why Join This Squad?</div>
+            <div class="perks-list">
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="perk-text">
+                        <div class="perk-name">Group Discount</div>
+                        <div class="perk-desc">Save 10% vs booking solo</div>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div class="perk-text">
+                        <div class="perk-name">Squad Management</div>
+                        <div class="perk-desc">Easy coordination with group chat</div>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="perk-text">
+                        <div class="perk-name">Payment Protection</div>
+                        <div class="perk-desc">Money held securely until confirmed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-bar slide-in" style="animation-delay: 0.5s;">
+            <button class="btn-decline" onclick="declineInvite()">
+                <i class="fas fa-times"></i>
+                Decline
+            </button>
+            <button class="btn-accept" onclick="acceptAndPay()" id="payBtn">
+                <i class="fas fa-check-circle"></i>
+                Pay ₹1,367 & Join
+            </button>
+        </div>
+
+        <!-- Timer Notice -->
+        <div class="timer-notice slide-in" style="animation-delay: 0.6s;">
+            <i class="fas fa-clock"></i>
+            <span>Your spot is reserved for <strong id="timer">14:59</strong></span>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal-overlay" id="processingModal">
+        <div class="modal-content">
+            <div class="processing-animation">
+                <div class="spinner"></div>
+                <div class="pulse-ring"></div>
+            </div>
+            <div class="modal-title">Processing Payment</div>
+            <div class="modal-text">Securely connecting to payment gateway...</div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content success">
+            <div class="success-animation">
+                <div class="checkmark-circle">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="confetti">
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                    <div class="confetti-piece"></div>
+                </div>
+            </div>
+            <div class="modal-title">Welcome to the Squad! 🎉</div>
+            <div class="modal-text">
+                Your payment of <strong id="successAmount">₹1,367</strong> was successful.
+                You're now part of the <strong id="successEvent">Neon Nights</strong> squad!
+            </div>
+            <div class="success-actions">
+                <button class="btn-primary" onclick="openChat()">
+                    <i class="fas fa-comments"></i>
+                    Join Squad Chat
+                </button>
+                <button class="btn-secondary" onclick="viewTicket()">
+                    <i class="fas fa-ticket-alt"></i>
+                    View My Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decline Modal -->
+    <div class="modal-overlay" id="declineModal">
+        <div class="modal-content">
+            <div class="modal-icon warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="modal-title">Are you sure?</div>
+            <div class="modal-text">
+                If you decline, your spot will be offered to someone else. You can always join later if spots are available.
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeDeclineModal()">Cancel</button>
+                <button class="btn-danger" onclick="confirmDecline()">Decline Invite</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <span id="toastMessage">Message</span>
+    </div>
+
+    <script src="js/group-join.js"></script>
+</body>
+</html>

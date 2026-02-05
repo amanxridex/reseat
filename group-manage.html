@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Manage Squad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/group-manage.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div>
+                <div class="nav-title">Squad Management</div>
+                <div class="nav-subtitle">Organizer Dashboard</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="nav-icon" onclick="refreshData()">
+                <i class="fas fa-sync-alt" id="refreshIcon"></i>
+            </div>
+            <div class="nav-icon" onclick="showSettings()">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="nav-icon" onclick="openProfile()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Status Bar -->
+        <div class="status-bar slide-in">
+            <div class="status-item active">
+                <i class="fas fa-check-circle"></i>
+                <span>Created</span>
+            </div>
+            <div class="status-line completed"></div>
+            <div class="status-item active">
+                <i class="fas fa-users"></i>
+                <span>Collecting</span>
+            </div>
+            <div class="status-line" id="statusLine2"></div>
+            <div class="status-item" id="statusConfirmed">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Confirmed</span>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid slide-in" style="animation-delay: 0.1s;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statMembers">4/5</div>
+                    <div class="stat-label">Members</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--success), #34d399);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statPaid">3</div>
+                    <div class="stat-label">Paid</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--warning), #fbbf24);">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statPending">1</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--accent-orange), #f97316);">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="statCollected">₹4.1k</div>
+                    <div class="stat-label">Collected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card -->
+        <div class="event-card slide-in" style="animation-delay: 0.2s;">
+            <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=600" alt="Event" class="event-image" id="eventImage">
+            <div class="event-content">
+                <div class="event-badge">Group Booking Active</div>
+                <h2 class="event-name" id="eventName">Neon Nights Music Festival</h2>
+                <div class="event-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <span id="eventDate">Feb 15, 2025 • 8:00 PM</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="eventVenue">Cyber Arena, Downtown</span>
+                    </div>
+                </div>
+                <div class="event-actions">
+                    <button class="btn-icon" onclick="viewEventDetails()">
+                        <i class="fas fa-external-link-alt"></i>
+                        View Event
+                    </button>
+                    <button class="btn-icon" onclick="shareGroup()">
+                        <i class="fas fa-share-alt"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Progress -->
+        <div class="progress-card slide-in" style="animation-delay: 0.3s;">
+            <div class="progress-header">
+                <div>
+                    <h3 class="progress-title">Payment Progress</h3>
+                    <p class="progress-subtitle">Track who's paid their share</p>
+                </div>
+                <div class="progress-percentage" id="progressPercent">75%</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 75%;"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>₹4,100 of ₹5,467 collected</span>
+                    <span class="progress-remaining" id="progressRemaining">₹1,367 remaining</span>
+                </div>
+            </div>
+
+            <div class="progress-actions">
+                <button class="btn-remind-all" onclick="remindAll()">
+                    <i class="fas fa-bell"></i>
+                    Remind All Pending
+                </button>
+            </div>
+        </div>
+
+        <!-- Members List -->
+        <div class="members-card slide-in" style="animation-delay: 0.4s;">
+            <div class="members-header">
+                <h3 class="members-title">
+                    <i class="fas fa-users"></i>
+                    Squad Members
+                </h3>
+                <button class="btn-add" onclick="addMember()">
+                    <i class="fas fa-plus"></i>
+                    Add
+                </button>
+            </div>
+
+            <div class="members-list" id="membersList">
+                <!-- Members injected via JS -->
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="transactions-card slide-in" style="animation-delay: 0.5s;">
+            <div class="transactions-header">
+                <h3 class="transactions-title">
+                    <i class="fas fa-history"></i>
+                    Recent Activity
+                </h3>
+                <button class="btn-view-all" onclick="viewAllTransactions()">
+                    View All
+                </button>
+            </div>
+            
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transactions injected via JS -->
+            </div>
+        </div>
+
+        <!-- Group Chat Preview -->
+        <div class="chat-card slide-in" style="animation-delay: 0.6s;">
+            <div class="chat-header">
+                <div class="chat-info">
+                    <h3 class="chat-title">
+                        <i class="fas fa-comments"></i>
+                        Squad Chat
+                    </h3>
+                    <span class="chat-status">
+                        <span class="online-dot"></span>
+                        4 online
+                    </span>
+                </div>
+                <button class="btn-open-chat" onclick="openChat()">
+                    Open
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="chat-preview" id="chatPreview">
+                <!-- Last messages injected via JS -->
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-card slide-in" style="animation-delay: 0.7s;">
+            <h3 class="actions-title">Quick Actions</h3>
+            <div class="actions-grid">
+                <button class="action-btn" onclick="editSplit()">
+                    <div class="action-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <span>Edit Split</span>
+                </button>
+                <button class="action-btn" onclick="changeEvent()">
+                    <div class="action-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <span>Change Event</span>
+                </button>
+                <button class="action-btn" onclick="cancelGroup()">
+                    <div class="action-icon" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <span style="color: var(--danger);">Cancel Group</span>
+                </button>
+                <button class="action-btn" onclick="downloadTickets()">
+                    <div class="action-icon" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <span style="color: var(--success);">Get Tickets</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-card slide-in" style="animation-delay: 0.8s;">
+            <div class="danger-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Danger Zone</span>
+            </div>
+            <p class="danger-text">These actions cannot be undone. Be careful!</p>
+            <button class="btn-danger-action" onclick="dissolveGroup()">
+                <i class="fas fa-trash-alt"></i>
+                Dissolve Group & Refund All
+            </button>
+        </div>
+    </div>
+
+    <!-- Member Actions Modal -->
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Member Actions</h3>
+                <button class="modal-close" onclick="closeMemberModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="member-profile" id="modalMemberProfile">
+                <!-- Member info injected via JS -->
+            </div>
+            
+            <div class="action-list">
+                <button class="action-item" onclick="sendReminder()">
+                    <i class="fas fa-bell"></i>
+                    <span>Send Payment Reminder</span>
+                </button>
+                <button class="action-item" onclick="waivePayment()">
+                    <i class="fas fa-gift"></i>
+                    <span>Waive Payment (Mark as Paid)</span>
+                </button>
+                <button class="action-item" onclick="changeAmount()">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit Amount</span>
+                </button>
+                <button class="action-item" onclick="makeAdmin()">
+                    <i class="fas fa-crown"></i>
+                    <span>Make Co-Organizer</span>
+                </button>
+                <button class="action-item danger" onclick="removeMember()">
+                    <i class="fas fa-user-minus"></i>
+                    <span>Remove from Squad</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modal-overlay" id="addMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Squad Member</h3>
+                <button class="modal-close" onclick="closeAddMemberModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="add-methods">
+                <button class="add-method-btn" onclick="addFromContacts()">
+                    <i class="fas fa-address-book"></i>
+                    <span>From Contacts</span>
+                </button>
+                <button class="add-method-btn" onclick="shareLink()">
+                    <i class="fas fa-link"></i>
+                    <span>Share Invite Link</span>
+                </button>
+                <button class="add-method-btn" onclick="addByUsername()">
+                    <i class="fas fa-user-plus"></i>
+                    <span>By Username</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content confirm">
+            <div class="confirm-icon" id="confirmIcon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 class="confirm-title" id="confirmTitle">Are you sure?</h3>
+            <p class="confirm-text" id="confirmText">This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn-danger" id="confirmBtn" onclick="executeConfirm()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <span id="toastMessage">Message</span>
+    </div>
+
+    <script src="js/group-manage.js"></script>
+</body>
+</html>
