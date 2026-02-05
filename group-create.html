@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Create Group Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/group-create.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div>
+                <div class="nav-title">Group Booking</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="nav-icon">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="nav-icon" onclick="openProfile()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-dot"><i class="fas fa-check"></i></div>
+                <div class="step-label">Chat</div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step active">
+                <div class="step-dot">2</div>
+                <div class="step-label">Split</div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <div class="step-dot">3</div>
+                <div class="step-label">Manage</div>
+            </div>
+        </div>
+
+        <!-- Event Preview -->
+        <div class="glass-card slide-in">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div>
+                    <div class="card-title">Event Details</div>
+                    <div class="card-subtitle">Review before splitting</div>
+                </div>
+            </div>
+            <div class="event-preview" id="eventPreview">
+                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400" alt="Event" class="event-image" id="eventImage">
+                <div class="event-details">
+                    <div>
+                        <div class="event-name" id="eventName">Neon Nights Music Festival</div>
+                        <div class="event-meta">
+                            <div><i class="fas fa-calendar"></i> <span id="eventDate">Feb 15, 2025 • 8:00 PM</span></div>
+                            <div><i class="fas fa-map-marker-alt"></i> <span id="eventVenue">Cyber Arena, Downtown</span></div>
+                            <div><i class="fas fa-ticket"></i> <span id="eventType">VIP Access</span></div>
+                        </div>
+                    </div>
+                    <div class="event-price" id="totalPrice">₹4,500</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Select Members -->
+        <div class="glass-card slide-in" style="animation-delay: 0.1s;">
+            <div class="section-title">
+                <span>Select Squad Members</span>
+                <span class="member-count" id="memberCount">0 selected</span>
+            </div>
+            <div class="members-scroll" id="membersScroll">
+                <!-- Members injected via JS -->
+                <div class="add-member" onclick="showAddMemberModal()">
+                    <div class="add-btn">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="member-name">Add New</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Split Calculator -->
+        <div class="split-calculator slide-in" style="animation-delay: 0.2s;">
+            <div class="calc-header">
+                <div class="calc-title">
+                    <i class="fas fa-calculator" style="margin-right: 0.5rem; color: var(--accent-purple);"></i>
+                    Payment Split
+                </div>
+                <div class="split-type">
+                    <button class="split-btn active" onclick="setSplitType('equal')">Equal</button>
+                    <button class="split-btn" onclick="setSplitType('custom')">Custom</button>
+                </div>
+            </div>
+
+            <div class="amount-display">
+                <div class="amount-item">
+                    <div class="amount-label">Total Amount</div>
+                    <div class="amount-value total" id="displayTotal">₹4,500</div>
+                </div>
+                <div class="amount-divider"></div>
+                <div class="amount-item">
+                    <div class="amount-label">Per Person</div>
+                    <div class="amount-value" id="displayPerPerson">₹1,500</div>
+                </div>
+                <div class="amount-divider"></div>
+                <div class="amount-item">
+                    <div class="amount-label">You Pay</div>
+                    <div class="amount-value" id="displayYouPay" style="color: var(--accent-orange);">₹1,500</div>
+                </div>
+            </div>
+
+            <div class="split-details" id="splitDetails">
+                <!-- Individual splits injected via JS -->
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="glass-card slide-in" style="animation-delay: 0.3s;">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2)); color: var(--success);">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div>
+                    <div class="card-title">Payment Method</div>
+                    <div class="card-subtitle">How you'll collect from the squad</div>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <div class="payment-card selected" onclick="selectPayment('nexus')">
+                    <div class="payment-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); color: white;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="payment-name">Nexus Pay</div>
+                    <div class="payment-desc">Instant split & settle</div>
+                </div>
+                <div class="payment-card" onclick="selectPayment('upi')">
+                    <div class="payment-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="payment-name">UPI Apps</div>
+                    <div class="payment-desc">Google Pay, PhonePe</div>
+                </div>
+                <div class="payment-card" onclick="selectPayment('card')">
+                    <div class="payment-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="payment-name">Card</div>
+                    <div class="payment-desc">Credit/Debit card</div>
+                </div>
+                <div class="payment-card" onclick="selectPayment('cash')">
+                    <div class="payment-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="payment-name">Cash</div>
+                    <div class="payment-desc">Collect in person</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invite & Share -->
+        <div class="glass-card slide-in" style="animation-delay: 0.4s;">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2)); color: #3b82f6;">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <div>
+                    <div class="card-title">Invite Squad</div>
+                    <div class="card-subtitle">Share link or invite directly</div>
+                </div>
+            </div>
+
+            <div class="invite-section">
+                <div class="invite-link-box">
+                    <input type="text" class="invite-input" value="nexus.app/join/neon-nights-xyz" readonly id="inviteLink">
+                    <button class="invite-btn" onclick="copyLink()">
+                        <i class="fas fa-copy"></i>
+                        Copy
+                    </button>
+                </div>
+                
+                <div class="share-options">
+                    <button class="share-btn whatsapp" onclick="shareTo('whatsapp')">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button class="share-btn telegram" onclick="shareTo('telegram')">
+                        <i class="fab fa-telegram-plane"></i>
+                    </button>
+                    <button class="share-btn instagram" onclick="shareTo('instagram')">
+                        <i class="fab fa-instagram"></i>
+                    </button>
+                    <button class="share-btn twitter" onclick="shareTo('twitter')">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="summary-box slide-in" style="animation-delay: 0.5s;">
+            <div class="summary-row">
+                <span>Base Price (3 tickets)</span>
+                <span class="summary-value" id="summaryBase">₹4,500</span>
+            </div>
+            <div class="summary-row">
+                <span>Group Discount (10%)</span>
+                <span class="summary-value discount" id="summaryDiscount">-₹450</span>
+            </div>
+            <div class="summary-row">
+                <span>Platform Fee</span>
+                <span class="summary-value">₹50</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Amount</span>
+                <span class="summary-value" id="summaryTotal" style="font-size: 1.25rem; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">₹4,100</span>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar slide-in" style="animation-delay: 0.6s;">
+            <button class="btn btn-secondary" onclick="saveDraft()">
+                <i class="fas fa-save"></i>
+                Save Draft
+            </button>
+            <button class="btn btn-primary" onclick="createGroupBooking()" id="createBtn">
+                <i class="fas fa-users"></i>
+                Create Group
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="modal-title">Group Created!</div>
+            <div class="modal-text">
+                Your squad booking for <strong id="modalEventName">Neon Nights</strong> is ready. 
+                Share the link with your friends to collect payments.
+            </div>
+            <button class="btn btn-primary" onclick="goToManage()" style="width: 100%;">
+                Manage Group
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <span id="toastMessage">Link copied to clipboard!</span>
+    </div>
+
+    <script src="js/group-create.js"></script>
+</body>
+</html>
