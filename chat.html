@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat | Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="chat-nav">
+        <div class="nav-content">
+            <a href="index.html" class="back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div class="nav-title">
+                <h1>Community</h1>
+                <span class="online-count">
+                    <span class="pulse-dot"></span>
+                    12,847 online
+                </span>
+            </div>
+            <button class="nav-btn" onclick="Chat.showNewRoom()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-bar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" placeholder="Search rooms, events, topics..." id="searchInput">
+        </div>
+    </div>
+
+    <main class="chat-container">
+
+        <!-- Trending Now -->
+        <section class="section trending">
+            <div class="section-header">
+                <h2>🔥 Trending Now</h2>
+                <a href="#" class="see-all">See all</a>
+            </div>
+            <div class="trending-scroll" id="trendingList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Your Rooms -->
+        <section class="section your-rooms">
+            <div class="section-header">
+                <h2>Your Rooms</h2>
+                <span class="room-count">3 active</span>
+            </div>
+            <div class="room-list" id="yourRoomsList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Global Channels -->
+        <section class="section global-channels">
+            <div class="section-header">
+                <h2>Global Channels</h2>
+            </div>
+            <div class="channel-grid" id="channelGrid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Events Near You -->
+        <section class="section nearby">
+            <div class="section-header">
+                <h2>📍 Events Near You</h2>
+                <span class="location">Mumbai</span>
+            </div>
+            <div class="event-rooms" id="nearbyList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Suggested Groups -->
+        <section class="section suggested">
+            <div class="section-header">
+                <h2>Find Your Squad</h2>
+            </div>
+            <div class="squad-list" id="squadList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- New Room Modal -->
+    <div class="modal hidden" id="newRoomModal">
+        <div class="modal-overlay" onclick="Chat.closeModal()"></div>
+        <div class="modal-sheet">
+            <div class="sheet-header">
+                <h3>Create Room</h3>
+                <button class="close-btn" onclick="Chat.closeModal()">×</button>
+            </div>
+            <div class="room-types">
+                <button class="type-btn active" data-type="event">
+                    <span class="type-icon">🎉</span>
+                    <span>Event</span>
+                </button>
+                <button class="type-btn" data-type="travel">
+                    <span class="type-icon">🚌</span>
+                    <span>Travel</span>
+                </button>
+                <button class="type-btn" data-type="topic">
+                    <span class="type-icon">💬</span>
+                    <span>Topic</span>
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Room Name</label>
+                <input type="text" placeholder="e.g., IPL Mumbai Gang" id="roomName">
+            </div>
+            <div class="form-group">
+                <label>Event/Route (Optional)</label>
+                <input type="text" placeholder="Link to event or bus route" id="roomLink">
+            </div>
+            <button class="create-btn" onclick="Chat.createRoom()">Create Room</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>
