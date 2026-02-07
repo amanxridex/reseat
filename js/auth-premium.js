@@ -9,9 +9,16 @@ const firebaseConfig = {
     measurementId: "G-WKB1BPY3NM"
 };
 
+// Supabase Config - YOUR REAL CREDENTIALS
+const SUPABASE_URL = 'https://qoqyghkdxf nmkqtlypfo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcXlnaGtkeGZubWtxdGx5cGZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NTU2MjMsImV4cCI6MjA4NjAzMTYyM30.z6QGNCtsCuWocPFe4ybdTSuIYlHfLE61EZ5L7A3TKgY';
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+
+// Initialize Supabase
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Backend API URL
 const API_BASE = 'https://nexus-api-hkfu.onrender.com';
@@ -274,8 +281,33 @@ const Auth = {
         document.body.style.opacity = '0';
         
         setTimeout(() => {
-            window.location.href = 'index.html';
+            // Check if profile exists in Supabase, then redirect accordingly
+            this.checkProfileAndRedirect(user);
         }, 400);
+    },
+    
+    // NEW: Check if user has profile in Supabase
+    async checkProfileAndRedirect(user) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('firebase_uid', user.uid)
+                .single();
+            
+            if (data) {
+                // Profile exists, save and go to main app
+                localStorage.setItem('nexus_profile', JSON.stringify(data));
+                window.location.href = 'index.html';
+            } else {
+                // No profile, go to complete profile page
+                window.location.href = 'complete-profile.html';
+            }
+        } catch (e) {
+            // Error or no profile found, go to complete profile
+            console.log('No profile found, redirecting to complete profile');
+            window.location.href = 'complete-profile.html';
+        }
     },
     
     async syncWithBackend(idToken) {
@@ -296,7 +328,8 @@ const Auth = {
     
     redirectToApp(user) {
         if (window.location.pathname.includes('auth.html')) {
-            window.location.href = 'index.html';
+            // Check profile before redirecting
+            this.checkProfileAndRedirect(user);
         }
     },
     
@@ -398,6 +431,7 @@ const Auth = {
     logout() {
         auth.signOut().then(() => {
             localStorage.removeItem('nexus_auth');
+            localStorage.removeItem('nexus_profile');
             sessionStorage.removeItem('nexus_session');
             window.location.href = 'auth.html';
         });
