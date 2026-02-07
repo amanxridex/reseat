@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus — Complete Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth-premium.css">
+    <style>
+        .profile-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--accent);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .google-info {
+            background: var(--bg-elevated);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .google-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        .required {
+            color: var(--accent);
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-light"></div>
+    <div class="mesh-gradient"></div>
+    
+    <div class="auth-form-container" style="min-height: 100vh;">
+        <div class="form-card profile-form">
+            <div class="profile-header">
+                <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile">
+                <h2>Complete Your Profile</h2>
+                <p>Just a few more details to get started</p>
+            </div>
+            
+            <div class="google-info">
+                <p>Signed in as <strong id="userEmail">loading...</strong></p>
+            </div>
+            
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" placeholder="Rahul Sharma" required>
+                    <div class="error-message" id="nameError">Please enter your name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mobile Number <span class="required">*</span></label>
+                    <div class="phone-input-wrapper">
+                        <span class="country-code">+91</span>
+                        <input type="tel" id="mobileNumber" placeholder="98765 43210" maxlength="10" required>
+                    </div>
+                    <div class="error-message" id="phoneError">Please enter valid 10-digit number</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="dob" max="2006-12-31">
+                </div>
+                
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="city" placeholder="Mumbai, Delhi, Bangalore...">
+                </div>
+                
+                <button type="submit" class="primary-button" style="margin-top: 1rem;" id="submitBtn">
+                    <span class="btn-text">Complete Setup</span>
+                    <div class="btn-loader hidden"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtADU0CC6S0y7yk4zp0DZ2HXWxi-INyBU",
+            authDomain: "nexus-user-c7579.firebaseapp.com",
+            projectId: "nexus-user-c7579",
+            storageBucket: "nexus-user-c7579.firebasestorage.app",
+            messagingSenderId: "622138563060",
+            appId: "1:622138563060:web:8329098be5c5c0f0a741a1"
+        };
+        
+        // Supabase Config - YOUR REAL CREDENTIALS
+        const SUPABASE_URL = 'https://qoqyghkdxf nmkqtlypfo.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcXlnaGtkeGZubWtxdGx5cGZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NTU2MjMsImV4cCI6MjA4NjAzMTYyM30.z6QGNCtsCuWocPFe4ybdTSuIYlHfLE61EZ5L7A3TKgY';
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // Initialize Supabase
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Pre-fill from Google
+            document.getElementById('userPhoto').src = user.photoURL || 'https://via.placeholder.com/80';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('fullName').value = user.displayName || '';
+            
+            // Check if profile already exists
+            checkExistingProfile(user.uid);
+        });
+        
+        // Check if user already has profile
+        async function checkExistingProfile(firebaseUid) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('firebase_uid', firebaseUid)
+                    .single();
+                
+                if (data) {
+                    // Profile exists, redirect to app
+                    localStorage.setItem('nexus_profile', JSON.stringify(data));
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                // No profile found, stay on page
+                console.log('No existing profile, please complete');
+            }
+        }
+        
+        // Form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Session expired. Please login again.');
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            // Validate
+            const name = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('mobileNumber').value.trim();
+            
+            if (!name) {
+                document.getElementById('nameError').classList.add('show');
+                return;
+            }
+            if (phone.length !== 10) {
+                document.getElementById('phoneError').classList.add('show');
+                return;
+            }
+            
+            // Hide errors
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            
+            // Show loading
+            const btn = document.getElementById('submitBtn');
+            btn.querySelector('.btn-text').classList.add('hidden');
+            btn.querySelector('.btn-loader').classList.remove('hidden');
+            btn.disabled = true;
+            
+            const profileData = {
+                firebase_uid: currentUser.uid,
+                email: currentUser.email,
+                full_name: name,
+                phone: '+91' + phone,
+                dob: document.getElementById('dob').value || null,
+                city: document.getElementById('city').value || null,
+                avatar_url: currentUser.photoURL,
+                updated_at: new Date().toISOString()
+            };
+            
+            try {
+                // Save to Supabase
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .insert([profileData])
+                    .select();
+                
+                if (error) throw error;
+                
+                // Save locally
+                localStorage.setItem('nexus_profile', JSON.stringify(profileData));
+                
+                // Success - redirect to app
+                document.body.style.transition = 'opacity 0.4s ease';
+                document.body.style.opacity = '0';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 400);
+                
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Failed to save profile: ' + error.message);
+                
+                // Reset button
+                btn.querySelector('.btn-text').classList.remove('hidden');
+                btn.querySelector('.btn-loader').classList.add('hidden');
+                btn.disabled = false;
+            }
+        });
+        
+        // Only numbers for mobile
+        document.getElementById('mobileNumber').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            document.getElementById('phoneError').classList.remove('show');
+        });
+        
+        document.getElementById('fullName').addEventListener('input', () => {
+            document.getElementById('nameError').classList.remove('show');
+        });
+    </script>
+</body>
+</html>
