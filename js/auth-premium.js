@@ -10,7 +10,7 @@ const firebaseConfig = {
 };
 
 // Supabase Config - YOUR REAL CREDENTIALS
-const SUPABASE_URL = 'https://qoqyghkdxf nmkqtlypfo.supabase.co';
+const SUPABASE_URL = 'https://qoqyghkdxfnmkqtlypfo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcXlnaGtkeGZubWtxdGx5cGZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NTU2MjMsImV4cCI6MjA4NjAzMTYyM30.z6QGNCtsCuWocPFe4ybdTSuIYlHfLE61EZ5L7A3TKgY';
 
 // Initialize Firebase
