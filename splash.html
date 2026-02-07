@@ -9,36 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/splash.css">
     
-    <!-- CRITICAL FIX: Check auth status before redirecting -->
+    <!-- CRITICAL: Check auth before showing splash -->
     <script>
         (function() {
-            // Check if already shown this session
-            if(sessionStorage.getItem('splash_shown_this_session')) {
+            // If already shown this session, redirect immediately
+            if(sessionStorage.getItem('splash_shown')) {
                 const auth = localStorage.getItem('nexus_auth');
-                const session = sessionStorage.getItem('nexus_session');
-                
-                // FIX: Redirect based on auth status!
-                if(auth || session) {
-                    window.location.replace('index.html');
-                } else {
-                    window.location.replace('auth.html');
-                }
+                window.location.replace(auth ? 'index.html' : 'auth.html');
                 return;
-            }
-            
-            // Check if coming from internal navigation (profile/settings -> index)
-            // In that case, index.html should handle the view, not splash
-            const referrer = document.referrer;
-            if(referrer && referrer.includes(window.location.hostname)) {
-                // Coming from our own site, skip splash but check auth first
-                const auth = localStorage.getItem('nexus_auth');
-                const session = sessionStorage.getItem('nexus_session');
-                
-                if(auth || session) {
-                    window.location.replace('index.html');
-                } else {
-                    window.location.replace('auth.html');
-                }
             }
         })();
     </script>
@@ -87,67 +65,6 @@
         </div>
     </div>
 
-    <script>
-        const Splash = {
-            progress: 0,
-            
-            init() {
-                this.startLoading();
-                this.animateLoadingText();
-            },
-            
-            startLoading() {
-                const bar = document.getElementById('progressBar');
-                const interval = setInterval(() => {
-                    const increment = Math.random() * 15 + 5;
-                    this.progress = Math.min(this.progress + increment, 100);
-                    bar.style.width = this.progress + '%';
-                    
-                    if(this.progress >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => this.complete(), 300);
-                    }
-                }, 150);
-            },
-            
-            animateLoadingText() {
-                const texts = ['Initializing', 'Checking session', 'Loading assets', 'Almost there'];
-                let index = 0;
-                const statusEl = document.getElementById('loadingStatus');
-                
-                setInterval(() => {
-                    if(this.progress < 100) {
-                        index = (index + 1) % texts.length;
-                        statusEl.style.opacity = '0';
-                        setTimeout(() => {
-                            statusEl.textContent = texts[index];
-                            statusEl.style.opacity = '1';
-                        }, 200);
-                    }
-                }, 600);
-            },
-            
-            complete() {
-                // Mark as shown for this browser session
-                sessionStorage.setItem('splash_shown_this_session', 'true');
-                
-                // CRITICAL FIX: Check auth and redirect accordingly
-                const auth = localStorage.getItem('nexus_auth');
-                const session = sessionStorage.getItem('nexus_session');
-                
-                // If authenticated -> index, else -> auth
-                const target = (auth || session) ? 'index.html' : 'auth.html';
-                
-                document.body.style.opacity = '0';
-                document.body.style.transition = 'opacity 0.5s ease';
-                
-                setTimeout(() => {
-                    window.location.replace(target);
-                }, 500);
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => Splash.init());
-    </script>
+    <script src="js/splash.js"></script>
 </body>
 </html>
