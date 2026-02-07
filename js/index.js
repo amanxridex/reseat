@@ -1,14 +1,14 @@
 // index.js - Main app functionality
 
-// Auth check FIRST - before anything else
+// Auth check - redirect to auth if not logged in
 (function() {
     const auth = localStorage.getItem('nexus_auth');
     const session = sessionStorage.getItem('nexus_session');
     
     if (!auth && !session) {
-        // Not logged in - redirect to splash
-        window.location.replace('splash.html');
-        return; // Stop execution
+        // Not logged in - go to auth page
+        window.location.replace('auth.html');
+        return;
     }
 })();
 
@@ -22,7 +22,7 @@ function loadUserData() {
     const profile = localStorage.getItem('nexus_profile');
     
     if (!auth) {
-        window.location.replace('splash.html');
+        window.location.replace('auth.html');
         return;
     }
     
@@ -49,28 +49,5 @@ function logout() {
     localStorage.removeItem('nexus_auth');
     localStorage.removeItem('nexus_profile');
     sessionStorage.removeItem('nexus_session');
-    sessionStorage.removeItem('splash_shown');
     window.location.replace('auth.html');
-}
-
-// Optional: Fetch fresh user data from Supabase
-async function fetchUserProfile() {
-    const auth = JSON.parse(localStorage.getItem('nexus_auth'));
-    if (!auth) return;
-    
-    try {
-        const response = await fetch('https://nexus-api-hkfu.onrender.com/api/users/profile', {
-            headers: {
-                'Authorization': `Bearer ${auth.idToken}`
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('nexus_profile', JSON.stringify(data.profile));
-            loadUserData();
-        }
-    } catch (error) {
-        console.error('Failed to fetch profile:', error);
-    }
 }
