@@ -39,7 +39,7 @@ const Auth = {
     checkAuthState() {
         auth.onAuthStateChanged((user) => {
             if (user) {
-                this.redirectToApp(user);
+                console.log('User already logged in');
             }
         });
     },
