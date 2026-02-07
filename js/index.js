@@ -1,17 +1,28 @@
 // index.js - Main app functionality
 
-// Load user data on page load
+// Auth check FIRST - before anything else
+(function() {
+    const auth = localStorage.getItem('nexus_auth');
+    const session = sessionStorage.getItem('nexus_session');
+    
+    if (!auth && !session) {
+        // Not logged in - redirect to splash
+        window.location.replace('splash.html');
+        return; // Stop execution
+    }
+})();
+
+// Only runs if authenticated
 document.addEventListener('DOMContentLoaded', () => {
     loadUserData();
 });
 
-// Load user from localStorage
 function loadUserData() {
     const auth = localStorage.getItem('nexus_auth');
     const profile = localStorage.getItem('nexus_profile');
     
     if (!auth) {
-        window.location.href = 'splash.html';
+        window.location.replace('splash.html');
         return;
     }
     
@@ -34,15 +45,12 @@ function loadUserData() {
     }
 }
 
-// Logout function
 function logout() {
-    // Clear all storage
     localStorage.removeItem('nexus_auth');
     localStorage.removeItem('nexus_profile');
     sessionStorage.removeItem('nexus_session');
-    
-    // Redirect to auth page
-    window.location.href = 'auth.html';
+    sessionStorage.removeItem('splash_shown');
+    window.location.replace('auth.html');
 }
 
 // Optional: Fetch fresh user data from Supabase
@@ -60,7 +68,7 @@ async function fetchUserProfile() {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('nexus_profile', JSON.stringify(data.profile));
-            loadUserData(); // Refresh UI
+            loadUserData();
         }
     } catch (error) {
         console.error('Failed to fetch profile:', error);
