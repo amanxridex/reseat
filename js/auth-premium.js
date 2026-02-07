@@ -1,20 +1,24 @@
-// Firebase Configuration - REPLACE WITH YOUR CONFIG
+// Firebase Configuration - YOUR REAL CONFIG
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+    apiKey: "AIzaSyCtADU0CC6S0y7yk4zp0DZ2HXWxi-INyBU",
+    authDomain: "nexus-user-c7579.firebaseapp.com",
+    projectId: "nexus-user-c7579",
+    storageBucket: "nexus-user-c7579.firebasestorage.app",
+    messagingSenderId: "622138563060",
+    appId: "1:622138563060:web:8329098be5c5c0f0a741a1",
+    measurementId: "G-WKB1BPY3NM"
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+// Backend API URL
+const API_BASE = 'https://nexus-api-hkfu.onrender.com';
+
 const Auth = {
-    mode: 'login', // 'login' or 'signup'
-    step: 'phone', // 'phone' or 'otp'
+    mode: 'login',
+    step: 'phone',
     confirmationResult: null,
     resendTimer: null,
     
@@ -25,18 +29,15 @@ const Auth = {
         this.checkAuthState();
     },
     
-    // Check if user is already logged in
     checkAuthState() {
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // User is signed in, redirect to app
                 this.redirectToApp(user);
             }
         });
     },
     
     setupRecaptcha() {
-        // Initialize invisible reCAPTCHA
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
             'size': 'invisible',
             'callback': (response) => {
@@ -48,10 +49,8 @@ const Auth = {
     setupPhoneInput() {
         const input = document.getElementById('phoneInput');
         input.addEventListener('input', (e) => {
-            // Only numbers
             e.target.value = e.target.value.replace(/\D/g, '');
             
-            // Auto-advance visual feedback
             if(e.target.value.length === 10) {
                 e.target.parentElement.style.borderColor = 'var(--accent)';
             } else {
@@ -59,7 +58,6 @@ const Auth = {
             }
         });
         
-        // Enter key support
         input.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') this.handleAction();
         });
@@ -101,10 +99,8 @@ const Auth = {
             const result = await auth.signInWithPopup(provider);
             const user = result.user;
             
-            // Get ID token for backend verification
             const idToken = await user.getIdToken();
             
-            // Store token and user data
             await this.completeAuth(user, idToken, 'google');
             
         } catch (error) {
@@ -118,18 +114,15 @@ const Auth = {
         this.mode = this.mode === 'login' ? 'signup' : 'login';
         const isLogin = this.mode === 'login';
         
-        // Update UI
         document.getElementById('formTitle').textContent = isLogin ? 'Welcome back' : 'Create account';
         document.getElementById('formSubtitle').textContent = isLogin ? 'Sign in to continue your journey' : 'Start your journey with Nexus';
         document.getElementById('toggleText').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
         document.getElementById('toggleBtn').textContent = isLogin ? 'Sign up' : 'Sign in';
         document.getElementById('actionBtn').querySelector('.btn-text').textContent = 'Continue';
         
-        // Reset form
         this.step = 'phone';
         this.showPhoneStep();
         
-        // Show/hide name field for signup
         const nameGroup = document.getElementById('nameGroup');
         if(!isLogin) {
             nameGroup.classList.remove('hidden');
@@ -153,7 +146,6 @@ const Auth = {
         }
     },
     
-    // SEND REAL OTP VIA FIREBASE
     async sendOTP() {
         this.setLoading(true);
         const phoneNumber = '+91' + document.getElementById('phoneInput').value;
@@ -168,7 +160,6 @@ const Auth = {
             this.step = 'otp';
             this.showOTPStep();
             
-            // Focus first OTP
             setTimeout(() => {
                 document.querySelector('.otp-digit').focus();
             }, 100);
@@ -181,7 +172,6 @@ const Auth = {
             this.showToast(this.getErrorMessage(error));
             console.error('SMS send error:', error);
             
-            // Reset reCAPTCHA if needed
             if (error.code === 'auth/invalid-app-credential') {
                 window.recaptchaVerifier.render().then(function(widgetId) {
                     grecaptcha.reset(widgetId);
@@ -206,11 +196,9 @@ const Auth = {
         document.getElementById('formSubtitle').textContent = this.mode === 'login' ? 'Sign in to continue your journey' : 'Start your journey with Nexus';
         document.getElementById('phoneInput').value = '';
         
-        // Clear OTP inputs
         document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
     },
     
-    // VERIFY REAL OTP
     async verifyOTP() {
         const inputs = document.querySelectorAll('.otp-digit');
         const code = Array.from(inputs).map(i => i.value).join('');
@@ -226,7 +214,6 @@ const Auth = {
             const result = await this.confirmationResult.confirm(code);
             const user = result.user;
             
-            // Update profile if signup mode
             if(this.mode === 'signup') {
                 const name = document.getElementById('nameInput').value;
                 if(name) {
@@ -234,10 +221,8 @@ const Auth = {
                 }
             }
             
-            // Get ID token for backend
             const idToken = await user.getIdToken();
             
-            // Success animation
             inputs.forEach(input => {
                 input.style.borderColor = 'var(--accent)';
                 input.style.background = 'rgba(16, 185, 129, 0.1)';
@@ -264,9 +249,7 @@ const Auth = {
         }
     },
     
-    // COMPLETE AUTHENTICATION
     async completeAuth(user, idToken, method) {
-        // Store auth data
         const authData = {
             uid: user.uid,
             phone: user.phoneNumber || null,
@@ -281,14 +264,12 @@ const Auth = {
         localStorage.setItem('nexus_auth', JSON.stringify(authData));
         sessionStorage.setItem('nexus_session', 'active');
         
-        // Optional: Send token to your backend for verification/session creation
         try {
             await this.syncWithBackend(idToken);
         } catch (e) {
             console.log('Backend sync optional');
         }
         
-        // Redirect
         document.body.style.transition = 'opacity 0.4s ease';
         document.body.style.opacity = '0';
         
@@ -297,10 +278,8 @@ const Auth = {
         }, 400);
     },
     
-    // SYNC WITH YOUR VERCEL BACKEND
     async syncWithBackend(idToken) {
-        // Replace with your Vercel backend URL
-        const response = await fetch('https://your-backend.vercel.app/api/auth/verify', {
+        const response = await fetch(`${API_BASE}/api/auth/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -316,7 +295,6 @@ const Auth = {
     },
     
     redirectToApp(user) {
-        // If already logged in, redirect to main app
         if (window.location.pathname.includes('auth.html')) {
             window.location.href = 'index.html';
         }
@@ -417,7 +395,6 @@ const Auth = {
         return errorMessages[error.code] || 'Something went wrong. Please try again.';
     },
     
-    // LOGOUT FUNCTION (call from other pages)
     logout() {
         auth.signOut().then(() => {
             localStorage.removeItem('nexus_auth');
@@ -427,7 +404,6 @@ const Auth = {
     }
 };
 
-// Add shake animation
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {
