@@ -1,11 +1,48 @@
+// Firebase Configuration - REPLACE WITH YOUR CONFIG
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
 const Auth = {
     mode: 'login', // 'login' or 'signup'
     step: 'phone', // 'phone' or 'otp'
-    hardcodedOTP: '9090',
+    confirmationResult: null,
+    resendTimer: null,
     
     init() {
         this.setupOTPInputs();
         this.setupPhoneInput();
+        this.setupRecaptcha();
+        this.checkAuthState();
+    },
+    
+    // Check if user is already logged in
+    checkAuthState() {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, redirect to app
+                this.redirectToApp(user);
+            }
+        });
+    },
+    
+    setupRecaptcha() {
+        // Initialize invisible reCAPTCHA
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved
+            }
+        });
     },
     
     setupPhoneInput() {
@@ -33,7 +70,7 @@ const Auth = {
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
                 if(e.target.value) {
-                    if(index < 3) inputs[index + 1].focus();
+                    if(index < 5) inputs[index + 1].focus();
                 }
             });
             
@@ -46,7 +83,7 @@ const Auth = {
             
             input.addEventListener('paste', (e) => {
                 e.preventDefault();
-                const paste = e.clipboardData.getData('text').slice(0, 4);
+                const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
                 for(let i = 0; i < paste.length; i++) {
                     if(inputs[i]) inputs[i].value = paste[i];
                 }
@@ -55,13 +92,35 @@ const Auth = {
         });
     },
     
+    // GOOGLE SIGN IN
+    async signInWithGoogle() {
+        this.setLoading(true);
+        const provider = new firebase.auth.GoogleAuthProvider();
+        
+        try {
+            const result = await auth.signInWithPopup(provider);
+            const user = result.user;
+            
+            // Get ID token for backend verification
+            const idToken = await user.getIdToken();
+            
+            // Store token and user data
+            await this.completeAuth(user, idToken, 'google');
+            
+        } catch (error) {
+            this.setLoading(false);
+            this.showToast(this.getErrorMessage(error));
+            console.error('Google sign in error:', error);
+        }
+    },
+    
     toggleMode() {
         this.mode = this.mode === 'login' ? 'signup' : 'login';
         const isLogin = this.mode === 'login';
         
         // Update UI
         document.getElementById('formTitle').textContent = isLogin ? 'Welcome back' : 'Create account';
-        document.getElementById('formSubtitle').textContent = isLogin ? 'Enter your mobile number to continue' : 'Start your journey with Nexus';
+        document.getElementById('formSubtitle').textContent = isLogin ? 'Sign in to continue your journey' : 'Start your journey with Nexus';
         document.getElementById('toggleText').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
         document.getElementById('toggleBtn').textContent = isLogin ? 'Sign up' : 'Sign in';
         document.getElementById('actionBtn').querySelector('.btn-text').textContent = 'Continue';
@@ -74,7 +133,6 @@ const Auth = {
         const nameGroup = document.getElementById('nameGroup');
         if(!isLogin) {
             nameGroup.classList.remove('hidden');
-            // Insert before phone
             const phoneGroup = document.getElementById('phoneGroup');
             phoneGroup.parentNode.insertBefore(nameGroup, phoneGroup);
         } else {
@@ -95,11 +153,17 @@ const Auth = {
         }
     },
     
-    sendOTP() {
+    // SEND REAL OTP VIA FIREBASE
+    async sendOTP() {
         this.setLoading(true);
+        const phoneNumber = '+91' + document.getElementById('phoneInput').value;
         
-        // Simulate API
-        setTimeout(() => {
+        try {
+            this.confirmationResult = await auth.signInWithPhoneNumber(
+                phoneNumber, 
+                window.recaptchaVerifier
+            );
+            
             this.setLoading(false);
             this.step = 'otp';
             this.showOTPStep();
@@ -109,9 +173,21 @@ const Auth = {
                 document.querySelector('.otp-digit').focus();
             }, 100);
             
-            // Show toast
-            this.showToast('Code sent: 9090');
-        }, 1500);
+            this.showToast('Verification code sent!');
+            this.startResendTimer();
+            
+        } catch (error) {
+            this.setLoading(false);
+            this.showToast(this.getErrorMessage(error));
+            console.error('SMS send error:', error);
+            
+            // Reset reCAPTCHA if needed
+            if (error.code === 'auth/invalid-app-credential') {
+                window.recaptchaVerifier.render().then(function(widgetId) {
+                    grecaptcha.reset(widgetId);
+                });
+            }
+        }
     },
     
     showOTPStep() {
@@ -119,7 +195,7 @@ const Auth = {
         document.getElementById('nameGroup')?.classList.add('hidden');
         document.getElementById('otpGroup').classList.remove('hidden');
         document.getElementById('actionBtn').querySelector('.btn-text').textContent = 'Verify';
-        document.getElementById('formSubtitle').textContent = 'Enter the 4-digit code sent to your phone';
+        document.getElementById('formSubtitle').textContent = 'Enter the 6-digit code sent to your phone';
     },
     
     showPhoneStep() {
@@ -127,15 +203,52 @@ const Auth = {
         if(this.mode === 'signup') document.getElementById('nameGroup').classList.remove('hidden');
         document.getElementById('otpGroup').classList.add('hidden');
         document.getElementById('actionBtn').querySelector('.btn-text').textContent = 'Continue';
-        document.getElementById('formSubtitle').textContent = this.mode === 'login' ? 'Enter your mobile number to continue' : 'Start your journey with Nexus';
+        document.getElementById('formSubtitle').textContent = this.mode === 'login' ? 'Sign in to continue your journey' : 'Start your journey with Nexus';
         document.getElementById('phoneInput').value = '';
+        
+        // Clear OTP inputs
+        document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
     },
     
-    verifyOTP() {
+    // VERIFY REAL OTP
+    async verifyOTP() {
         const inputs = document.querySelectorAll('.otp-digit');
-        const entered = Array.from(inputs).map(i => i.value).join('');
+        const code = Array.from(inputs).map(i => i.value).join('');
         
-        if(entered !== this.hardcodedOTP) {
+        if(code.length !== 6) {
+            this.shakeInput(document.querySelector('.otp-container'));
+            return;
+        }
+        
+        this.setLoading(true);
+        
+        try {
+            const result = await this.confirmationResult.confirm(code);
+            const user = result.user;
+            
+            // Update profile if signup mode
+            if(this.mode === 'signup') {
+                const name = document.getElementById('nameInput').value;
+                if(name) {
+                    await user.updateProfile({ displayName: name });
+                }
+            }
+            
+            // Get ID token for backend
+            const idToken = await user.getIdToken();
+            
+            // Success animation
+            inputs.forEach(input => {
+                input.style.borderColor = 'var(--accent)';
+                input.style.background = 'rgba(16, 185, 129, 0.1)';
+            });
+            
+            setTimeout(() => {
+                this.completeAuth(user, idToken, 'phone');
+            }, 500);
+            
+        } catch (error) {
+            this.setLoading(false);
             inputs.forEach(input => {
                 input.style.borderColor = '#ef4444';
                 input.style.animation = 'shake 0.4s';
@@ -146,40 +259,36 @@ const Auth = {
                     input.style.animation = '';
                 });
             }, 400);
-            return;
+            
+            this.showToast('Invalid code. Please try again.');
         }
-        
-        // Success
-        inputs.forEach(input => {
-            input.style.borderColor = 'var(--accent)';
-            input.style.background = 'rgba(16, 185, 129, 0.1)';
-        });
-        
-        this.setLoading(true);
-        
-        // Complete authentication and redirect
-        setTimeout(() => {
-            this.completeAuth();
-        }, 800);
     },
     
-    completeAuth() {
-        // Get user details
-        const phone = document.getElementById('phoneInput').value;
-        const name = document.getElementById('nameInput')?.value || 'User';
+    // COMPLETE AUTHENTICATION
+    async completeAuth(user, idToken, method) {
+        // Store auth data
+        const authData = {
+            uid: user.uid,
+            phone: user.phoneNumber || null,
+            email: user.email || null,
+            name: user.displayName || document.getElementById('nameInput')?.value || 'User',
+            photoURL: user.photoURL || null,
+            method: method,
+            idToken: idToken,
+            timestamp: Date.now()
+        };
         
-        // Set auth flag in localStorage (persists across sessions)
-        localStorage.setItem('nexus_auth', JSON.stringify({
-            timestamp: Date.now(),
-            phone: phone,
-            name: name,
-            isLoggedIn: true
-        }));
-        
-        // Also set session flag (cleared when browser closes)
+        localStorage.setItem('nexus_auth', JSON.stringify(authData));
         sessionStorage.setItem('nexus_session', 'active');
         
-        // Smooth fade out before redirect
+        // Optional: Send token to your backend for verification/session creation
+        try {
+            await this.syncWithBackend(idToken);
+        } catch (e) {
+            console.log('Backend sync optional');
+        }
+        
+        // Redirect
         document.body.style.transition = 'opacity 0.4s ease';
         document.body.style.opacity = '0';
         
@@ -188,8 +297,53 @@ const Auth = {
         }, 400);
     },
     
+    // SYNC WITH YOUR VERCEL BACKEND
+    async syncWithBackend(idToken) {
+        // Replace with your Vercel backend URL
+        const response = await fetch('https://your-backend.vercel.app/api/auth/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                timestamp: Date.now()
+            })
+        });
+        
+        if (!response.ok) throw new Error('Backend sync failed');
+        return await response.json();
+    },
+    
+    redirectToApp(user) {
+        // If already logged in, redirect to main app
+        if (window.location.pathname.includes('auth.html')) {
+            window.location.href = 'index.html';
+        }
+    },
+    
+    startResendTimer() {
+        let timeLeft = 60;
+        const timerEl = document.getElementById('otpTimer');
+        const resendBtn = document.getElementById('resendBtn');
+        
+        resendBtn.classList.add('hidden');
+        timerEl.classList.remove('hidden');
+        
+        this.resendTimer = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = `Resend code in ${timeLeft}s`;
+            
+            if(timeLeft <= 0) {
+                clearInterval(this.resendTimer);
+                timerEl.classList.add('hidden');
+                resendBtn.classList.remove('hidden');
+            }
+        }, 1000);
+    },
+    
     resendOTP() {
-        this.showToast('Code resent: 9090');
+        this.sendOTP();
     },
     
     setLoading(isLoading) {
@@ -218,7 +372,11 @@ const Auth = {
     },
     
     showToast(message) {
+        const existing = document.querySelector('.toast-notification');
+        if(existing) existing.remove();
+        
         const toast = document.createElement('div');
+        toast.className = 'toast-notification';
         toast.style.cssText = `
             position: fixed;
             bottom: 2rem;
@@ -242,6 +400,30 @@ const Auth = {
             toast.style.animation = 'slideDown 0.3s ease-out';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
+    },
+    
+    getErrorMessage(error) {
+        const errorMessages = {
+            'auth/invalid-phone-number': 'Invalid phone number format',
+            'auth/too-many-requests': 'Too many attempts. Please try again later.',
+            'auth/captcha-check-failed': 'Verification failed. Please try again.',
+            'auth/popup-closed-by-user': 'Sign in cancelled',
+            'auth/popup-blocked': 'Popup blocked. Please allow popups for this site.',
+            'auth/account-exists-with-different-credential': 'Account exists with different sign-in method',
+            'auth/network-request-failed': 'Network error. Please check your connection.',
+            'auth/invalid-verification-code': 'Invalid verification code',
+            'auth/code-expired': 'Code expired. Please request a new one.'
+        };
+        return errorMessages[error.code] || 'Something went wrong. Please try again.';
+    },
+    
+    // LOGOUT FUNCTION (call from other pages)
+    logout() {
+        auth.signOut().then(() => {
+            localStorage.removeItem('nexus_auth');
+            sessionStorage.removeItem('nexus_session');
+            window.location.href = 'auth.html';
+        });
     }
 };
 
