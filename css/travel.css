@@ -432,3 +432,39 @@ body {
         border-right: 1px solid var(--border);
     }
 }
+
+:root {
+    --bg: #000000;
+    --card-bg: #0a0a0a;
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #10b981;
+    --train: #3b82f6;
+    --bus: #f59e0b;
+    --metro: #ec4899;  /* Pink/magenta for metro */
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --font: 'Space Grotesk', sans-serif;
+}
+
+/* Add these styles after the bus-card styles */
+
+.card-icon.metro {
+    background: rgba(236, 72, 153, 0.1);
+    border: 1px solid rgba(236, 72, 153, 0.2);
+    color: var(--metro);
+}
+
+.metro-card:hover {
+    border-color: rgba(236, 72, 153, 0.4);
+    box-shadow: 0 20px 40px rgba(236, 72, 153, 0.15);
+}
+
+.card:hover .card-icon.metro {
+    background: rgba(236, 72, 153, 0.2);
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+}
+
+.metro-card:hover .card-arrow {
+    background: var(--metro);
+    border-color: var(--metro);
+}
