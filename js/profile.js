@@ -97,9 +97,9 @@ const Profile = {
         document.getElementById('nexusPoints').textContent = (this.user.points / 1000).toFixed(1) + 'k';
         
         // Update member since text
-        const memberSinceEl = document.querySelector('.member-since');
+        const memberSinceEl = document.getElementById('memberSinceText');
         if (memberSinceEl) {
-            memberSinceEl.innerHTML = `<span class="pulse-dot"></span>Nexus Member since ${this.user.memberSince}`;
+            memberSinceEl.textContent = `Nexus Member since ${this.user.memberSince}`;
         }
     },
     
@@ -118,13 +118,6 @@ const Profile = {
             return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         }
         return new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    },
-    
-    logout() {
-        localStorage.removeItem('nexus_auth');
-        localStorage.removeItem('nexus_profile');
-        sessionStorage.removeItem('nexus_session');
-        window.location.replace('auth.html');
     },
     
     toggleNotifications() {
