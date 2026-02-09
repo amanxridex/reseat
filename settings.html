@@ -47,7 +47,7 @@
                         <span class="setting-desc">Name, phone, email</span>
                     </div>
                     <div class="setting-action">
-                        <span class="value-preview">Rahul Sharma</span>
+                        <span class="value-preview" id="personalInfoPreview">Loading...</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <div class="setting-item">
+                <div class="setting-item" onclick="Settings.openKYC()">
                     <div class="setting-icon kyc">
                         <i class="fas fa-shield-alt"></i>
                     </div>
@@ -74,7 +74,7 @@
                         <span class="setting-desc">Identity verification</span>
                     </div>
                     <div class="setting-action">
-                        <span class="status-badge verified">Verified</span>
+                        <span class="status-badge" id="kycStatus">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                         <span class="setting-label">Language</span>
                     </div>
                     <div class="setting-action">
-                        <span class="value-preview">English</span>
+                        <span class="value-preview" id="currentLanguage">English</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
             <h2 class="section-title">Payments</h2>
             
             <div class="settings-card">
-                <div class="setting-item" onclick="window.location.href='profile.html#payments'">
+                <div class="setting-item" onclick="Settings.managePayments()">
                     <div class="setting-icon payment">
                         <i class="fas fa-credit-card"></i>
                     </div>
@@ -162,6 +162,7 @@
                         <span class="setting-desc">UPI, cards, wallets</span>
                     </div>
                     <div class="setting-action">
+                        <span class="value-preview" id="paymentMethodsCount">2 saved</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -191,7 +192,7 @@
                         <span class="setting-desc">Budget control</span>
                     </div>
                     <div class="setting-action">
-                        <span class="value-preview">₹50,000</span>
+                        <span class="value-preview" id="spendingLimit">₹50,000</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -218,7 +219,8 @@
                         </label>
                     </div>
                 </div>
-
+                
+                <!-- Convert to Cash -->
                 <div class="setting-item" onclick="Settings.convertPoints()">
                     <div class="setting-icon convert">
                         <i class="fas fa-exchange-alt"></i>
@@ -228,7 +230,7 @@
                         <span class="setting-desc">Transfer to bank account</span>
                     </div>
                     <div class="setting-action">
-                        <span class="value-preview">12,450 pts</span>
+                        <span class="value-preview" id="pointsBalance">0 pts</span>
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -369,27 +371,95 @@
         </div>
     </main>
 
-    <!-- Modals -->
+    <!-- Edit Profile Modal -->
     <div id="editModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('editModal')"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Edit Profile</h3>
-                <button class="close-btn" onclick="Settings.closeModal()">×</button>
+                <button class="close-btn" onclick="Settings.closeModal('editModal')">×</button>
             </div>
             <div class="modal-body">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="editName" value="Rahul Sharma">
+                    <input type="text" id="editName" placeholder="Enter your name">
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="editPhone" placeholder="+91 00000 00000">
                 </div>
                 <div class="input-group">
                     <label>Email</label>
-                    <input type="email" id="editEmail" value="rahul@email.com">
+                    <input type="email" id="editEmail" placeholder="your@email.com">
                 </div>
                 <button class="btn-primary" onclick="Settings.saveProfile()">Save Changes</button>
             </div>
         </div>
     </div>
 
-    <script src="js/settings.js"></script>
-</body>
-</html>
+    <!-- KYC Verification Modal -->
+    <div id="kycModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('kycModal')"></div>
+        <div class="modal-content kyc-modal">
+            <div class="modal-header">
+                <h3>Verify with DigiLocker</h3>
+                <button class="close-btn" onclick="Settings.closeModal('kycModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="kyc-intro">
+                    <div class="kyc-icon">🔐</div>
+                    <p>Complete your KYC verification instantly using DigiLocker. This is 100% secure and takes less than 2 minutes.</p>
+                </div>
+                
+                <div class="kyc-steps">
+                    <div class="kyc-step" id="kycStep1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Link DigiLocker</h4>
+                            <p>Connect your DigiLocker account</p>
+                            <button class="btn-secondary" onclick="Settings.linkDigiLocker()">
+                                <i class="fas fa-link"></i> Link Now
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="kyc-step disabled" id="kycStep2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Select Documents</h4>
+                            <p>Choose Aadhaar/PAN/Driving License</p>
+                            <div class="doc-options">
+                                <label class="doc-option">
+                                    <input type="radio" name="kycDoc" value="aadhaar" checked>
+                                    <span>Aadhaar</span>
+                                </label>
+                                <label class="doc-option">
+                                    <input type="radio" name="kycDoc" value="pan">
+                                    <span>PAN</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="kyc-step disabled" id="kycStep3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Verify Identity</h4>
+                            <p>Complete OTP verification</p>
+                            <button class="btn-secondary" onclick="Settings.verifyKYC()" id="verifyKycBtn">
+                                Verify Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kyc-status hidden" id="kycVerificationStatus">
+                    <div class="spinner"></div>
+                    <p>Verifying your identity...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+     
