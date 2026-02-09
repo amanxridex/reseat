@@ -219,7 +219,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <!-- Convert to Cash -->
                 <div class="setting-item" onclick="Settings.convertPoints()">
                     <div class="setting-icon convert">
@@ -462,4 +462,145 @@
     </div>
 
     <!-- Change Password Modal -->
-     
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('passwordModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button class="close-btn" onclick="Settings.closeModal('passwordModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                </div>
+                <div class="input-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password">
+                </div>
+                <div class="input-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                </div>
+                <button class="btn-primary" onclick="Settings.savePassword()">Update Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Selection Modal -->
+    <div id="languageModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('languageModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Language</h3>
+                <button class="close-btn" onclick="Settings.closeModal('languageModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="language-list">
+                    <div class="language-option active" onclick="Settings.selectLanguage('English')">
+                        <span>English</span>
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="language-option" onclick="Settings.selectLanguage('Hindi')">
+                        <span>हिंदी (Hindi)</span>
+                        <i class="fas fa-check hidden"></i>
+                    </div>
+                    <div class="language-option" onclick="Settings.selectLanguage('Tamil')">
+                        <span>தமிழ் (Tamil)</span>
+                        <i class="fas fa-check hidden"></i>
+                    </div>
+                    <div class="language-option" onclick="Settings.selectLanguage('Telugu')">
+                        <span>తెలుగు (Telugu)</span>
+                        <i class="fas fa-check hidden"></i>
+                    </div>
+                    <div class="language-option" onclick="Settings.selectLanguage('Marathi')">
+                        <span>मराठी (Marathi)</span>
+                        <i class="fas fa-check hidden"></i>
+                    </div>
+                    <div class="language-option" onclick="Settings.selectLanguage('Bengali')">
+                        <span>বাংলা (Bengali)</span>
+                        <i class="fas fa-check hidden"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spending Limit Modal -->
+    <div id="limitModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('limitModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Monthly Spending Limit</h3>
+                <button class="close-btn" onclick="Settings.closeModal('limitModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Set a monthly budget to control your spending. You'll receive alerts when you reach 80% of your limit.</p>
+                <div class="input-group">
+                    <label>Limit Amount (₹)</label>
+                    <input type="number" id="limitAmount" placeholder="50000" min="1000" step="1000">
+                </div>
+                <div class="limit-presets">
+                    <button onclick="Settings.setLimitPreset(25000)">₹25k</button>
+                    <button onclick="Settings.setLimitPreset(50000)">₹50k</button>
+                    <button onclick="Settings.setLimitPreset(100000)">₹1L</button>
+                </div>
+                <button class="btn-primary" onclick="Settings.saveSpendingLimit()">Set Limit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Convert Points Modal -->
+    <div id="convertModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('convertModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Convert Points to Cash</h3>
+                <button class="close-btn" onclick="Settings.closeModal('convertModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="points-balance-display">
+                    <span class="points-label">Available Points</span>
+                    <span class="points-value" id="convertPointsBalance">0</span>
+                </div>
+                <div class="conversion-rate">
+                    <span>1 Point = ₹1.00</span>
+                </div>
+                <div class="input-group">
+                    <label>Points to Convert</label>
+                    <input type="number" id="convertAmount" placeholder="Enter points" min="1000" step="100">
+                </div>
+                <div class="conversion-result">
+                    <span>You will receive: <strong id="conversionResult">₹0</strong></span>
+                </div>
+                <button class="btn-primary" onclick="Settings.confirmConvertPoints()">Convert Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Methods Modal -->
+    <div id="paymentModal" class="modal hidden">
+        <div class="modal-overlay" onclick="Settings.closeModal('paymentModal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payment Methods</h3>
+                <button class="close-btn" onclick="Settings.closeModal('paymentModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-methods-list" id="paymentMethodsList">
+                    <!-- Dynamically populated -->
+                </div>
+                <button class="btn-secondary add-payment-btn" onclick="Settings.addPaymentMethod()">
+                    <i class="fas fa-plus"></i> Add New Payment Method
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/settings.js"></script>
+</body>
+</html>
