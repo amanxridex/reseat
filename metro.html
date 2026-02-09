@@ -1,0 +1,180 @@
+<script>
+    // Auth Guard
+    (function() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        if(!auth && !session) {
+            window.location.href = 'splash.html';
+        }
+    })();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro | Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/metro.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <i class="fas fa-bolt"></i>
+            <span>NEXUS</span>
+        </div>
+        <div class="nav-actions">
+            <button class="icon-btn"><i class="fas fa-search"></i></button>
+            <button class="icon-btn" style="position: relative;">
+                <i class="fas fa-ticket-alt"></i>
+                <span class="badge">2</span>
+            </button>
+            <button class="icon-btn" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 class="title">
+            <span class="word" style="--delay: 0s">SELECT</span>
+            <span class="word accent" style="--delay: 0.1s">METRO</span>
+        </h1>
+        <p class="subtitle">Choose your city metro</p>
+
+        <!-- Metro Cards Grid -->
+        <div class="metro-grid">
+            <!-- Delhi Metro -->
+            <div class="metro-card" onclick="selectMetro('delhi')" style="--delay: 0.2s">
+                <div class="metro-logo">
+                    <img src="assets/delhimetro.png" alt="Delhi Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Delhi Metro</h3>
+                    <p>DMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Noida Metro -->
+            <div class="metro-card" onclick="selectMetro('noida')" style="--delay: 0.25s">
+                <div class="metro-logo">
+                    <img src="assets/noidametro.png" alt="Noida Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Noida Metro</h3>
+                    <p>NMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Rapid Metro Gurgaon -->
+            <div class="metro-card" onclick="selectMetro('gurgaon')" style="--delay: 0.3s">
+                <div class="metro-logo">
+                    <img src="assets/rapidmetrogurgaon.png" alt="Rapid Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Rapid Metro</h3>
+                    <p>Gurgaon</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Agra Metro -->
+            <div class="metro-card" onclick="selectMetro('agra')" style="--delay: 0.35s">
+                <div class="metro-logo">
+                    <img src="assets/agrametro.png" alt="Agra Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Agra Metro</h3>
+                    <p>UPMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Jaipur Metro -->
+            <div class="metro-card" onclick="selectMetro('jaipur')" style="--delay: 0.4s">
+                <div class="metro-logo">
+                    <img src="assets/jaipurmetro.png" alt="Jaipur Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Jaipur Metro</h3>
+                    <p>JMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Navi Mumbai Metro -->
+            <div class="metro-card" onclick="selectMetro('navimumbai')" style="--delay: 0.45s">
+                <div class="metro-logo">
+                    <img src="assets/navimumbaimetro.png" alt="Navi Mumbai Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Navi Mumbai Metro</h3>
+                    <p>NMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Lucknow Metro -->
+            <div class="metro-card" onclick="selectMetro('lucknow')" style="--delay: 0.5s">
+                <div class="metro-logo">
+                    <img src="assets/lucknowmetro.png" alt="Lucknow Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Lucknow Metro</h3>
+                    <p>UPMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Kanpur Metro -->
+            <div class="metro-card" onclick="selectMetro('kanpur')" style="--delay: 0.55s">
+                <div class="metro-logo">
+                    <img src="assets/kanpurmetro.png" alt="Kanpur Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Kanpur Metro</h3>
+                    <p>UPMRC</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Chennai Metro -->
+            <div class="metro-card" onclick="selectMetro('chennai')" style="--delay: 0.6s">
+                <div class="metro-logo">
+                    <img src="assets/chennaimetro.png" alt="Chennai Metro">
+                </div>
+                <div class="metro-info">
+                    <h3>Chennai Metro</h3>
+                    <p>CMRL</p>
+                </div>
+                <div class="metro-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/metro.js"></script>
+</body>
+</html>
