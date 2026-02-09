@@ -26,14 +26,13 @@
                         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
                         <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
                     </svg>
-                    <span class="notif-badge">3</span>
+                    <span class="notif-badge" id="notifBadge">3</span>
                 </button>
-                <a href="settings.html" class="nav-btn">
+                <button class="nav-btn" onclick="Profile.logout()" title="Logout">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
                     </svg>
-                </a>
+                </button>
             </div>
         </div>
     </nav>
@@ -54,21 +53,21 @@
             <div class="user-identity">
                 <div class="avatar-section">
                     <div class="avatar-ring">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="Profile" id="userAvatar">
+                        <img src="" alt="Profile" id="userAvatar">
                     </div>
                     <div class="tier-flair" id="tierFlair">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                         </svg>
-                        <span>GOLD</span>
+                        <span id="tierText">GOLD</span>
                     </div>
                 </div>
                 <div class="identity-info">
-                    <h2 id="userName">Rahul Sharma</h2>
-                    <p class="user-contact" id="userContact">+91 98765 43210 • rahul@email.com</p>
-                    <div class="member-since">
+                    <h2 id="userName">Loading...</h2>
+                    <p class="user-contact" id="userContact">Loading...</p>
+                    <div class="member-since" id="memberSince">
                         <span class="pulse-dot"></span>
-                        Nexus Member since Jan 2024
+                        <span id="memberSinceText">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -98,7 +97,7 @@
                     </div>
                     <div class="wallet-balance">
                         <span class="currency">₹</span>
-                        <span class="amount" id="walletBalance">2,450</span>
+                        <span class="amount" id="walletBalance">0</span>
                         <span class="decimal">.00</span>
                     </div>
                     <div class="wallet-quick-actions">
@@ -137,11 +136,11 @@
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                         </svg>
                         <div>
-                            <h3>Nexus Club <span class="tier-name">Gold</span></h3>
-                            <p>You're in top 15% of Nexus users</p>
+                            <h3>Nexus Club <span class="tier-name" id="clubTierName">Gold</span></h3>
+                            <p id="clubSubtitle">Loading...</p>
                         </div>
                     </div>
-                    <div class="tier-benefits-preview">
+                    <div class="tier-benefits-preview" id="tierBenefits">
                         <span class="benefit-tag">5% Cashback</span>
                         <span class="benefit-tag">Free Cancellation</span>
                         <span class="benefit-tag">Priority Support</span>
@@ -149,29 +148,29 @@
                 </div>
                 <div class="tier-progress-container">
                     <div class="tier-markers">
-                        <div class="marker active">
+                        <div class="marker" id="markerSilver">
                             <div class="marker-dot"></div>
                             <span>Silver</span>
                         </div>
-                        <div class="marker current">
+                        <div class="marker current" id="markerGold">
                             <div class="marker-dot"></div>
                             <span>Gold</span>
                         </div>
-                        <div class="marker">
+                        <div class="marker" id="markerPlatinum">
                             <div class="marker-dot"></div>
                             <span>Platinum</span>
                         </div>
-                        <div class="marker">
+                        <div class="marker" id="markerElite">
                             <div class="marker-dot"></div>
                             <span>Elite</span>
                         </div>
                     </div>
                     <div class="progress-track">
-                        <div class="progress-fill" style="width: 65%"></div>
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                     <div class="progress-stats">
-                        <span>12,450 points earned</span>
-                        <span class="next-tier">3,400 more to Platinum</span>
+                        <span id="pointsEarned">0 points earned</span>
+                        <span class="next-tier" id="nextTierText">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -183,12 +182,12 @@
                 <div class="stat-visual">
                     <svg viewBox="0 0 36 36" class="circular-chart">
                         <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                        <path class="circle" stroke-dasharray="85, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                     </svg>
                     <div class="stat-icon">💰</div>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value" id="totalSavings">₹24,500</span>
+                    <span class="stat-value" id="totalSavings">₹0</span>
                     <span class="stat-label">Total Savings</span>
                 </div>
             </div>
@@ -198,7 +197,7 @@
                     <div class="stat-icon">🎫</div>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value" id="ticketsBooked">47</span>
+                    <span class="stat-value" id="ticketsBooked">0</span>
                     <span class="stat-label">Tickets Booked</span>
                 </div>
             </div>
@@ -208,7 +207,7 @@
                     <div class="stat-icon">🔄</div>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value" id="resaleDeals">12</span>
+                    <span class="stat-value" id="resaleDeals">0</span>
                     <span class="stat-label">Resale Deals</span>
                 </div>
             </div>
@@ -218,7 +217,7 @@
                     <div class="stat-icon">⭐</div>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value" id="nexusPoints">12.4k</span>
+                    <span class="stat-value" id="nexusPoints">0</span>
                     <span class="stat-label">Points Balance</span>
                 </div>
             </div>
@@ -250,7 +249,9 @@
                         <h3>Recent Activity</h3>
                         <button class="view-all" onclick="Profile.switchTab('tickets')">View All</button>
                     </div>
-                    <div class="activity-list" id="recentActivity"></div>
+                    <div class="activity-list" id="recentActivity">
+                        <div class="loading-state">Loading activity...</div>
+                    </div>
                 </div>
 
                 <!-- Referral Card -->
@@ -261,7 +262,7 @@
                             <p>Get ₹100 in wallet + 500 points for every friend who joins</p>
                         </div>
                         <div class="referral-code">
-                            <span class="code-text" id="referralCode">RAHUL100</span>
+                            <span class="code-text" id="referralCode">LOADING</span>
                             <button class="copy-btn" onclick="Profile.copyReferral()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -273,15 +274,15 @@
                     </div>
                     <div class="referral-stats">
                         <div class="ref-stat">
-                            <span class="ref-number">5</span>
+                            <span class="ref-number" id="refInvited">0</span>
                             <span class="ref-label">Invited</span>
                         </div>
                         <div class="ref-stat">
-                            <span class="ref-number">3</span>
+                            <span class="ref-number" id="refJoined">0</span>
                             <span class="ref-label">Joined</span>
                         </div>
                         <div class="ref-stat highlight">
-                            <span class="ref-number">₹300</span>
+                            <span class="ref-number" id="refEarned">₹0</span>
                             <span class="ref-label">Earned</span>
                         </div>
                     </div>
@@ -319,7 +320,9 @@
                     <button class="chip" onclick="Profile.filterTickets('past')">Past</button>
                     <button class="chip" onclick="Profile.filterTickets('resale')">Listed</button>
                 </div>
-                <div class="tickets-grid" id="ticketsGrid"></div>
+                <div class="tickets-grid" id="ticketsGrid">
+                    <div class="loading-state">Loading tickets...</div>
+                </div>
             </div>
 
             <!-- Insights Tab -->
@@ -327,14 +330,16 @@
                 <div class="insights-header">
                     <div class="insight-card total-spent">
                         <span class="insight-label">Total Spent (2024)</span>
-                        <span class="insight-value" id="totalSpent">₹1,24,500</span>
-                        <span class="insight-change positive">↑ 23% vs last year</span>
+                        <span class="insight-value" id="totalSpent">₹0</span>
+                        <span class="insight-change positive" id="spentChange">↑ 0% vs last year</span>
                     </div>
                 </div>
 
                 <div class="category-breakdown">
                     <h4>Spending by Category</h4>
-                    <div class="category-bars" id="categoryBars"></div>
+                    <div class="category-bars" id="categoryBars">
+                        <div class="loading-state">Loading insights...</div>
+                    </div>
                 </div>
 
                 <div class="monthly-chart">
@@ -349,7 +354,9 @@
 
                 <div class="achievements">
                     <h4>Achievements</h4>
-                    <div class="badge-grid" id="badgeGrid"></div>
+                    <div class="badge-grid" id="badgeGrid">
+                        <div class="loading-state">Loading achievements...</div>
+                    </div>
                 </div>
             </div>
 
@@ -358,7 +365,9 @@
                 <div class="wishlist-header">
                     <p>Saved events with price drop alerts</p>
                 </div>
-                <div class="wishlist-grid" id="wishlistGrid"></div>
+                <div class="wishlist-grid" id="wishlistGrid">
+                    <div class="loading-state">Loading wishlist...</div>
+                </div>
             </div>
 
         </section>
@@ -389,7 +398,7 @@
                         <span class="option-icon">🏦</span>
                         <div class="option-details">
                             <span class="option-title">UPI</span>
-                            <span class="option-sub">rahulsharma@oksbi</span>
+                            <span class="option-sub" id="upiId">Loading...</span>
                         </div>
                     </div>
                 </label>
@@ -404,7 +413,7 @@
                     </div>
                 </label>
             </div>
-            <button class="confirm-btn" onclick="Profile.confirmAddMoney()">
+            <button class="confirm-btn" id="confirmAddMoneyBtn" onclick="Profile.confirmAddMoney()">
                 Add ₹2,000
             </button>
         </div>

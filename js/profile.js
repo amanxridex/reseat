@@ -1,14 +1,5 @@
 const Profile = {
-    user: {
-        name: 'Rahul Sharma',
-        phone: '+91 98765 43210',
-        email: 'rahul@email.com',
-        wallet: 2450,
-        points: 12450,
-        tier: 'gold',
-        referralCode: 'RAHUL100',
-        memberSince: 'Jan 2024'
-    },
+    user: null, // Will be loaded from localStorage
     
     notifications: [
         { id: 1, icon: 'purple', emoji: '🎉', title: 'Price Drop Alert', desc: 'Dune 2 tickets now 20% off!', time: '2 min ago', read: false },
@@ -52,6 +43,9 @@ const Profile = {
     ],
     
     init() {
+        // Check auth first
+        if (!this.checkAuth()) return;
+        
         this.loadUserData();
         this.renderNotifications();
         this.renderActivity();
@@ -61,15 +55,76 @@ const Profile = {
         this.setupEventListeners();
     },
     
+    checkAuth() {
+        const auth = localStorage.getItem('nexus_auth');
+        const session = sessionStorage.getItem('nexus_session');
+        
+        if (!auth && !session) {
+            // Not logged in - redirect to auth
+            window.location.replace('auth.html');
+            return false;
+        }
+        return true;
+    },
+    
     loadUserData() {
+        // Get auth data from localStorage
+        const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
+        const profileData = JSON.parse(localStorage.getItem('nexus_profile') || '{}');
+        
+        // Build user object from stored data
+        this.user = {
+            name: profileData.full_name || authData.name || 'User',
+            phone: profileData.phone || '+91 00000 00000',
+            email: authData.email || profileData.email || 'user@email.com',
+            avatar: authData.photoURL || profileData.avatar_url || 'https://via.placeholder.com/150',
+            wallet: 2450, // Keep mock for now until backend connected
+            points: 12450,
+            tier: 'gold',
+            referralCode: this.generateReferralCode(authData.name || 'USER'),
+            memberSince: this.getMemberSince()
+        };
+        
+        // Update DOM elements
         document.getElementById('userName').textContent = this.user.name;
         document.getElementById('userContact').textContent = `${this.user.phone} • ${this.user.email}`;
+        document.getElementById('userAvatar').src = this.user.avatar;
         document.getElementById('walletBalance').textContent = this.user.wallet.toLocaleString();
         document.getElementById('referralCode').textContent = this.user.referralCode;
         document.getElementById('totalSavings').textContent = '₹24,500';
         document.getElementById('ticketsBooked').textContent = '47';
         document.getElementById('resaleDeals').textContent = '12';
         document.getElementById('nexusPoints').textContent = (this.user.points / 1000).toFixed(1) + 'k';
+        
+        // Update member since text
+        const memberSinceEl = document.querySelector('.member-since');
+        if (memberSinceEl) {
+            memberSinceEl.innerHTML = `<span class="pulse-dot"></span>Nexus Member since ${this.user.memberSince}`;
+        }
+    },
+    
+    generateReferralCode(name) {
+        // Generate referral code from name + random number
+        const cleanName = name.replace(/\s+/g, '').toUpperCase().substring(0, 6);
+        const randomNum = Math.floor(100 + Math.random() * 900);
+        return cleanName + randomNum;
+    },
+    
+    getMemberSince() {
+        // Get join date from profile or default to current month
+        const profile = JSON.parse(localStorage.getItem('nexus_profile') || '{}');
+        if (profile.created_at) {
+            const date = new Date(profile.created_at);
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }
+        return new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    },
+    
+    logout() {
+        localStorage.removeItem('nexus_auth');
+        localStorage.removeItem('nexus_profile');
+        sessionStorage.removeItem('nexus_session');
+        window.location.replace('auth.html');
     },
     
     toggleNotifications() {
