@@ -1,110 +1,29 @@
-const colleges = [
-    {
-        id: 1,
-        name: "Christ University",
-        location: "Bangalore",
-        image: "assets/colleges/christ.jpg",
-        festName: "InBloom"
-    },
-    {
-        id: 2,
-        name: "Christ University",
-        location: "Delhi NCR",
-        image: "assets/colleges/delhi-ncr.jpg",
-        festName: "Crossroads"
-    },
-    {
-        id: 3,
-        name: "Symbiosis Noida",
-        location: "Noida, UP",
-        image: "assets/colleges/symbiosis.jpg",
-        festName: "Symphony"
-    },
-    {
-        id: 4,
-        name: "LPU Jalandhar",
-        location: "Jalandhar, Punjab",
-        image: "assets/colleges/lpu.jpg",
-        festName: "YouthVibe"
-    },
-    {
-        id: 5,
-        name: "IIT Bombay",
-        location: "Mumbai, Maharashtra",
-        image: "assets/colleges/iit-bombay.jpg",
-        festName: "Mood Indigo"
-    },
-    {
-        id: 6,
-        name: "IIT Delhi",
-        location: "New Delhi",
-        image: "assets/colleges/iit-delhi.jpg",
-        festName: "Rendezvous"
-    },
-    {
-        id: 7,
-        name: "BITS Pilani",
-        location: "Pilani, Rajasthan",
-        image: "assets/colleges/bits.jpg",
-        festName: "OASIS"
-    },
-    {
-        id: 8,
-        name: "VIT Vellore",
-        location: "Vellore, Tamil Nadu",
-        image: "assets/colleges/vit.jpg",
-        festName: "Riviera"
-    },
-    {
-        id: 9,
-        name: "SRM University",
-        location: "Chennai, Tamil Nadu",
-        image: "assets/colleges/srm.jpg",
-        festName: "Milan"
-    },
-    {
-        id: 10,
-        name: "Manipal University",
-        location: "Manipal, Karnataka",
-        image: "assets/colleges/manipal.jpg",
-        festName: "Revels"
-    },
-    {
-        id: 11,
-        name: "NMIMS Mumbai",
-        location: "Mumbai, Maharashtra",
-        image: "assets/colleges/nmims.jpg",
-        festName: "NMMUN"
-    },
-    {
-        id: 12,
-        name: "Ashoka University",
-        location: "Sonipat, Haryana",
-        image: "assets/colleges/ashoka.jpg",
-        festName: "Breeze"
-    },
-    {
-        id: 13,
-        name: "FLAME University",
-        location: "Pune, Maharashtra",
-        image: "assets/colleges/flame.jpg",
-        festName: "FLAME Fest"
-    },
-    {
-        id: 14,
-        name: "Jadavpur University",
-        location: "Kolkata, West Bengal",
-        image: "assets/colleges/jadavpur.jpg",
-        festName: "Sanskriti"
-    },
-    {
-        id: 15,
-        name: "NIT Trichy",
-        location: "Tiruchirappalli",
-        image: "assets/colleges/nit-trichy.jpg",
-        festName: "Festember"
+const API_BASE_URL = 'https://nexus-host-backend.onrender.com/api';
+
+let colleges = []; // Will be populated from backend
+
+// Fetch colleges from backend
+async function fetchColleges() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/colleges/public/all`);
+        const result = await response.json();
+        
+        if (result.success) {
+            colleges = result.data;
+            renderColleges(colleges);
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('Failed to fetch colleges:', error);
+        document.getElementById('collegesGrid').innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Failed to load colleges. Please try again later.</p>
+            </div>
+        `;
     }
-];
+}
 
 function renderColleges(collegesToRender = colleges) {
     const grid = document.getElementById('collegesGrid');
@@ -113,14 +32,14 @@ function renderColleges(collegesToRender = colleges) {
         grid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
-                <p>If your university is not in the list mail us at: collegefest@nexus.in</p>
+                <p>No colleges found. If your university is not in the list, mail us at: collegefest@nexus.in</p>
             </div>
         `;
         return;
     }
     
     grid.innerHTML = collegesToRender.map(college => `
-        <div class="college-card" onclick="openCollege(${college.id})">
+        <div class="college-card" onclick="openCollege('${college.id}')">
             <img src="${college.image}" alt="${college.name}" class="college-image" onerror="this.src='assets/college-fest.jpg'">
             <div class="college-info">
                 <div class="college-name">${college.name}</div>
@@ -136,8 +55,7 @@ function renderColleges(collegesToRender = colleges) {
 function filterColleges(query) {
     const filtered = colleges.filter(c => 
         c.name.toLowerCase().includes(query.toLowerCase()) ||
-        c.location.toLowerCase().includes(query.toLowerCase()) ||
-        c.festName.toLowerCase().includes(query.toLowerCase())
+        c.location.toLowerCase().includes(query.toLowerCase())
     );
     renderColleges(filtered);
 }
@@ -148,5 +66,5 @@ function openCollege(id) {
     window.location.href = `college-fest-detail.html?id=${id}`;
 }
 
-// Initial render
-renderColleges();
+// Initial fetch instead of hardcoded render
+fetchColleges();
