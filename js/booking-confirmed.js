@@ -1,17 +1,82 @@
 const API_BASE_URL = 'https://nexus-api-hkfu.onrender.com/api';
 
-// Helper function to get auth token
-function getAuthToken() {
-    try {
-        const authData = localStorage.getItem('nexus_auth');
-        if (authData) {
+// ✅ UPDATED: Async helper function to get fresh auth token
+async function getAuthToken() {
+    return new Promise((resolve, reject) => {
+        // Check if Firebase is available
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+            // Fallback to localStorage
+            const authData = localStorage.getItem('nexus_auth');
+            if (!authData) {
+                reject(new Error('NOT_LOGGED_IN'));
+                return;
+            }
             const parsed = JSON.parse(authData);
-            return parsed.idToken || null;
+            resolve(parsed.idToken);
+            return;
         }
-    } catch (e) {
-        console.error('Error parsing auth data:', e);
-    }
-    return null;
+
+        const user = firebase.auth().currentUser;
+        
+        if (!user) {
+            // Check localStorage as fallback
+            const authData = localStorage.getItem('nexus_auth');
+            if (!authData) {
+                reject(new Error('NOT_LOGGED_IN'));
+                return;
+            }
+            
+            const parsed = JSON.parse(authData);
+            
+            // Check if token is expired
+            try {
+                const tokenData = JSON.parse(atob(parsed.idToken.split('.')[1]));
+                const expiry = tokenData.exp * 1000;
+                
+                if (Date.now() > expiry - 60000) {
+                    reject(new Error('TOKEN_EXPIRED'));
+                    return;
+                }
+                
+                resolve(parsed.idToken);
+            } catch (e) {
+                reject(new Error('INVALID_TOKEN'));
+            }
+            return;
+        }
+
+        // User is logged in Firebase - get fresh token
+        user.getIdToken(false) // false = use cached if still valid
+            .then((token) => {
+                // Update localStorage
+                const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
+                authData.idToken = token;
+                authData.lastRefresh = Date.now();
+                localStorage.setItem('nexus_auth', JSON.stringify(authData));
+                resolve(token);
+            })
+            .catch((error) => {
+                console.error('Token fetch error:', error);
+                reject(new Error('TOKEN_FETCH_FAILED'));
+            });
+    });
+}
+
+// ✅ NEW: Handle auth errors with user-friendly messages
+function handleAuthError(error) {
+    const errorMessages = {
+        'NOT_LOGGED_IN': 'Please login to continue',
+        'TOKEN_EXPIRED': 'Your session has expired. Please login again.',
+        'INVALID_TOKEN': 'Invalid session. Please login again.',
+        'TOKEN_FETCH_FAILED': 'Session error. Please try logging in again.'
+    };
+    
+    const errorType = error.message || 'NOT_LOGGED_IN';
+    const message = errorMessages[errorType] || errorMessages['NOT_LOGGED_IN'];
+    
+    alert(message);
+    localStorage.removeItem('nexus_auth');
+    window.location.href = 'auth.html';
 }
 
 let bookingData = null;
@@ -39,12 +104,13 @@ async function loadBookingData() {
     }
 }
 
-// Fetch specific ticket details from backend
+// ✅ UPDATED: Fetch specific ticket details from backend with async token
 async function fetchTicketDetails(bookingId) {
-    const token = getAuthToken();
-    if (!token) {
-        alert('Please login first');
-        window.location.href = 'auth.html';
+    let token;
+    try {
+        token = await getAuthToken();
+    } catch (error) {
+        handleAuthError(error);
         return;
     }
 
@@ -87,12 +153,13 @@ async function fetchTicketDetails(bookingId) {
     }
 }
 
-// Fetch latest ticket when no session data
+// ✅ UPDATED: Fetch latest ticket when no session data with async token
 async function fetchLatestTicket() {
-    const token = getAuthToken();
-    if (!token) {
-        alert('Please login first');
-        window.location.href = 'auth.html';
+    let token;
+    try {
+        token = await getAuthToken();
+    } catch (error) {
+        handleAuthError(error);
         return;
     }
 

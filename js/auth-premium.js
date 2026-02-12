@@ -34,6 +34,7 @@ const Auth = {
         this.setupPhoneInput();
         this.setupRecaptcha();
         this.checkAuthState();
+        this.startTokenRefresh(); // ✅ NEW: Start auto token refresh
     },
     
     checkAuthState() {
@@ -42,6 +43,47 @@ const Auth = {
                 console.log('User already logged in');
             }
         });
+    },
+    
+    // ✅ NEW: Get fresh token from Firebase
+    async getFreshToken() {
+        return new Promise((resolve, reject) => {
+            const user = auth.currentUser;
+            if (!user) {
+                reject(new Error('No user logged in'));
+                return;
+            }
+            
+            // Force refresh to get new token if old
+            user.getIdToken(true).then((token) => {
+                // Update stored token
+                const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
+                authData.idToken = token;
+                authData.lastRefresh = Date.now();
+                localStorage.setItem('nexus_auth', JSON.stringify(authData));
+                resolve(token);
+            }).catch(reject);
+        });
+    },
+    
+    // ✅ NEW: Auto-refresh token every 50 minutes
+    startTokenRefresh() {
+        // Refresh immediately if user is already logged in
+        if (auth.currentUser) {
+            this.getFreshToken().catch(console.error);
+        }
+        
+        // Then refresh every 50 minutes (before 1 hour expiry)
+        setInterval(async () => {
+            if (auth.currentUser) {
+                try {
+                    await this.getFreshToken();
+                    console.log('✅ Token auto-refreshed');
+                } catch (error) {
+                    console.error('❌ Token refresh failed:', error);
+                }
+            }
+        }, 50 * 60 * 1000); // 50 minutes
     },
     
     setupRecaptcha() {
@@ -265,7 +307,8 @@ const Auth = {
             photoURL: user.photoURL || null,
             method: method,
             idToken: idToken,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            lastRefresh: Date.now() // ✅ NEW: Track last refresh
         };
         
         localStorage.setItem('nexus_auth', JSON.stringify(authData));
