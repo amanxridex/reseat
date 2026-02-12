@@ -13,42 +13,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
+    // Load event data from API
     loadEventData();
 });
 
 async function loadEventData() {
     try {
-        // Try to get from sessionStorage first (for faster loading)
-        const cachedData = sessionStorage.getItem('selectedEvent');
-        if (cachedData) {
-            eventData = JSON.parse(cachedData);
-            populatePage(); // Show cached data immediately
-        }
+        console.log('Fetching event:', eventId);
         
-        // Fetch fresh data from backend
         const response = await fetch(`${API_BASE_URL}/fest/public/${eventId}`);
         const result = await response.json();
+        
+        console.log('API Response:', result);
         
         if (result.success) {
             eventData = result.fest;
             sessionStorage.setItem('selectedEvent', JSON.stringify(eventData));
-            populatePage(); // Update with fresh data
+            populatePage();
         } else {
-            throw new Error(result.error);
+            throw new Error(result.error || 'Failed to load event');
         }
         
     } catch (error) {
         console.error('Error loading event:', error);
-        // If we have cached data, keep showing it
-        if (!eventData) {
-            alert('Failed to load event details');
-            window.location.href = 'college-fests.html';
-        }
+        alert('Failed to load event details. Please try again.');
+        window.location.href = 'college-fests.html';
     }
 }
 
 function populatePage() {
     if (!eventData) return;
+    
+    console.log('Populating page with:', eventData);
     
     // Hero section
     document.getElementById('eventImage').src = eventData.image || 'assets/college-fest.jpg';
@@ -67,7 +63,38 @@ function populatePage() {
     // About
     document.getElementById('eventDescription').textContent = eventData.description || 'No description available.';
     
-    // Lineup (if available) or show tags based on fest type
+    // Coordinator Info
+    if (eventData.college?.hostName) {
+        document.getElementById('coordinatorSection').style.display = 'block';
+        document.getElementById('coordinatorName').textContent = eventData.college.hostName;
+        document.getElementById('coordinatorPhone').textContent = eventData.college.hostPhone || 'Contact via app';
+        
+        if (eventData.college.hostPhone) {
+            document.getElementById('contactBtn').href = `tel:${eventData.college.hostPhone}`;
+        }
+    }
+    
+    // ID Requirements
+    if (eventData.idRequired) {
+        document.getElementById('idSection').style.display = 'block';
+        const idFields = eventData.idFields?.join(', ') || 'ID Card';
+        document.getElementById('idRequirements').textContent = 
+            `Please carry your ${idFields} for verification at entry.`;
+    }
+    
+    // Audience Info
+    const audienceTags = document.getElementById('audienceTags');
+    const audiences = [];
+    if (eventData.allowOtherColleges) audiences.push('Other Colleges');
+    if (eventData.allowOutside) audiences.push('Outside Students');
+    if (eventData.allowGeneralPublic) audiences.push('General Public');
+    if (audiences.length === 0) audiences.push('Same College Only');
+    
+    audienceTags.innerHTML = audiences.map(audience => 
+        `<span class="audience-tag">${audience}</span>`
+    ).join('');
+    
+    // Lineup
     const lineupContainer = document.getElementById('lineupTags');
     const lineupItems = eventData.lineup && eventData.lineup.length > 0 
         ? eventData.lineup 
@@ -86,7 +113,6 @@ function populatePage() {
     document.title = `${eventData.name} | Nexus`;
 }
 
-// Generate lineup tags based on fest type
 function generateLineupFromType(category) {
     const lineups = {
         'Cultural Fest': ['Music', 'Dance', 'Art', 'Fashion Show'],
