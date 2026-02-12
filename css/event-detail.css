@@ -297,3 +297,57 @@ section h3::before {
     transform: translateY(-2px);
     box-shadow: 0 10px 30px var(--accent-glow);
 }
+
+/* Coordinator */
+.coordinator-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.coordinator-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.coordinator-name {
+    font-weight: 600;
+}
+
+.coordinator-phone {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.contact-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Audience */
+.audience-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.audience-tag {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: var(--accent);
+    border-radius: 100px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}

@@ -1,37 +1,55 @@
+const API_BASE_URL = 'https://nexus-host-backend.onrender.com/api';
+
 let eventData = null;
+let eventId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadEventData();
-});
-
-function loadEventData() {
-    // Read from sessionStorage (set by college-fest-detail.js)
-    const data = sessionStorage.getItem('selectedEvent');
+    // Get event ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    eventId = urlParams.get('id');
     
-    if (!data) {
-        // No data found - redirect back to college fests
+    if (!eventId) {
         window.location.href = 'college-fests.html';
         return;
     }
     
+    loadEventData();
+});
+
+async function loadEventData() {
     try {
-        eventData = JSON.parse(data);
-        
-        // Validate required fields
-        if (!eventData.name || !eventData.college) {
-            throw new Error('Invalid event data');
+        // Try to get from sessionStorage first (for faster loading)
+        const cachedData = sessionStorage.getItem('selectedEvent');
+        if (cachedData) {
+            eventData = JSON.parse(cachedData);
+            populatePage(); // Show cached data immediately
         }
         
-        // Populate the page
-        populatePage();
+        // Fetch fresh data from backend
+        const response = await fetch(`${API_BASE_URL}/fest/public/${eventId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            eventData = result.fest;
+            sessionStorage.setItem('selectedEvent', JSON.stringify(eventData));
+            populatePage(); // Update with fresh data
+        } else {
+            throw new Error(result.error);
+        }
         
     } catch (error) {
         console.error('Error loading event:', error);
-        window.location.href = 'college-fests.html';
+        // If we have cached data, keep showing it
+        if (!eventData) {
+            alert('Failed to load event details');
+            window.location.href = 'college-fests.html';
+        }
     }
 }
 
 function populatePage() {
+    if (!eventData) return;
+    
     // Hero section
     document.getElementById('eventImage').src = eventData.image || 'assets/college-fest.jpg';
     document.getElementById('eventImage').onerror = function() {
@@ -39,7 +57,7 @@ function populatePage() {
     };
     document.getElementById('eventCategory').textContent = eventData.category || 'Event';
     document.getElementById('eventName').textContent = eventData.name;
-    document.getElementById('collegeName').textContent = eventData.college.name || eventData.college;
+    document.getElementById('collegeName').textContent = eventData.college?.name || 'Unknown College';
     
     // Stats
     document.getElementById('eventDate').textContent = eventData.date || 'TBA';
@@ -49,19 +67,37 @@ function populatePage() {
     // About
     document.getElementById('eventDescription').textContent = eventData.description || 'No description available.';
     
-    // Lineup
+    // Lineup (if available) or show tags based on fest type
     const lineupContainer = document.getElementById('lineupTags');
-    if (eventData.lineup && eventData.lineup.length > 0) {
-        lineupContainer.innerHTML = eventData.lineup.map(item => 
-            `<span class="lineup-tag">${item}</span>`
-        ).join('');
-    } else {
-        lineupContainer.innerHTML = '<span class="lineup-tag">Coming Soon</span>';
-    }
+    const lineupItems = eventData.lineup && eventData.lineup.length > 0 
+        ? eventData.lineup 
+        : generateLineupFromType(eventData.category);
+    
+    lineupContainer.innerHTML = lineupItems.map(item => 
+        `<span class="lineup-tag">${item}</span>`
+    ).join('');
     
     // Ticket price
-    document.getElementById('ticketPrice').textContent = `₹${eventData.price || 0}`;
-    document.getElementById('footerPrice').textContent = `₹${eventData.price || 0}`;
+    const price = eventData.price || 0;
+    document.getElementById('ticketPrice').textContent = `₹${price}`;
+    document.getElementById('footerPrice').textContent = `₹${price}`;
+    
+    // Update page title
+    document.title = `${eventData.name} | Nexus`;
+}
+
+// Generate lineup tags based on fest type
+function generateLineupFromType(category) {
+    const lineups = {
+        'Cultural Fest': ['Music', 'Dance', 'Art', 'Fashion Show'],
+        'Technical Fest': ['Hackathon', 'Coding', 'Robotics', 'Workshops'],
+        'Sports Fest': ['Tournaments', 'Matches', 'Competitions'],
+        'Literary Fest': ['Debates', 'Poetry', 'Quizzes', 'Writing'],
+        'Management Fest': ['B-Plan', 'Case Study', 'Marketing'],
+        'Music Fest': ['Live Bands', 'DJ Night', 'Solo Performances'],
+        'Youth Fest': ['Cultural', 'Sports', 'Fun Events']
+    };
+    return lineups[category] || ['Exciting Events', 'Competitions', 'Performances'];
 }
 
 function goBack() {
@@ -69,12 +105,14 @@ function goBack() {
 }
 
 function shareEvent() {
+    const shareData = {
+        title: eventData?.name || 'Event',
+        text: `Check out ${eventData?.name} at ${eventData?.college?.name || 'Nexus'}!`,
+        url: window.location.href
+    };
+    
     if (navigator.share) {
-        navigator.share({
-            title: eventData.name,
-            text: `Check out ${eventData.name} at ${eventData.college.name || eventData.college}!`,
-            url: window.location.href
-        });
+        navigator.share(shareData);
     } else {
         navigator.clipboard.writeText(window.location.href);
         alert('Link copied to clipboard!');
@@ -82,22 +120,10 @@ function shareEvent() {
 }
 
 function bookTickets() {
-    // Store data for booking page (reuse same key, update if needed)
-    const bookingData = {
-        id: eventData.id,
-        name: eventData.name,
-        category: eventData.category,
-        date: eventData.date,
-        time: eventData.time,
-        venue: eventData.venue,
-        price: eventData.price,
-        image: eventData.image,
-        description: eventData.description,
-        lineup: eventData.lineup,
-        college: eventData.college
-    };
+    if (!eventData) return;
     
-    sessionStorage.setItem('selectedEvent', JSON.stringify(bookingData));
+    // Store complete data for booking page
+    sessionStorage.setItem('bookingEvent', JSON.stringify(eventData));
     
     // Redirect to booking page
     window.location.href = 'college-event-booking.html';
