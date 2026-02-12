@@ -7,6 +7,20 @@ let ticketPrice = 0;
 let currentQty = 1;
 let currentBookingId = null;
 
+// Helper function to get auth token from nexus_auth
+function getAuthToken() {
+    try {
+        const authData = localStorage.getItem('nexus_auth');
+        if (authData) {
+            const parsed = JSON.parse(authData);
+            return parsed.idToken || null;
+        }
+    } catch (e) {
+        console.error('Error parsing auth data:', e);
+    }
+    return null;
+}
+
 // Load Razorpay script dynamically
 function loadRazorpayScript() {
     return new Promise((resolve) => {
@@ -119,8 +133,8 @@ async function proceedToPayment() {
         return;
     }
 
-    // Get Firebase token
-    const token = localStorage.getItem('firebaseToken') || sessionStorage.getItem('firebaseToken');
+    // Get Firebase token from nexus_auth
+    const token = getAuthToken();
     if (!token) {
         alert('Please login first');
         return;
