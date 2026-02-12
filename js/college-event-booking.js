@@ -252,7 +252,7 @@ async function verifyPayment(razorpayResponse, token) {
 
             // Redirect after delay
             setTimeout(() => {
-                window.location.href = 'my-ticket.html';
+                window.location.href = 'booking-confirmed.html';
             }, 1500);
         } else {
             throw new Error(verifyData.error || 'Verification failed');
