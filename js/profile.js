@@ -1,5 +1,7 @@
 const Profile = {
-    user: null, // Will be loaded from localStorage
+    user: null,
+    userTickets: [], // Add this to store fetched tickets
+    API_BASE_URL: 'https://nexus-api-hkfu.onrender.com/api', // Add API URL
     
     notifications: [
         { id: 1, icon: 'purple', emoji: '🎉', title: 'Price Drop Alert', desc: 'Dune 2 tickets now 20% off!', time: '2 min ago', read: false },
@@ -43,13 +45,12 @@ const Profile = {
     ],
     
     init() {
-        // Check auth first
         if (!this.checkAuth()) return;
         
         this.loadUserData();
         this.renderNotifications();
         this.renderActivity();
-        this.renderTickets();
+        this.fetchAndRenderTickets(); // Changed from renderTickets()
         this.renderInsights();
         this.renderWishlist();
         this.setupEventListeners();
@@ -60,32 +61,41 @@ const Profile = {
         const session = sessionStorage.getItem('nexus_session');
         
         if (!auth && !session) {
-            // Not logged in - redirect to auth
             window.location.replace('auth.html');
             return false;
         }
         return true;
     },
     
+    getAuthToken() {
+        try {
+            const authData = localStorage.getItem('nexus_auth');
+            if (authData) {
+                const parsed = JSON.parse(authData);
+                return parsed.idToken || null;
+            }
+        } catch (e) {
+            console.error('Error parsing auth data:', e);
+        }
+        return null;
+    },
+    
     loadUserData() {
-        // Get auth data from localStorage
         const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
         const profileData = JSON.parse(localStorage.getItem('nexus_profile') || '{}');
         
-        // Build user object from stored data
         this.user = {
             name: profileData.full_name || authData.name || 'User',
             phone: profileData.phone || '+91 00000 00000',
             email: authData.email || profileData.email || 'user@email.com',
             avatar: authData.photoURL || profileData.avatar_url || 'https://via.placeholder.com/150',
-            wallet: 2450, // Keep mock for now until backend connected
+            wallet: 2450,
             points: 12450,
             tier: 'gold',
             referralCode: this.generateReferralCode(authData.name || 'USER'),
             memberSince: this.getMemberSince()
         };
         
-        // Update DOM elements
         document.getElementById('userName').textContent = this.user.name;
         document.getElementById('userContact').textContent = `${this.user.phone} • ${this.user.email}`;
         document.getElementById('userAvatar').src = this.user.avatar;
@@ -96,7 +106,6 @@ const Profile = {
         document.getElementById('resaleDeals').textContent = '12';
         document.getElementById('nexusPoints').textContent = (this.user.points / 1000).toFixed(1) + 'k';
         
-        // Update member since text
         const memberSinceEl = document.getElementById('memberSinceText');
         if (memberSinceEl) {
             memberSinceEl.textContent = `Nexus Member since ${this.user.memberSince}`;
@@ -104,14 +113,12 @@ const Profile = {
     },
     
     generateReferralCode(name) {
-        // Generate referral code from name + random number
         const cleanName = name.replace(/\s+/g, '').toUpperCase().substring(0, 6);
         const randomNum = Math.floor(100 + Math.random() * 900);
         return cleanName + randomNum;
     },
     
     getMemberSince() {
-        // Get join date from profile or default to current month
         const profile = JSON.parse(localStorage.getItem('nexus_profile') || '{}');
         if (profile.created_at) {
             const date = new Date(profile.created_at);
@@ -169,71 +176,175 @@ const Profile = {
         `).join('');
     },
     
+    // NEW: Fetch tickets from backend
+    async fetchAndRenderTickets() {
+        const token = this.getAuthToken();
+        if (!token) return;
+
+        const container = document.getElementById('ticketsGrid');
+        container.innerHTML = '<div class="loading-state">Loading tickets...</div>';
+
+        try {
+            const response = await fetch(`${this.API_BASE_URL}/booking/my-tickets`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+        
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to fetch tickets');
+            }
+
+            this.userTickets = data.tickets || [];
+            this.renderTicketsList(this.userTickets);
+
+        } catch (error) {
+            console.error('Error fetching tickets:', error);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <p>Failed to load tickets</p>
+                    <button onclick="Profile.fetchAndRenderTickets()" class="retry-btn">Retry</button>
+                </div>
+            `;
+        }
+    },
+
+    // NEW: Render tickets list
+    renderTicketsList(tickets) {
+        const container = document.getElementById('ticketsGrid');
+    
+        if (!tickets || tickets.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎫</div>
+                    <p>No tickets found</p>
+                    <a href="college-fests.html" class="browse-btn">Browse Events</a>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = tickets.map(ticket => {
+            const booking = ticket.bookings || {};
+            const eventName = booking.event_name || 'Event';
+            const collegeName = booking.college_name || 'College';
+            const bookingDate = new Date(booking.created_at || ticket.created_at);
+            const formattedDate = bookingDate.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        
+            const isPast = new Date(bookingDate) < new Date();
+            const status = isPast ? 'past' : 'active';
+        
+            return `
+                <div class="ticket-card" onclick="Profile.viewTicketDetail('${ticket.ticket_id}')">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="ticket-type">🎫 College Fest</div>
+                            <div class="ticket-title">${eventName}</div>
+                            <div class="ticket-subtitle">${collegeName}</div>
+                        </div>
+                        <span class="ticket-status ${status}">${status}</span>
+                    </div>
+                    <div class="ticket-body">
+                        <div class="ticket-qr-preview">
+                            <svg viewBox="0 0 100 100">
+                                <rect x="10" y="10" width="25" height="25" fill="#000"/>
+                                <rect x="65" y="10" width="25" height="25" fill="#000"/>
+                                <rect x="10" y="65" width="25" height="25" fill="#000"/>
+                                <rect x="40" y="40" width="20" height="20" fill="#000"/>
+                            </svg>
+                        </div>
+                        <div class="ticket-info">
+                            <div class="info-row">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                ${formattedDate}
+                            </div>
+                            <div class="info-row">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                ${ticket.attendee_name || 'Attendee'}
+                            </div>
+                            <div class="info-row">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                    <line x1="2" y1="10" x2="22" y2="10"/>
+                                </svg>
+                                Ticket ID: ${ticket.ticket_id}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ticket-footer">
+                        <span class="ticket-booking-id">Booking: ${booking.booking_id || '-'}</span>
+                        <span class="view-ticket-btn">View →</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+
+    // NEW: View ticket detail
+    viewTicketDetail(ticketId) {
+        const ticket = this.userTickets.find(t => t.ticket_id === ticketId);
+        if (!ticket) return;
+
+        const booking = ticket.bookings || {};
+        const ticketData = {
+            bookingId: booking.booking_id,
+            ticketId: ticket.ticket_id,
+            event: {
+                name: booking.event_name,
+                college: { name: booking.college_name },
+                date: new Date(booking.created_at).toLocaleDateString('en-IN'),
+                venue: 'Main Auditorium'
+            },
+            attendee: {
+                name: ticket.attendee_name,
+                email: booking.attendee_email,
+                phone: booking.attendee_phone
+            },
+            tickets: [{ ticketId: ticket.ticket_id, qrCode: ticket.qr_code }],
+            qrCode: ticket.qr_code
+        };
+
+        sessionStorage.setItem('selectedTicket', JSON.stringify(ticketData));
+        window.location.href = 'booking-confirmed.html';
+    },
+
+    // UPDATED: Filter tickets
     filterTickets(filter) {
         document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
         event.target.classList.add('active');
-        
-        let filtered = this.tickets;
-        if(filter !== 'all') filtered = this.tickets.filter(t => t.status === filter);
-        this.renderTickets(filtered);
-    },
     
-    renderTickets(ticketList = this.tickets) {
-        const container = document.getElementById('ticketsGrid');
-        container.innerHTML = ticketList.map(t => `
-            <div class="ticket-card">
-                <div class="ticket-header">
-                    <div>
-                        <div class="ticket-type">${t.icon} ${t.type}</div>
-                        <div class="ticket-title">${t.title}</div>
-                    </div>
-                    <span class="ticket-status ${t.status}">${t.status}</span>
-                </div>
-                <div class="ticket-body">
-                    <div class="ticket-qr">
-                        <svg viewBox="0 0 100 100">
-                            <rect x="10" y="10" width="25" height="25" fill="#000"/>
-                            <rect x="65" y="10" width="25" height="25" fill="#000"/>
-                            <rect x="10" y="65" width="25" height="25" fill="#000"/>
-                            <rect x="40" y="40" width="20" height="20" fill="#000"/>
-                        </svg>
-                    </div>
-                    <div class="ticket-info">
-                        <div class="info-row">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                <line x1="16" y1="2" x2="16" y2="6"/>
-                                <line x1="8" y1="2" x2="8" y2="6"/>
-                                <line x1="3" y1="10" x2="21" y2="10"/>
-                            </svg>
-                            ${t.date}
-                        </div>
-                        <div class="info-row">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                            ${t.time}
-                        </div>
-                        <div class="info-row">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                            ${t.subtitle}
-                        </div>
-                    </div>
-                </div>
-                <div class="ticket-footer">
-                    <span class="ticket-points">+${t.points} pts</span>
-                    <span class="ticket-price">₹${t.price.toLocaleString()}</span>
-                </div>
-            </div>
-        `).join('');
+        if (!this.userTickets) return;
+    
+        let filtered = this.userTickets;
+        if (filter !== 'all') {
+            filtered = this.userTickets.filter(t => {
+                const bookingDate = new Date(t.bookings?.created_at || t.created_at);
+                const isPast = bookingDate < new Date();
+                if (filter === 'active') return !isPast;
+                if (filter === 'past') return isPast;
+                return true;
+            });
+        }
+        this.renderTicketsList(filtered);
     },
     
     renderInsights() {
-        // Category breakdown
         const total = this.categories.reduce((sum, c) => sum + c.value, 0);
         const barsContainer = document.getElementById('categoryBars');
         barsContainer.innerHTML = this.categories.map(c => {
@@ -249,7 +360,6 @@ const Profile = {
             `;
         }).join('');
         
-        // Monthly bars
         const maxVal = Math.max(...this.monthlyData);
         const monthlyContainer = document.getElementById('monthlyBars');
         monthlyContainer.innerHTML = this.monthlyData.map((val, idx) => {
@@ -258,7 +368,6 @@ const Profile = {
             return `<div class="month-bar ${isActive ? 'active' : ''}" style="height: ${height}%" title="₹${val},000"></div>`;
         }).join('');
         
-        // Achievements
         const badgeContainer = document.getElementById('badgeGrid');
         badgeContainer.innerHTML = this.achievements.map(b => `
             <div class="badge-item ${b.unlocked ? 'unlocked' : ''}">
@@ -342,7 +451,6 @@ const Profile = {
     },
     
     setupEventListeners() {
-        // Close notifications when clicking outside
         document.addEventListener('click', (e) => {
             const panel = document.getElementById('notificationsPanel');
             const btn = document.getElementById('notifBtn');
