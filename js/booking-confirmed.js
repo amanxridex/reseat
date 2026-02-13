@@ -1,3 +1,4 @@
+// ✅ FIXED: Removed trailing space
 const API_BASE_URL = 'https://nexus-api-hkfu.onrender.com/api';
 
 // Get auth token
@@ -67,6 +68,8 @@ async function fetchTicketDetails(bookingId) {
             t.booking_id === bookingId
         );
         
+        console.log('Found ticket:', ticket); // Debug log
+        
         if (ticket) {
             populateTicketFromBackend(ticket);
         } else {
@@ -117,9 +120,19 @@ async function fetchLatestTicket() {
     }
 }
 
-// ✅ FIXED: Use ticket.attendee_name directly
+// ✅ FIXED: Proper name extraction with debug logs
 function populateTicketFromBackend(ticket) {
     const booking = ticket.bookings || {};
+    
+    console.log('Ticket data:', ticket);
+    console.log('Booking data:', booking);
+    console.log('Ticket attendee_name:', ticket.attendee_name);
+    console.log('Booking attendee_name:', booking.attendee_name);
+    
+    // ✅ PRIORITY: ticket.attendee_name first (comes from tickets table)
+    const finalAttendeeName = ticket.attendee_name || booking.attendee_name;
+    
+    console.log('Final attendee name:', finalAttendeeName);
     
     bookingData = {
         eventId: ticket.fest_id,
@@ -131,8 +144,8 @@ function populateTicketFromBackend(ticket) {
         time: '10:00 AM',
         venue: 'Main Venue',
         tickets: 1,
-        // ✅ FIXED: Use ticket.attendee_name directly from tickets table
-        attendeeName: ticket.attendee_name || booking.attendee_name || 'Guest',
+        // ✅ FIXED: Use extracted name, empty string if null (not 'Guest')
+        attendeeName: finalAttendeeName || '',
         attendeeEmail: booking.attendee_email || '',
         attendeePhone: booking.attendee_phone || '',
         bookingId: booking.booking_id || ticket.booking_id,
@@ -156,8 +169,8 @@ function populateTicketFromSession(data) {
         time: sessionEvent.time || 'TBA',
         venue: sessionEvent.venue || 'TBA',
         tickets: data.tickets?.length || 1,
-        // ✅ FIXED: Use attendeeName directly
-        attendeeName: data.attendee?.name || 'Guest',
+        // ✅ FIXED: No hardcoded 'Guest'
+        attendeeName: data.attendee?.name || '',
         bookingId: data.bookingId,
         ticketId: data.tickets?.[0]?.ticketId,
         qrCode: data.tickets?.[0]?.qrCode,
@@ -167,7 +180,7 @@ function populateTicketFromSession(data) {
     updateUI();
 }
 
-// ✅ FIXED: Update UI with correct field name
+// ✅ FIXED: Update UI
 function updateUI() {
     document.getElementById('eventName').textContent = bookingData.eventName;
     document.getElementById('collegeName').textContent = bookingData.college.name;
@@ -175,8 +188,11 @@ function updateUI() {
     document.getElementById('ticketTime').textContent = bookingData.time;
     document.getElementById('ticketVenue').textContent = bookingData.venue;
     document.getElementById('ticketQty').textContent = bookingData.tickets;
-    // ✅ FIXED: Use attendeeName instead of attendee.name
-    document.getElementById('attendeeName').textContent = bookingData.attendeeName;
+    
+    // ✅ FIXED: Show name or empty, not 'Guest'
+    const nameElement = document.getElementById('attendeeName');
+    nameElement.textContent = bookingData.attendeeName || '---';
+    
     document.getElementById('bookingId').textContent = bookingData.bookingId;
     document.getElementById('ticketId').textContent = bookingData.ticketId || bookingData.bookingId;
     
@@ -261,7 +277,7 @@ function generateConfetti() {
     const container = document.getElementById('confetti');
     const colors = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#00d4ff'];
     
-    for (let  i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i++) {
         setTimeout(() => {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
