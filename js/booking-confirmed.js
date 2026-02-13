@@ -1,80 +1,20 @@
 const API_BASE_URL = 'https://nexus-api-hkfu.onrender.com/api';
 
-// ✅ UPDATED: Async helper function to get fresh auth token
+// Get auth token
 async function getAuthToken() {
     return new Promise((resolve, reject) => {
-        // Check if Firebase is available
-        if (typeof firebase === 'undefined' || !firebase.auth) {
-            // Fallback to localStorage
-            const authData = localStorage.getItem('nexus_auth');
-            if (!authData) {
-                reject(new Error('NOT_LOGGED_IN'));
-                return;
-            }
-            const parsed = JSON.parse(authData);
-            resolve(parsed.idToken);
+        const authData = localStorage.getItem('nexus_auth');
+        if (!authData) {
+            reject(new Error('NOT_LOGGED_IN'));
             return;
         }
-
-        const user = firebase.auth().currentUser;
-        
-        if (!user) {
-            // Check localStorage as fallback
-            const authData = localStorage.getItem('nexus_auth');
-            if (!authData) {
-                reject(new Error('NOT_LOGGED_IN'));
-                return;
-            }
-            
-            const parsed = JSON.parse(authData);
-            
-            // Check if token is expired
-            try {
-                const tokenData = JSON.parse(atob(parsed.idToken.split('.')[1]));
-                const expiry = tokenData.exp * 1000;
-                
-                if (Date.now() > expiry - 60000) {
-                    reject(new Error('TOKEN_EXPIRED'));
-                    return;
-                }
-                
-                resolve(parsed.idToken);
-            } catch (e) {
-                reject(new Error('INVALID_TOKEN'));
-            }
-            return;
-        }
-
-        // User is logged in Firebase - get fresh token
-        user.getIdToken(false) // false = use cached if still valid
-            .then((token) => {
-                // Update localStorage
-                const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
-                authData.idToken = token;
-                authData.lastRefresh = Date.now();
-                localStorage.setItem('nexus_auth', JSON.stringify(authData));
-                resolve(token);
-            })
-            .catch((error) => {
-                console.error('Token fetch error:', error);
-                reject(new Error('TOKEN_FETCH_FAILED'));
-            });
+        const parsed = JSON.parse(authData);
+        resolve(parsed.idToken);
     });
 }
 
-// ✅ NEW: Handle auth errors with user-friendly messages
 function handleAuthError(error) {
-    const errorMessages = {
-        'NOT_LOGGED_IN': 'Please login to continue',
-        'TOKEN_EXPIRED': 'Your session has expired. Please login again.',
-        'INVALID_TOKEN': 'Invalid session. Please login again.',
-        'TOKEN_FETCH_FAILED': 'Session error. Please try logging in again.'
-    };
-    
-    const errorType = error.message || 'NOT_LOGGED_IN';
-    const message = errorMessages[errorType] || errorMessages['NOT_LOGGED_IN'];
-    
-    alert(message);
+    alert('Please login to continue');
     localStorage.removeItem('nexus_auth');
     window.location.href = 'auth.html';
 }
@@ -87,24 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
     generateConfetti();
 });
 
-// Load booking from sessionStorage (from payment flow) OR fetch from backend
+// Load booking data
 async function loadBookingData() {
-    // Try to get from sessionStorage first (passed from payment flow)
     const sessionData = sessionStorage.getItem('bookingComplete');
     
     if (sessionData) {
         const parsed = JSON.parse(sessionData);
-        console.log('Session data:', parsed);
-        
-        // Fetch full ticket details from backend to get real QR codes
         await fetchTicketDetails(parsed.bookingId);
     } else {
-        // No session data - fetch all tickets and show the most recent one
         await fetchLatestTicket();
     }
 }
 
-// ✅ UPDATED: Fetch specific ticket details from backend with async token
+// Fetch ticket details
 async function fetchTicketDetails(bookingId) {
     let token;
     try {
@@ -116,7 +51,6 @@ async function fetchTicketDetails(bookingId) {
 
     try {
         const response = await fetch(`${API_BASE_URL}/booking/my-tickets`, {
-            method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -125,24 +59,22 @@ async function fetchTicketDetails(bookingId) {
 
         const data = await response.json();
         
-        if (!data.success) {
-            throw new Error(data.error || 'Failed to fetch tickets');
-        }
+        if (!data.success) throw new Error(data.error);
 
-        // Find the ticket for this booking
-        const ticket = data.tickets.find(t => t.bookings?.booking_id === bookingId || t.booking_id === bookingId);
+        // Find ticket by booking ID
+        const ticket = data.tickets.find(t => 
+            t.bookings?.booking_id === bookingId || 
+            t.booking_id === bookingId
+        );
         
         if (ticket) {
             populateTicketFromBackend(ticket);
         } else {
-            // Fallback to session data if API doesn't return ticket yet
-            const sessionData = JSON.parse(sessionStorage.getItem('bookingComplete') || '{}');
-            populateTicketFromSession(sessionData);
+            throw new Error('Ticket not found');
         }
 
     } catch (error) {
-        console.error('Error fetching ticket:', error);
-        // Fallback to session data
+        console.error('Error:', error);
         const sessionData = JSON.parse(sessionStorage.getItem('bookingComplete') || '{}');
         if (sessionData.bookingId) {
             populateTicketFromSession(sessionData);
@@ -153,7 +85,7 @@ async function fetchTicketDetails(bookingId) {
     }
 }
 
-// ✅ UPDATED: Fetch latest ticket when no session data with async token
+// Fetch latest ticket
 async function fetchLatestTicket() {
     let token;
     try {
@@ -165,7 +97,6 @@ async function fetchLatestTicket() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/booking/my-tickets`, {
-            method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -174,24 +105,19 @@ async function fetchLatestTicket() {
 
         const data = await response.json();
         
-        if (!data.success || !data.tickets || data.tickets.length === 0) {
-            alert('No tickets found');
-            window.location.href = 'index.html';
-            return;
+        if (!data.success || !data.tickets?.length) {
+            throw new Error('No tickets');
         }
 
-        // Get the most recent ticket
-        const latestTicket = data.tickets[0];
-        populateTicketFromBackend(latestTicket);
+        populateTicketFromBackend(data.tickets[0]);
 
     } catch (error) {
-        console.error('Error fetching tickets:', error);
         alert('Failed to load tickets');
         window.location.href = 'index.html';
     }
 }
 
-// Populate ticket from backend data (REAL DATA)
+// ✅ FIXED: Use ticket.attendee_name directly
 function populateTicketFromBackend(ticket) {
     const booking = ticket.bookings || {};
     
@@ -200,27 +126,25 @@ function populateTicketFromBackend(ticket) {
         eventName: booking.event_name || 'Event',
         college: { 
             name: booking.college_name || 'College',
-            location: booking.college_name || ''
         },
         date: formatDate(booking.created_at),
-        time: '10:00 AM', // You may need to add time to your database
-        venue: 'Main Venue', // You may need to add venue to your database
-        tickets: 1, // This ticket represents one entry
-        attendee: {
-            name: ticket.attendee_name || 'Guest',
-            email: booking.attendee_email || '',
-            phone: booking.attendee_phone || ''
-        },
+        time: '10:00 AM',
+        venue: 'Main Venue',
+        tickets: 1,
+        // ✅ FIXED: Use ticket.attendee_name directly from tickets table
+        attendeeName: ticket.attendee_name || 'Guest',
+        attendeeEmail: booking.attendee_email || '',
+        attendeePhone: booking.attendee_phone || '',
         bookingId: booking.booking_id || ticket.booking_id,
         ticketId: ticket.ticket_id,
-        qrCode: ticket.qr_code, // REAL QR from database!
+        qrCode: ticket.qr_code,
         bookedAt: booking.created_at || ticket.created_at
     };
 
     updateUI();
 }
 
-// Populate from session data (fallback)
+// Populate from session (fallback)
 function populateTicketFromSession(data) {
     const sessionEvent = data.event || {};
     
@@ -232,17 +156,18 @@ function populateTicketFromSession(data) {
         time: sessionEvent.time || 'TBA',
         venue: sessionEvent.venue || 'TBA',
         tickets: data.tickets?.length || 1,
-        attendee: data.attendee || { name: 'Guest' },
+        // ✅ FIXED: Use attendeeName directly
+        attendeeName: data.attendee?.name || 'Guest',
         bookingId: data.bookingId,
         ticketId: data.tickets?.[0]?.ticketId,
-        qrCode: data.tickets?.[0]?.qrCode, // Base64 QR from backend
+        qrCode: data.tickets?.[0]?.qrCode,
         bookedAt: new Date().toISOString()
     };
 
     updateUI();
 }
 
-// Update UI with bookingData
+// ✅ FIXED: Update UI with correct field name
 function updateUI() {
     document.getElementById('eventName').textContent = bookingData.eventName;
     document.getElementById('collegeName').textContent = bookingData.college.name;
@@ -250,7 +175,8 @@ function updateUI() {
     document.getElementById('ticketTime').textContent = bookingData.time;
     document.getElementById('ticketVenue').textContent = bookingData.venue;
     document.getElementById('ticketQty').textContent = bookingData.tickets;
-    document.getElementById('attendeeName').textContent = bookingData.attendee.name;
+    // ✅ FIXED: Use attendeeName instead of attendee.name
+    document.getElementById('attendeeName').textContent = bookingData.attendeeName;
     document.getElementById('bookingId').textContent = bookingData.bookingId;
     document.getElementById('ticketId').textContent = bookingData.ticketId || bookingData.bookingId;
     
@@ -267,21 +193,16 @@ function updateUI() {
     generateQR();
 }
 
-// Generate QR Code - uses REAL QR from backend if available
+// Generate QR Code
 function generateQR() {
     const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = ''; // Clear existing
+    qrContainer.innerHTML = '';
     
     if (bookingData.qrCode) {
-        // Use REAL QR code from backend (it's base64 encoded JSON)
-        // Display as image or generate from the data
         try {
-            // The QR code in DB is base64 of the ticket data
-            // Let's display it properly
-            const qrData = atob(bookingData.qrCode); // Decode base64
+            const qrData = atob(bookingData.qrCode);
             const parsed = JSON.parse(qrData);
             
-            // Generate visual QR with the ticket data
             qrCode = new QRCode(qrContainer, {
                 text: JSON.stringify({
                     ticketId: parsed.ticketId,
@@ -296,7 +217,6 @@ function generateQR() {
                 correctLevel: QRCode.CorrectLevel.H
             });
         } catch (e) {
-            // Fallback: generate QR with ticket ID
             qrCode = new QRCode(qrContainer, {
                 text: bookingData.ticketId || bookingData.bookingId,
                 width: 128,
@@ -307,7 +227,6 @@ function generateQR() {
             });
         }
     } else {
-        // Fallback: generate QR with booking data
         const qrData = JSON.stringify({
             bookingId: bookingData.bookingId,
             event: bookingData.eventName,
@@ -326,7 +245,7 @@ function generateQR() {
     }
 }
 
-// Helper: Format date
+// Format date
 function formatDate(dateString) {
     if (!dateString) return 'TBA';
     const date = new Date(dateString);
@@ -337,12 +256,12 @@ function formatDate(dateString) {
     });
 }
 
-// Generate confetti animation
+// Generate confetti
 function generateConfetti() {
     const container = document.getElementById('confetti');
     const colors = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#00d4ff'];
     
-    for (let i = 0; i < 50; i++) {
+    for (let  i = 0; i < 50; i++) {
         setTimeout(() => {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
@@ -357,7 +276,7 @@ function generateConfetti() {
     }
 }
 
-// Download ticket as JPG image
+// Download ticket
 async function downloadTicket() {
     const btn = document.querySelector('.action-btn.primary');
     const originalText = btn.innerHTML;
@@ -365,10 +284,6 @@ async function downloadTicket() {
     btn.disabled = true;
     
     try {
-        if (typeof html2canvas === 'undefined') {
-            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-        }
-        
         const ticketElement = document.getElementById('ticketWrapper');
         
         const canvas = await html2canvas(ticketElement, {
@@ -393,17 +308,6 @@ async function downloadTicket() {
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
-}
-
-// Helper: Load script dynamically
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
 }
 
 // Share ticket
