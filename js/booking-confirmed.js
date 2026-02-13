@@ -132,7 +132,7 @@ function populateTicketFromBackend(ticket) {
         venue: 'Main Venue',
         tickets: 1,
         // ✅ FIXED: Use ticket.attendee_name directly from tickets table
-        attendeeName: ticket.attendee_name || 'Guest',
+        attendeeName: ticket.attendee_name || booking.attendee_name || 'Guest',
         attendeeEmail: booking.attendee_email || '',
         attendeePhone: booking.attendee_phone || '',
         bookingId: booking.booking_id || ticket.booking_id,
