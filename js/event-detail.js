@@ -13,9 +13,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Load event data from API
-    loadEventData();
+    // ✅ Check session first, then load event
+    checkSession().then(valid => {
+        if (valid) {
+            loadEventData();
+        }
+    });
 });
+
+// ✅ NEW: Check session cookie
+async function checkSession() {
+    try {
+        const res = await fetch('https://nexus-api-hkfu.onrender.com/api/auth/check', {
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!res.ok) {
+            throw new Error('No session');
+        }
+        
+        const data = await res.json();
+        if (!data.exists) {
+            throw new Error('User not found');
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Auth error:', err);
+        window.location.href = 'auth.html';
+        return false;
+    }
+}
 
 async function loadEventData() {
     try {
@@ -148,9 +177,6 @@ function shareEvent() {
 function bookTickets() {
     if (!eventData) return;
     
-    // Store complete data for booking page
     sessionStorage.setItem('bookingEvent', JSON.stringify(eventData));
-    
-    // Redirect to booking page
     window.location.href = 'college-event-booking.html';
 }

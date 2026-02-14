@@ -1,7 +1,7 @@
 const Profile = {
     user: null,
-    userTickets: [], // Add this to store fetched tickets
-    API_BASE_URL: 'https://nexus-api-hkfu.onrender.com/api', // Add API URL
+    userTickets: [],
+    API_BASE_URL: 'https://nexus-api-hkfu.onrender.com/api',
     
     notifications: [
         { id: 1, icon: 'purple', emoji: '🎉', title: 'Price Drop Alert', desc: 'Dune 2 tickets now 20% off!', time: '2 min ago', read: false },
@@ -50,101 +50,40 @@ const Profile = {
         this.loadUserData();
         this.renderNotifications();
         this.renderActivity();
-        this.fetchAndRenderTickets(); // Changed from renderTickets()
+        this.fetchAndRenderTickets();
         this.renderInsights();
         this.renderWishlist();
         this.setupEventListeners();
     },
     
-    checkAuth() {
-        const auth = localStorage.getItem('nexus_auth');
-        const session = sessionStorage.getItem('nexus_session');
-        
-        if (!auth && !session) {
-            window.location.replace('auth.html');
+    // ✅ UPDATED: Check Auth with cookie
+    async checkAuth() {
+        try {
+            const res = await fetch(`${this.API_BASE_URL}/auth/check`, {
+                credentials: 'include', // ✅ Cookie sent
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (!res.ok) {
+                throw new Error('No session');
+            }
+            
+            const data = await res.json();
+            if (!data.exists) {
+                throw new Error('User not found');
+            }
+            
+            return true;
+        } catch (err) {
+            console.error('Auth error:', err);
+            window.location.href = 'auth.html';
             return false;
         }
-        return true;
     },
     
-    // ✅ UPDATED: Async helper function to get FRESH auth token
-    async getAuthToken() {
-        return new Promise((resolve, reject) => {
-            // Check if Firebase is available
-            if (typeof firebase === 'undefined' || !firebase.auth) {
-                // Fallback to localStorage
-                const authData = localStorage.getItem('nexus_auth');
-                if (!authData) {
-                    reject(new Error('NOT_LOGGED_IN'));
-                    return;
-                }
-                const parsed = JSON.parse(authData);
-                resolve(parsed.idToken);
-                return;
-            }
-
-            const user = firebase.auth().currentUser;
-            
-            if (!user) {
-                // Check localStorage as fallback
-                const authData = localStorage.getItem('nexus_auth');
-                if (!authData) {
-                    reject(new Error('NOT_LOGGED_IN'));
-                    return;
-                }
-                
-                const parsed = JSON.parse(authData);
-                
-                // Check if token is expired
-                try {
-                    const tokenData = JSON.parse(atob(parsed.idToken.split('.')[1]));
-                    const expiry = tokenData.exp * 1000;
-                    
-                    if (Date.now() > expiry - 60000) {
-                        reject(new Error('TOKEN_EXPIRED'));
-                        return;
-                    }
-                    
-                    resolve(parsed.idToken);
-                } catch (e) {
-                    reject(new Error('INVALID_TOKEN'));
-                }
-                return;
-            }
-
-            // User is logged in Firebase - get fresh token
-            user.getIdToken(false) // false = use cached if still valid
-                .then((token) => {
-                    // Update localStorage
-                    const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
-                    authData.idToken = token;
-                    authData.lastRefresh = Date.now();
-                    localStorage.setItem('nexus_auth', JSON.stringify(authData));
-                    resolve(token);
-                })
-                .catch((error) => {
-                    console.error('Token fetch error:', error);
-                    reject(new Error('TOKEN_FETCH_FAILED'));
-                });
-        });
-    },
+    // ❌ REMOVED: getAuthToken() - no longer needed with cookies
     
-    // ✅ NEW: Handle auth errors with user-friendly messages
-    handleAuthError(error) {
-        const errorMessages = {
-            'NOT_LOGGED_IN': 'Please login to continue',
-            'TOKEN_EXPIRED': 'Your session has expired. Please login again.',
-            'INVALID_TOKEN': 'Invalid session. Please login again.',
-            'TOKEN_FETCH_FAILED': 'Session error. Please try logging in again.'
-        };
-        
-        const errorType = error.message || 'NOT_LOGGED_IN';
-        const message = errorMessages[errorType] || errorMessages['NOT_LOGGED_IN'];
-        
-        alert(message);
-        localStorage.removeItem('nexus_auth');
-        window.location.href = 'auth.html';
-    },
+    // ❌ REMOVED: handleAuthError() - simplified
     
     loadUserData() {
         const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
@@ -242,26 +181,16 @@ const Profile = {
         `).join('');
     },
     
-    // ✅ UPDATED: Fetch tickets from backend with async token
+    // ✅ UPDATED: Fetch tickets from backend with cookie
     async fetchAndRenderTickets() {
-        let token;
-        try {
-            token = await this.getAuthToken();
-        } catch (error) {
-            this.handleAuthError(error);
-            return;
-        }
-
         const container = document.getElementById('ticketsGrid');
         container.innerHTML = '<div class="loading-state">Loading tickets...</div>';
 
         try {
             const response = await fetch(`${this.API_BASE_URL}/booking/my-tickets`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                credentials: 'include', // ✅ Cookie sent automatically
+                headers: { 'Content-Type': 'application/json' }
             });
 
             const data = await response.json();
@@ -284,7 +213,7 @@ const Profile = {
         }
     },
 
-    // NEW: Render tickets list
+    // Render tickets list (same as before)
     renderTicketsList(tickets) {
         const container = document.getElementById('ticketsGrid');
     
@@ -367,7 +296,7 @@ const Profile = {
         }).join('');
     },
 
-    // NEW: View ticket detail
+    // View ticket detail (same as before)
     viewTicketDetail(ticketId) {
         const ticket = this.userTickets.find(t => t.ticket_id === ticketId);
         if (!ticket) return;
@@ -395,7 +324,7 @@ const Profile = {
         window.location.href = 'booking-confirmed.html';
     },
 
-    // UPDATED: Filter tickets
+    // Filter tickets (same as before)
     filterTickets(filter) {
         document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
         event.target.classList.add('active');
@@ -519,6 +448,24 @@ const Profile = {
         toast.textContent = message;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
+    },
+    
+    // ✅ UPDATED: Logout with backend call
+    async logout() {
+        try {
+            await fetch(`${this.API_BASE_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include', // ✅ Cookie sent
+                headers: { 'Content-Type': 'application/json' }
+            });
+        } catch (err) {
+            console.error('Logout error:', err);
+        }
+        
+        localStorage.removeItem('nexus_auth');
+        localStorage.removeItem('nexus_profile');
+        sessionStorage.clear();
+        window.location.href = 'auth.html';
     },
     
     setupEventListeners() {

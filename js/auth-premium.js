@@ -1,4 +1,4 @@
-// Firebase Configuration - YOUR REAL CONFIG
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCtADU0CC6S0y7yk4zp0DZ2HXWxi-INyBU",
     authDomain: "nexus-user-c7579.firebaseapp.com",
@@ -9,7 +9,7 @@ const firebaseConfig = {
     measurementId: "G-WKB1BPY3NM"
 };
 
-// Supabase Config - YOUR REAL CREDENTIALS
+// Supabase Config
 const SUPABASE_URL = 'https://qoqyghkdxfnmkqtlypfo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcXlnaGtkeGZubWtxdGx5cGZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NTU2MjMsImV4cCI6MjA4NjAzMTYyM30.z6QGNCtsCuWocPFe4ybdTSuIYlHfLE61EZ5L7A3TKgY';
 
@@ -34,64 +34,37 @@ const Auth = {
         this.setupPhoneInput();
         this.setupRecaptcha();
         this.checkAuthState();
-        this.startTokenRefresh(); // ✅ NEW: Start auto token refresh
+        // ❌ REMOVED: startTokenRefresh - no longer needed with cookies
     },
     
-    checkAuthState() {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                console.log('User already logged in');
-            }
-        });
-    },
-    
-    // ✅ NEW: Get fresh token from Firebase
-    async getFreshToken() {
-        return new Promise((resolve, reject) => {
-            const user = auth.currentUser;
-            if (!user) {
-                reject(new Error('No user logged in'));
-                return;
-            }
+    // ✅ UPDATED: Check session cookie instead of Firebase token
+    async checkAuthState() {
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/check`, {
+                credentials: 'include', // ✅ Cookie sent
+                headers: { 'Content-Type': 'application/json' }
+            });
             
-            // Force refresh to get new token if old
-            user.getIdToken(true).then((token) => {
-                // Update stored token
-                const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
-                authData.idToken = token;
-                authData.lastRefresh = Date.now();
-                localStorage.setItem('nexus_auth', JSON.stringify(authData));
-                resolve(token);
-            }).catch(reject);
-        });
-    },
-    
-    // ✅ NEW: Auto-refresh token every 50 minutes
-    startTokenRefresh() {
-        // Refresh immediately if user is already logged in
-        if (auth.currentUser) {
-            this.getFreshToken().catch(console.error);
-        }
-        
-        // Then refresh every 50 minutes (before 1 hour expiry)
-        setInterval(async () => {
-            if (auth.currentUser) {
-                try {
-                    await this.getFreshToken();
-                    console.log('✅ Token auto-refreshed');
-                } catch (error) {
-                    console.error('❌ Token refresh failed:', error);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.exists) {
+                    // Session valid, redirect to app
+                    window.location.href = 'index.html';
                 }
             }
-        }, 50 * 60 * 1000); // 50 minutes
+        } catch (err) {
+            console.log('No active session');
+        }
     },
+    
+    // ❌ REMOVED: getFreshToken() - no longer needed
+    
+    // ❌ REMOVED: startTokenRefresh() - no longer needed
     
     setupRecaptcha() {
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
             'size': 'invisible',
-            'callback': (response) => {
-                // reCAPTCHA solved
-            }
+            'callback': (response) => {}
         });
     },
     
@@ -150,13 +123,32 @@ const Auth = {
             
             const idToken = await user.getIdToken();
             
-            await this.completeAuth(user, idToken, 'google');
+            // ✅ NEW: Create session cookie first
+            await this.createSession(idToken);
+            
+            await this.completeAuth(user, 'google');
             
         } catch (error) {
             this.setLoading(false);
             this.showToast(this.getErrorMessage(error));
             console.error('Google sign in error:', error);
         }
+    },
+    
+    // ✅ NEW: Create session cookie
+    async createSession(idToken) {
+        const res = await fetch(`${API_BASE}/api/auth/session`, {
+            method: 'POST',
+            credentials: 'include', // ✅ Receive cookie
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+        });
+        
+        if (!res.ok) {
+            throw new Error('Failed to create session');
+        }
+        
+        return await res.json();
     },
     
     toggleMode() {
@@ -272,13 +264,16 @@ const Auth = {
             
             const idToken = await user.getIdToken();
             
+            // ✅ NEW: Create session cookie
+            await this.createSession(idToken);
+            
             inputs.forEach(input => {
                 input.style.borderColor = 'var(--accent)';
                 input.style.background = 'rgba(16, 185, 129, 0.1)';
             });
             
             setTimeout(() => {
-                this.completeAuth(user, idToken, 'phone');
+                this.completeAuth(user, 'phone');
             }, 500);
             
         } catch (error) {
@@ -298,7 +293,7 @@ const Auth = {
         }
     },
     
-    async completeAuth(user, idToken, method) {
+    async completeAuth(user, method) {
         const authData = {
             uid: user.uid,
             phone: user.phoneNumber || null,
@@ -306,16 +301,16 @@ const Auth = {
             name: user.displayName || document.getElementById('nameInput')?.value || 'User',
             photoURL: user.photoURL || null,
             method: method,
-            idToken: idToken,
-            timestamp: Date.now(),
-            lastRefresh: Date.now() // ✅ NEW: Track last refresh
+            // ❌ REMOVED: idToken - no longer stored
+            timestamp: Date.now()
         };
         
         localStorage.setItem('nexus_auth', JSON.stringify(authData));
         sessionStorage.setItem('nexus_session', 'active');
         
         try {
-            await this.syncWithBackend(idToken);
+            // ✅ UPDATED: Sync with backend using cookie
+            await this.syncWithBackend();
         } catch (e) {
             console.log('Backend sync optional');
         }
@@ -324,14 +319,13 @@ const Auth = {
         document.body.style.opacity = '0';
         
         setTimeout(() => {
-            // Check if profile exists in Supabase, then redirect accordingly
             this.checkProfileAndRedirect(user);
         }, 400);
     },
     
-    // NEW: Check if user has profile in Supabase
     async checkProfileAndRedirect(user) {
         try {
+            // ✅ UPDATED: Use cookie instead of token
             const { data, error } = await supabaseClient
                 .from('users')
                 .select('*')
@@ -339,30 +333,24 @@ const Auth = {
                 .single();
             
             if (data) {
-                // Profile exists, save and go to main app
                 localStorage.setItem('nexus_profile', JSON.stringify(data));
                 window.location.href = 'index.html';
             } else {
-                // No profile, go to complete profile page
                 window.location.href = 'complete-profile.html';
             }
         } catch (e) {
-            // Error or no profile found, go to complete profile
             console.log('No profile found, redirecting to complete profile');
             window.location.href = 'complete-profile.html';
         }
     },
     
-    async syncWithBackend(idToken) {
+    // ✅ UPDATED: Sync with backend using cookie
+    async syncWithBackend() {
         const response = await fetch(`${API_BASE}/api/auth/verify`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`
-            },
-            body: JSON.stringify({
-                timestamp: Date.now()
-            })
+            credentials: 'include', // ✅ Cookie sent automatically
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ timestamp: Date.now() })
         });
         
         if (!response.ok) throw new Error('Backend sync failed');
@@ -371,7 +359,6 @@ const Auth = {
     
     redirectToApp(user) {
         if (window.location.pathname.includes('auth.html')) {
-            // Check profile before redirecting
             this.checkProfileAndRedirect(user);
         }
     },
@@ -471,7 +458,19 @@ const Auth = {
         return errorMessages[error.code] || 'Something went wrong. Please try again.';
     },
     
-    logout() {
+    // ✅ UPDATED: Logout with backend call
+    async logout() {
+        try {
+            // Call backend to clear cookie
+            await fetch(`${API_BASE}/api/auth/logout`, {
+                method: 'POST',
+                credentials: 'include', // ✅ Cookie sent
+                headers: { 'Content-Type': 'application/json' }
+            });
+        } catch (err) {
+            console.error('Logout error:', err);
+        }
+        
         auth.signOut().then(() => {
             localStorage.removeItem('nexus_auth');
             localStorage.removeItem('nexus_profile');

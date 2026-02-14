@@ -7,26 +7,54 @@ const CONVENIENCE_FEE = 49;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    loadBookingData();
-    renderPassengerForms();
-    updatePricing();
-    
-    // Payment method selection
-    document.querySelectorAll('input[name="payment"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            document.querySelectorAll('.payment-card').forEach(card => {
-                card.classList.remove('active');
+    // ✅ Check session first
+    checkSession().then(valid => {
+        if (valid) {
+            loadBookingData();
+            renderPassengerForms();
+            updatePricing();
+            
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll('.payment-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    e.target.closest('.payment-card').classList.add('active');
+                });
             });
-            e.target.closest('.payment-card').classList.add('active');
-        });
+        }
     });
 });
+
+// ✅ NEW: Check session cookie
+async function checkSession() {
+    try {
+        const res = await fetch(`${API_BASE}/api/auth/check`, {
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!res.ok) {
+            throw new Error('No session');
+        }
+        
+        const data = await res.json();
+        if (!data.exists) {
+            throw new Error('User not found');
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Auth error:', err);
+        window.location.href = 'auth.html';
+        return false;
+    }
+}
 
 // Load booking data from sessionStorage
 function loadBookingData() {
     const data = sessionStorage.getItem('bookingData');
     if (!data) {
-        // Redirect back if no data
         window.location.href = 'bus-details.html';
         return;
     }
@@ -35,7 +63,6 @@ function loadBookingData() {
     selectedSeats = bookingData.selectedSeats || [];
     basePrice = bookingData.price * selectedSeats.length;
     
-    // Update UI
     document.getElementById('fromCity').textContent = bookingData.from;
     document.getElementById('toCity').textContent = bookingData.to;
     document.getElementById('depTime').textContent = bookingData.depTime;
@@ -178,16 +205,15 @@ function removeCoupon() {
 }
 
 // Proceed to payment
-function proceedToPayment() {
+// ✅ UPDATED: proceedToPayment should use cookie
+async function proceedToPayment() {
     const form = document.getElementById('passengerForm');
     
-    // Validate form
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
     
-    // Collect passenger data
     const passengers = [];
     for (let i = 0; i < selectedSeats.length; i++) {
         const suffix = i === 0 ? '1' : (i + 1).toString();
@@ -201,17 +227,14 @@ function proceedToPayment() {
         });
     }
     
-    // Collect contact info
     const contact = {
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
         altPhone: document.getElementById('altPhone').value
     };
     
-    // Get payment method
     const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
     
-    // Final booking data
     const finalBooking = {
         ...bookingData,
         passengers,
@@ -223,19 +246,15 @@ function proceedToPayment() {
         bookingTime: new Date().toISOString()
     };
     
-    // Save to sessionStorage
     sessionStorage.setItem('finalBooking', JSON.stringify(finalBooking));
     
-    // Show processing modal
     document.getElementById('processingModal').classList.remove('hidden');
     
     // Simulate payment processing
     setTimeout(() => {
-        // Generate booking ID
         const bookingId = 'NEX' + Date.now().toString(36).toUpperCase();
         sessionStorage.setItem('bookingId', bookingId);
         
-        // Redirect to confirmation
         window.location.href = 'confirmation.html';
     }, 3000);
 }

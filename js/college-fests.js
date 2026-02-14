@@ -1,8 +1,44 @@
 const API_BASE_URL = 'https://nexus-host-backend.onrender.com/api';
 
-let colleges = []; // Will be populated from backend
+let colleges = [];
 
-// Fetch colleges from backend
+// ✅ UPDATED: Check session first, then fetch colleges
+document.addEventListener('DOMContentLoaded', async () => {
+    // Check session
+    const hasSession = await checkSession();
+    if (!hasSession) return;
+    
+    // Then fetch colleges
+    fetchColleges();
+});
+
+// ✅ NEW: Check session cookie
+async function checkSession() {
+    try {
+        // Note: This uses USER backend, not host backend
+        const res = await fetch('https://nexus-api-hkfu.onrender.com/api/auth/check', {
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!res.ok) {
+            throw new Error('No session');
+        }
+        
+        const data = await res.json();
+        if (!data.exists) {
+            throw new Error('User not found');
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Auth error:', err);
+        window.location.href = 'auth.html';
+        return false;
+    }
+}
+
+// Fetch colleges from backend (public endpoint, no auth needed)
 async function fetchColleges() {
     try {
         const response = await fetch(`${API_BASE_URL}/colleges/public/all`);
@@ -65,6 +101,3 @@ function openCollege(id) {
     sessionStorage.setItem('selectedCollege', JSON.stringify(college));
     window.location.href = `college-fest-detail.html?id=${id}`;
 }
-
-// Initial fetch instead of hardcoded render
-fetchColleges();

@@ -7,84 +7,9 @@ let ticketPrice = 0;
 let currentQty = 1;
 let currentBookingId = null;
 
-// ✅ UPDATED: Async helper function to get FRESH auth token
-async function getAuthToken() {
-    return new Promise((resolve, reject) => {
-        // Check if Firebase is available
-        if (typeof firebase === 'undefined' || !firebase.auth) {
-            // Fallback to localStorage
-            const authData = localStorage.getItem('nexus_auth');
-            if (!authData) {
-                reject(new Error('NOT_LOGGED_IN'));
-                return;
-            }
-            const parsed = JSON.parse(authData);
-            resolve(parsed.idToken);
-            return;
-        }
+// ❌ REMOVED: getAuthToken() function - no longer needed
 
-        const user = firebase.auth().currentUser;
-        
-        if (!user) {
-            // Check localStorage as fallback
-            const authData = localStorage.getItem('nexus_auth');
-            if (!authData) {
-                reject(new Error('NOT_LOGGED_IN'));
-                return;
-            }
-            
-            const parsed = JSON.parse(authData);
-            
-            // Check if token is expired
-            try {
-                const tokenData = JSON.parse(atob(parsed.idToken.split('.')[1]));
-                const expiry = tokenData.exp * 1000;
-                
-                if (Date.now() > expiry - 60000) {
-                    reject(new Error('TOKEN_EXPIRED'));
-                    return;
-                }
-                
-                resolve(parsed.idToken);
-            } catch (e) {
-                reject(new Error('INVALID_TOKEN'));
-            }
-            return;
-        }
-
-        // User is logged in Firebase - get fresh token
-        user.getIdToken(false) // false = use cached if still valid
-            .then((token) => {
-                // Update localStorage
-                const authData = JSON.parse(localStorage.getItem('nexus_auth') || '{}');
-                authData.idToken = token;
-                authData.lastRefresh = Date.now();
-                localStorage.setItem('nexus_auth', JSON.stringify(authData));
-                resolve(token);
-            })
-            .catch((error) => {
-                console.error('Token fetch error:', error);
-                reject(new Error('TOKEN_FETCH_FAILED'));
-            });
-    });
-}
-
-// ✅ NEW: Handle auth errors with user-friendly messages
-function handleAuthError(error) {
-    const errorMessages = {
-        'NOT_LOGGED_IN': 'Please login to continue',
-        'TOKEN_EXPIRED': 'Your session has expired. Please login again.',
-        'INVALID_TOKEN': 'Invalid session. Please login again.',
-        'TOKEN_FETCH_FAILED': 'Session error. Please try logging in again.'
-    };
-    
-    const errorType = error.message || 'NOT_LOGGED_IN';
-    const message = errorMessages[errorType] || errorMessages['NOT_LOGGED_IN'];
-    
-    alert(message);
-    localStorage.removeItem('nexus_auth');
-    window.location.href = 'auth.html';
-}
+// ❌ REMOVED: handleAuthError() function - simplified
 
 // Load Razorpay script dynamically
 function loadRazorpayScript() {
@@ -97,15 +22,44 @@ function loadRazorpayScript() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // ✅ Check session first
+    const hasSession = await checkSession();
+    if (!hasSession) return;
+    
     await loadRazorpayScript();
     loadEventData();
     updatePricing();
     
-    // Phone input validation
     document.getElementById('attendeePhone').addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
     });
 });
+
+// ✅ NEW: Check session cookie
+async function checkSession() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/auth/check`, {
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!res.ok) {
+            throw new Error('No session');
+        }
+        
+        const data = await res.json();
+        if (!data.exists) {
+            throw new Error('User not found');
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Auth error:', err);
+        alert('Please login to continue');
+        window.location.href = 'auth.html';
+        return false;
+    }
+}
 
 function loadEventData() {
     const data = sessionStorage.getItem('bookingEvent') || sessionStorage.getItem('selectedEvent');
@@ -117,7 +71,6 @@ function loadEventData() {
     eventData = JSON.parse(data);
     ticketPrice = eventData.price || 0;
     
-    // Populate page
     document.getElementById('eventImage').src = eventData.image || 'assets/college-fest.jpg';
     document.getElementById('eventImage').onerror = function() {
         this.src = 'assets/college-fest.jpg';
@@ -181,9 +134,8 @@ function showMaxLimit() {
     }, 200);
 }
 
-// ✅ UPDATED: Async payment with fresh token
+// ✅ UPDATED: Payment with cookie
 async function proceedToPayment() {
-    // Validate form
     const name = document.getElementById('attendeeName').value.trim();
     const email = document.getElementById('attendeeEmail').value.trim();
     const phone = document.getElementById('attendeePhone').value.trim();
@@ -199,29 +151,17 @@ async function proceedToPayment() {
         return;
     }
 
-    // ✅ Get FRESH Firebase token with error handling
-    let token;
-    try {
-        token = await getAuthToken();
-    } catch (error) {
-        handleAuthError(error);
-        return;
-    }
-
-    // Show processing modal
     const modal = document.getElementById('paymentModal');
     modal.classList.remove('hidden');
     document.getElementById('paymentStatus').textContent = 'Creating order...';
     document.getElementById('paymentSubtext').textContent = 'Please wait...';
 
     try {
-        // Step 1: Create order with FRESH token
+        // Step 1: Create order with cookie
         const orderResponse = await fetch(`${API_BASE_URL}/booking/create-order`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 festId: eventData.id,
                 eventName: eventData.name,
@@ -253,15 +193,8 @@ async function proceedToPayment() {
             description: `${eventData.name} - ${currentQty} ticket(s)`,
             order_id: orderData.orderId,
             handler: async function(response) {
-                // Step 3: Verify payment - get fresh token again
-                let verifyToken;
-                try {
-                    verifyToken = await getAuthToken();
-                } catch (error) {
-                    handleAuthError(error);
-                    return;
-                }
-                await verifyPayment(response, verifyToken);
+                // Step 3: Verify payment with cookie
+                await verifyPayment(response);
             },
             prefill: {
                 name: name,
@@ -291,17 +224,16 @@ async function proceedToPayment() {
     }
 }
 
-async function verifyPayment(razorpayResponse, token) {
+// ✅ UPDATED: Verify payment with cookie
+async function verifyPayment(razorpayResponse) {
     const modal = document.getElementById('paymentModal');
     document.getElementById('paymentStatus').textContent = 'Verifying payment...';
     
     try {
         const verifyResponse = await fetch(`${API_BASE_URL}/booking/verify-payment`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 razorpay_order_id: razorpayResponse.razorpay_order_id,
                 razorpay_payment_id: razorpayResponse.razorpay_payment_id,
@@ -312,20 +244,17 @@ async function verifyPayment(razorpayResponse, token) {
         const verifyData = await verifyResponse.json();
 
         if (verifyData.success) {
-            // Show success
             document.querySelector('.spinner-ring').style.display = 'none';
             document.getElementById('successIcon').classList.remove('hidden');
             document.getElementById('paymentStatus').textContent = 'Payment Successful!';
             document.getElementById('paymentSubtext').textContent = 'Redirecting to your tickets...';
 
-            // Save to sessionStorage for ticket page
             sessionStorage.setItem('bookingComplete', JSON.stringify({
                 bookingId: verifyData.bookingId,
                 tickets: verifyData.tickets,
                 event: eventData
             }));
 
-            // Redirect after delay
             setTimeout(() => {
                 window.location.href = 'booking-confirmed.html';
             }, 1500);

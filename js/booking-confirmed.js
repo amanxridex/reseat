@@ -1,32 +1,46 @@
-// ✅ FIXED: No trailing space
 const API_BASE_URL = 'https://nexus-api-hkfu.onrender.com/api';
 
-// Get auth token
-async function getAuthToken() {
-    return new Promise((resolve, reject) => {
-        const authData = localStorage.getItem('nexus_auth');
-        if (!authData) {
-            reject(new Error('NOT_LOGGED_IN'));
-            return;
-        }
-        const parsed = JSON.parse(authData);
-        resolve(parsed.idToken);
-    });
-}
+// ❌ REMOVED: getAuthToken() function - no longer needed
 
-function handleAuthError(error) {
-    alert('Please login to continue');
-    localStorage.removeItem('nexus_auth');
-    window.location.href = 'auth.html';
-}
+// ❌ REMOVED: handleAuthError() function - simplified
 
 let bookingData = null;
 let qrCode = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadBookingData();
-    generateConfetti();
+    // ✅ Check session first
+    checkSession().then(valid => {
+        if (valid) {
+            loadBookingData();
+            generateConfetti();
+        }
+    });
 });
+
+// ✅ NEW: Check session cookie
+async function checkSession() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/auth/check`, {
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!res.ok) {
+            throw new Error('No session');
+        }
+        
+        const data = await res.json();
+        if (!data.exists) {
+            throw new Error('User not found');
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Auth error:', err);
+        window.location.href = 'auth.html';
+        return false;
+    }
+}
 
 // Load booking data
 async function loadBookingData() {
@@ -40,27 +54,17 @@ async function loadBookingData() {
     }
 }
 
-// Fetch ticket details
+// Fetch ticket details (cookie automatically sent)
 async function fetchTicketDetails(bookingId) {
-    let token;
-    try {
-        token = await getAuthToken();
-    } catch (error) {
-        handleAuthError(error);
-        return;
-    }
-
     try {
         const response = await fetch(`${API_BASE_URL}/booking/my-tickets`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
         });
 
         const data = await response.json();
         
-        console.log('🔍 API Response:', data); // Debug
+        console.log('🔍 API Response:', data);
         
         if (!data.success) throw new Error(data.error);
 
@@ -89,27 +93,17 @@ async function fetchTicketDetails(bookingId) {
     }
 }
 
-// Fetch latest ticket
+// Fetch latest ticket (cookie automatically sent)
 async function fetchLatestTicket() {
-    let token;
-    try {
-        token = await getAuthToken();
-    } catch (error) {
-        handleAuthError(error);
-        return;
-    }
-
     try {
         const response = await fetch(`${API_BASE_URL}/booking/my-tickets`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+            credentials: 'include', // ✅ Cookie sent
+            headers: { 'Content-Type': 'application/json' }
         });
 
         const data = await response.json();
         
-        console.log('🔍 Latest Ticket API:', data); // Debug
+        console.log('🔍 Latest Ticket API:', data);
         
         if (!data.success || !data.tickets?.length) {
             throw new Error('No tickets');
@@ -132,11 +126,10 @@ function populateTicketFromBackend(ticket) {
     console.log('Booking attendee_name:', booking.attendee_name);
     console.log('Booking booking_attendee_name:', booking.booking_attendee_name);
     
-    // ✅ Check all possible sources
     const finalAttendeeName = 
-        ticket.attendee_name ||                    // From tickets table
-        booking.booking_attendee_name ||           // From bookings (aliased)
-        booking.attendee_name ||                   // From bookings
+        ticket.attendee_name ||
+        booking.booking_attendee_name ||
+        booking.attendee_name ||
         '';
     
     console.log('Final name:', finalAttendeeName);
