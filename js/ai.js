@@ -5,6 +5,7 @@
 // Chat State
 let isProcessing = false;
 let conversationHistory = [];
+let conversationContext = null;
 let userPreferences = {
     preferredAirline: null,
     preferredSeat: null,
@@ -13,6 +14,11 @@ let userPreferences = {
 };
 let isListening = false;
 let recognition = null;
+
+// Initialize conversation context
+if (typeof ConversationContext !== 'undefined') {
+    conversationContext = new ConversationContext();
+}
 
 // DOM Elements
 const chatContainer = document.getElementById('chatContainer');
@@ -235,68 +241,145 @@ function processAIResponse(userText) {
     }, 1500 + Math.random() * 1000);
 }
 
-// Advanced Intent Detection
+// Advanced Intent Detection with NER (Named Entity Recognition)
 function detectIntent(text) {
     const intents = {
-        flight: ['flight', 'plane', 'fly', 'flying', 'air travel', 'airplane'],
-        movie: ['movie', 'film', 'cinema', 'show', 'theater'],
-        train: ['train', 'rail', 'railway', 'metro'],
-        bus: ['bus', 'coach', 'road'],
-        concert: ['concert', 'music', 'band', 'artist', 'live music'],
+        flight: ['flight', 'plane', 'fly', 'flying', 'air travel', 'airplane', 'airline'],
+        movie: ['movie', 'film', 'cinema', 'show', 'theater', 'pvr', 'inox'],
+        train: ['train', 'rail', 'railway', 'rajdhani', 'shatabdi', 'duronto'],
+        bus: ['bus', 'coach', 'road', 'volvo', 'redbus', 'sleeper'],
+        metro: ['metro', 'subway', 'namma metro', 'rapid transit'],
+        concert: ['concert', 'music', 'band', 'artist', 'live music', 'coldplay', 'dua lipa', 'gig'],
+        sports: ['cricket', 'football', 'ipl', 'match', 'stadium', 'sports'],
+        collegeEvent: ['college', 'fest', 'tech fest', 'cultural', 'mood indigo', 'iit', 'bits'],
         event: ['event', 'show', 'performance', 'festival'],
-        sell: ['sell', 'resale', 'resell', 'list ticket'],
-        compare: ['compare', 'comparison', 'vs', 'versus', 'difference'],
-        price: ['price', 'cost', 'cheap', 'expensive', 'discount', 'deal'],
+        sell: ['sell', 'resale', 'resell', 'list ticket', 'list my'],
+        buy: ['buy', 'purchase', 'looking for', 'need', 'want'],
+        compare: ['compare', 'comparison', 'vs', 'versus', 'difference', 'which is better'],
+        price: ['price', 'cost', 'cheap', 'expensive', 'discount', 'deal', 'offer'],
+        route: ['from', 'to', 'between', 'delhi', 'mumbai', 'bangalore', 'chennai'],
         date: ['tomorrow', 'today', 'weekend', 'next week', 'next month', 'friday', 'saturday', 'sunday'],
-        greeting: ['hello', 'hi', 'hey', 'greetings'],
-        help: ['help', 'assist', 'support', 'how'],
-        track: ['track', 'booking', 'status', 'order']
+        greeting: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good evening'],
+        help: ['help', 'assist', 'support', 'how', 'what can you'],
+        track: ['track', 'booking', 'status', 'order', 'pnr', 'ticket number'],
+        about: ['about', 'what is nexus', 'who are you', 'features', 'services']
     };
     
+    // Check for multiple intents
+    let detectedIntents = [];
     for (const [intent, keywords] of Object.entries(intents)) {
         if (keywords.some(keyword => text.includes(keyword))) {
-            return intent;
+            detectedIntents.push(intent);
         }
     }
+    
+    // Priority system
+    if (detectedIntents.includes('flight')) return 'flight';
+    if (detectedIntents.includes('train')) return 'train';
+    if (detectedIntents.includes('bus')) return 'bus';
+    if (detectedIntents.includes('metro')) return 'metro';
+    if (detectedIntents.includes('movie')) return 'movie';
+    if (detectedIntents.includes('concert')) return 'concert';
+    if (detectedIntents.includes('sports')) return 'sports';
+    if (detectedIntents.includes('collegeEvent')) return 'collegeEvent';
+    if (detectedIntents.includes('sell')) return 'sell';
+    if (detectedIntents.includes('compare')) return 'compare';
+    if (detectedIntents.includes('greeting')) return 'greeting';
+    if (detectedIntents.includes('help')) return 'help';
+    if (detectedIntents.includes('about')) return 'about';
+    if (detectedIntents.includes('track')) return 'track';
     
     return 'general';
 }
 
+// Extract entities from text (cities, dates, numbers)
+function extractEntities(text) {
+    const entities = {
+        cities: [],
+        dates: [],
+        numbers: []
+    };
+    
+    // Common Indian cities
+    const cities = ['delhi', 'mumbai', 'bangalore', 'chennai', 'kolkata', 'hyderabad', 
+                   'pune', 'ahmedabad', 'jaipur', 'lucknow', 'goa', 'kochi', 'chandigarh'];
+    
+    cities.forEach(city => {
+        if (text.includes(city)) {
+            entities.cities.push(city.charAt(0).toUpperCase() + city.slice(1));
+        }
+    });
+    
+    // Extract numbers
+    const numbers = text.match(/\d+/g);
+    if (numbers) {
+        entities.numbers = numbers;
+    }
+    
+    // Date keywords
+    const dateKeywords = ['tomorrow', 'today', 'tonight', 'weekend', 'next week', 'next month'];
+    dateKeywords.forEach(keyword => {
+        if (text.includes(keyword)) {
+            entities.dates.push(keyword);
+        }
+    });
+    
+    return entities;
+}
+
 // Intent Handlers
 function handleIntent(intent, lowerText, originalText) {
+    // Extract entities for smart responses
+    const entities = extractEntities(lowerText);
+    
     switch (intent) {
         case 'flight':
-            handleFlightIntent(lowerText);
+            handleFlightIntent(lowerText, entities);
             break;
         case 'movie':
-            handleMovieIntent(lowerText);
+            handleMovieIntent(lowerText, entities);
             break;
         case 'train':
-            handleTrainIntent(lowerText);
+            handleTrainIntent(lowerText, entities);
             break;
         case 'bus':
-            handleBusIntent(lowerText);
+            handleBusIntent(lowerText, entities);
+            break;
+        case 'metro':
+            handleMetroIntent(lowerText, entities);
             break;
         case 'concert':
-            handleConcertIntent(lowerText);
+            handleConcertIntent(lowerText, entities);
+            break;
+        case 'sports':
+            handleSportsIntent(lowerText, entities);
+            break;
+        case 'collegeEvent':
+            handleCollegeEventIntent(lowerText, entities);
             break;
         case 'sell':
-            handleSellIntent(lowerText);
+            handleSellIntent(lowerText, entities);
             break;
         case 'compare':
-            handleCompareIntent(lowerText);
+            handleCompareIntent(lowerText, entities);
             break;
         case 'price':
-            handlePriceIntent(lowerText);
+            handlePriceIntent(lowerText, entities);
             break;
         case 'greeting':
             handleGreetingIntent();
+            break;
+        case 'help':
+            handleHelpIntent();
+            break;
+        case 'about':
+            handleAboutIntent();
             break;
         case 'track':
             handleTrackIntent();
             break;
         default:
-            handleGeneralIntent(originalText);
+            handleGeneralIntent(originalText, entities);
     }
 }
 
@@ -426,7 +509,116 @@ function handleTrackIntent() {
     }, 1500);
 }
 
-function handleGeneralIntent(text) {
+function handleMetroIntent(text, entities) {
+    const response = "🚇 Let me help you with metro booking!";
+    
+    // Check if city is mentioned
+    if (entities.cities.length > 0) {
+        const city = entities.cities[0];
+        addAIMessage(`${response} I see you're in ${city}.`, [
+            { label: 'Quick Recharge', action: `Book metro card for ${city}`, icon: 'fas fa-bolt' },
+            { label: 'Route Map', action: `Show ${city} metro map`, icon: 'fas fa-map' },
+            { label: 'Station Info', action: 'Find nearest station', icon: 'fas fa-map-marker-alt' }
+        ]);
+    } else {
+        addAIMessage(response, [
+            { label: 'Delhi Metro', action: 'Book Delhi metro', icon: 'fas fa-subway' },
+            { label: 'Mumbai Metro', action: 'Book Mumbai metro', icon: 'fas fa-subway' },
+            { label: 'Bangalore Metro', action: 'Book Bangalore metro', icon: 'fas fa-subway' },
+            { label: 'Chennai Metro', action: 'Book Chennai metro', icon: 'fas fa-subway' }
+        ]);
+    }
+}
+
+function handleSportsIntent(text, entities) {
+    const response = "🏏 Let me find exciting sports events for you!";
+    addAIMessage(response, [
+        { label: 'Cricket', action: 'Show cricket matches', icon: 'fas fa-baseball-ball' },
+        { label: 'Football', action: 'Show football matches', icon: 'fas fa-football-ball' },
+        { label: 'IPL Tickets', action: 'Show IPL matches', icon: 'fas fa-ticket-alt' },
+        { label: 'All Sports', action: 'Show all sports events', icon: 'fas fa-trophy' }
+    ]);
+    
+    setTimeout(() => addSportsResults(), 1500);
+}
+
+function handleCollegeEventIntent(text, entities) {
+    const response = "🎓 Awesome! Let me show you the hottest college fests!";
+    addAIMessage(response, [
+        { label: 'Cultural Fests', action: 'Show cultural fests', icon: 'fas fa-music' },
+        { label: 'Tech Fests', action: 'Show tech fests', icon: 'fas fa-laptop-code' },
+        { label: 'IIT Fests', action: 'Show IIT fests', icon: 'fas fa-graduation-cap' },
+        { label: 'All Events', action: 'Show all college events', icon: 'fas fa-calendar' }
+    ]);
+    
+    setTimeout(() => addCollegeEventResults(), 1500);
+}
+
+function handleHelpIntent() {
+    const helpText = `
+        <div style="line-height: 1.8;">
+            <p style="margin-bottom: 1rem;">I can help you with:</p>
+            <div style="display: grid; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-plane" style="color: var(--ai-primary); width: 20px;"></i>
+                    <span><strong>Travel:</strong> Flights, Trains, Buses, Metro</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-film" style="color: var(--ai-primary); width: 20px;"></i>
+                    <span><strong>Entertainment:</strong> Movies, Concerts, Events</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-football-ball" style="color: var(--ai-primary); width: 20px;"></i>
+                    <span><strong>Sports:</strong> Cricket, Football, IPL</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-graduation-cap" style="color: var(--ai-primary); width: 20px;"></i>
+                    <span><strong>College:</strong> Fests, Events, Competitions</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-ticket-alt" style="color: var(--ai-primary); width: 20px;"></i>
+                    <span><strong>Resale:</strong> Buy & Sell Tickets</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    addAIMessage(helpText, [
+        { label: 'Book Travel', action: 'I need travel tickets', icon: 'fas fa-plane' },
+        { label: 'Entertainment', action: 'Show entertainment options', icon: 'fas fa-film' },
+        { label: 'Sell Tickets', action: 'I want to sell tickets', icon: 'fas fa-tags' }
+    ]);
+}
+
+function handleAboutIntent() {
+    const aboutText = `
+        <div style="line-height: 1.8;">
+            <p style="margin-bottom: 1rem;"><strong>NEXUS</strong> is India's most intelligent ticketing platform! 🚀</p>
+            <div style="background: var(--surface-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Active Users</span>
+                    <strong style="color: var(--accent);">50,000+</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Total Bookings</span>
+                    <strong style="color: var(--accent);">12,500+</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Avg. Savings</span>
+                    <strong style="color: var(--accent);">₹2,450</strong>
+                </div>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+                We're revolutionizing ticketing with AI-powered search, real-time pricing, and exclusive deals!
+            </p>
+        </div>
+    `;
+    
+    addAIMessage(aboutText, [
+        { label: 'Start Booking', action: 'I want to book tickets', icon: 'fas fa-rocket' },
+        { label: 'View Features', action: 'Tell me about features', icon: 'fas fa-star' }
+    ]);
+}
     const responses = [
         "I can help you with that! Could you tell me more about what you're looking for?",
         "Interesting! Are you looking to book travel, entertainment, or manage your tickets?",
@@ -707,7 +899,110 @@ function addBusResults() {
     });
 }
 
-function addConcertResults() {
+function addSportsResults() {
+    const sports = [
+        {
+            title: 'IPL 2025 - MI vs CSK',
+            subtitle: 'Wankhede Stadium • March 22, 2025',
+            price: '₹800',
+            originalPrice: '₹1,200',
+            seats: 'Available'
+        },
+        {
+            title: 'ISL Final - Kerala vs Goa',
+            subtitle: 'Jawaharlal Nehru Stadium • April 10, 2025',
+            price: '₹500',
+            seats: 'Hot Selling'
+        }
+    ];
+    
+    addAIMessage("🏏 Upcoming matches:");
+    
+    sports.forEach((sport, index) => {
+        setTimeout(() => {
+            const card = document.createElement('div');
+            card.className = 'message ai';
+            card.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content" style="padding: 0; background: transparent; border: none;">
+                    <div class="result-card" onclick="selectResult('${sport.title}', '${sport.price}')">
+                        <div class="result-icon"><i class="fas fa-football-ball"></i></div>
+                        <div class="result-info">
+                            <h4>${sport.title}</h4>
+                            <p>${sport.subtitle}</p>
+                            <div class="result-badge">
+                                <i class="fas fa-fire"></i> ${sport.seats}
+                            </div>
+                        </div>
+                        <div class="result-price">
+                            <div class="price">${sport.price}</div>
+                            ${sport.originalPrice ? `<div class="original-price">${sport.originalPrice}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(card);
+            scrollToBottom();
+        }, index * 300);
+    });
+}
+
+function addCollegeEventResults() {
+    const events = [
+        {
+            title: 'IIT Bombay - Mood Indigo',
+            subtitle: 'Dec 20-23, 2024 • Cultural Fest',
+            price: '₹299',
+            originalPrice: '₹499',
+            badge: 'Asia\'s Largest'
+        },
+        {
+            title: 'IIT Delhi - Rendezvous',
+            subtitle: 'Oct 15-17, 2024 • Cultural Fest',
+            price: '₹199',
+            originalPrice: '₹399',
+            badge: 'Pronites'
+        },
+        {
+            title: 'BITS Pilani - Oasis',
+            subtitle: 'Nov 2-4, 2024 • Cultural Fest',
+            price: '₹249',
+            badge: 'Popular'
+        }
+    ];
+    
+    addAIMessage("🎓 Top college fests:");
+    
+    events.forEach((event, index) => {
+        setTimeout(() => {
+            const card = document.createElement('div');
+            card.className = 'message ai';
+            card.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content" style="padding: 0; background: transparent; border: none;">
+                    <div class="result-card" onclick="selectResult('${event.title}', '${event.price}')">
+                        <div class="result-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="result-info">
+                            <h4>${event.title}</h4>
+                            <p>${event.subtitle}</p>
+                            <div class="result-badge">
+                                <i class="fas fa-star"></i> ${event.badge}
+                            </div>
+                        </div>
+                        <div class="result-price">
+                            <div class="price">${event.price}</div>
+                            ${event.originalPrice ? `<div class="original-price">${event.originalPrice}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(card);
+            scrollToBottom();
+        }, index * 300);
+    });
+}
+
+function handleGeneralIntent(text, entities) {
     const concerts = [
         {
             title: 'Coldplay - Mumbai',
