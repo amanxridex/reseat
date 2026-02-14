@@ -619,6 +619,8 @@ function handleAboutIntent() {
         { label: 'View Features', action: 'Tell me about features', icon: 'fas fa-star' }
     ]);
 }
+
+function handleGeneralIntent(text, entities) {
     const responses = [
         "I can help you with that! Could you tell me more about what you're looking for?",
         "Interesting! Are you looking to book travel, entertainment, or manage your tickets?",
@@ -1002,7 +1004,7 @@ function addCollegeEventResults() {
     });
 }
 
-function handleGeneralIntent(text, entities) {
+function addConcertResults() {
     const concerts = [
         {
             title: 'Coldplay - Mumbai',
@@ -1049,6 +1051,22 @@ function handleGeneralIntent(text, entities) {
             scrollToBottom();
         }, index * 300);
     });
+}
+
+function handleGeneralIntent(text, entities) {
+    const responses = [
+        "I can help you with that! Could you tell me more about what you're looking for?",
+        "Interesting! Are you looking to book travel, entertainment, or manage your tickets?",
+        "I'd be happy to assist! What type of tickets are you interested in?"
+    ];
+    
+    const response = responses[Math.floor(Math.random() * responses.length)];
+    
+    addAIMessage(response, [
+        { label: 'Travel Options', action: 'Show travel options', icon: 'fas fa-plane' },
+        { label: 'Entertainment', action: 'Show entertainment options', icon: 'fas fa-film' },
+        { label: 'Resale Market', action: 'Browse resale tickets', icon: 'fas fa-ticket-alt' }
+    ]);
 }
 
 function addPriceAlert() {
